@@ -1,0 +1,83 @@
+[
+  {
+    "id": "operating_forecast",
+    "label": "Midmarket SaaS operating forecast",
+    "prompt": "Build a compact 12-month operating forecast for a B2B SaaS company with editable starting ARR, monthly growth, gross margin, fixed operating expense, starting cash, and sales efficiency. Include a simple revenue build, cash runway, key SaaS KPIs, and base/downside/upside cases.",
+    "tags": ["live-research", "operating-forecast", "saas", "acceptance-fixture"],
+    "difficulty": "standard",
+    "prompt_complexity": "single-company operating forecast with simple KPIs and scenarios",
+    "notes": "Normalized from bounded subagent brief 1. Test fixture only; not deterministic product template logic."
+  },
+  {
+    "id": "working_capital_cash",
+    "label": "13-week working capital and cash liquidity model",
+    "prompt": "Build a compact 13-week cash liquidity model for a distributor with editable starting cash, weekly sales, gross margin, DSO, DPO, payroll, rent, minimum cash, and revolver availability. Keep timing logic simple and explicit: zero-day DSO or DPO settles in the current week, and payment timing assumptions should only change timing. Include weekly cash balance, borrowing need, liquidity metrics, and base/downside/upside cases.",
+    "tags": ["live-research", "working-capital", "cash-liquidity", "13-week-cash-flow", "acceptance-fixture"],
+    "difficulty": "standard",
+    "prompt_complexity": "weekly liquidity model with timing assumptions and simple scenarios",
+    "notes": "Normalized from bounded subagent brief 2. Test fixture only; not deterministic product template logic."
+  },
+  {
+    "id": "three_statement_model",
+    "label": "Basic three-statement operating model",
+    "prompt": "Build a simple three-statement financial model for a mid-sized SaaS company with revenue growth, gross margin, operating expenses, working capital, capex, debt, and cash flow assumptions. Include editable assumptions, linked income statement, balance sheet, cash flow statement, key KPIs, validation checks, and a concise explanation of assumptions that require business review.",
+    "tags": ["live-research", "three-statement", "saas", "acceptance-fixture"],
+    "difficulty": "standard",
+    "prompt_complexity": "single-company integrated three-statement forecast",
+    "notes": "Normalized from bounded subagent brief 3. Test fixture only; not deterministic product template logic."
+  },
+  {
+    "id": "dcf_valuation",
+    "label": "DCF valuation for mid-market SaaS company",
+    "prompt": "Build a DCF-style valuation model for a private mid-market SaaS company with subscription revenue, customer churn, sales efficiency, operating expenses, working capital, capex, taxes, discount rate, terminal value, and sensitivity cases. Include editable assumptions and explain implied values.",
+    "tags": ["live-research", "dcf", "valuation", "saas", "acceptance-fixture"],
+    "difficulty": "standard",
+    "prompt_complexity": "valuation model with operating forecast, terminal value, and sensitivity cases",
+    "notes": "Normalized from bounded subagent brief 4. Test fixture only; not deterministic product template logic."
+  },
+  {
+    "id": "acquisition_investment_case",
+    "label": "Acquisition investment case",
+    "prompt": "Build an acquisition investment case model for a sponsor evaluating the purchase of a $120M revenue specialty packaging company. Include purchase price, debt financing, revenue growth, margin expansion, working capital, capex, exit multiple, returns, downside case, and key diligence questions. Make assumptions explicit.",
+    "tags": ["live-research", "acquisition", "investment-case", "sponsor-model", "acceptance-fixture"],
+    "difficulty": "standard",
+    "prompt_complexity": "transaction case with financing, exit value, and returns outputs",
+    "notes": "Normalized from bounded subagent brief 5. Test fixture only; not deterministic product template logic."
+  },
+  {
+    "id": "project_finance_debt_sizing",
+    "label": "Infrastructure project finance debt sizing",
+    "prompt": "Build a consultant-grade project finance model for a single infrastructure project with a 2-year construction period and 8-year operating forecast. Include full project/company three-statement outputs, construction uses and funding, senior debt sizing to target minimum DSCR, interest during construction, debt service reserve account, cash waterfall, operating revenue, operating costs, maintenance capex, taxes, debt amortization, ending cash, ending debt, equity balance, DSCR, LLCR-style coverage output if practical, and base/downside/upside cases. Make all key assumptions editable.",
+    "tags": ["live-research", "hard", "consultant-grade", "domain-specific", "project-finance", "debt-sizing", "infrastructure", "three-statement", "acceptance-fixture"],
+    "difficulty": "hard",
+    "prompt_complexity": "constraint-based project finance model with debt sizing, reserves, waterfall, and full three-statements",
+    "notes": "Hard consultant-grade research fixture only; not deterministic product template logic."
+  },
+  {
+    "id": "lbo_sponsor_returns",
+    "label": "Leveraged investment returns model",
+    "prompt": "Build a consultant-grade leveraged investment returns model for a private company with $250M revenue, 18% EBITDA margin, 6-year forecast period, entry valuation multiple, transaction funding uses, fees, senior financing, junior financing, excess-cash debt paydown, scheduled amortization, interest expense, working capital, capex, taxes, exit valuation multiple, IRR, MOIC, leverage, covenant metrics, and full company three-statement outputs. Include editable assumptions and base/downside/upside cases.",
+    "tags": ["live-research", "hard", "consultant-grade", "domain-specific", "lbo", "sponsor-returns", "debt", "three-statement", "acceptance-fixture"],
+    "difficulty": "hard",
+    "prompt_complexity": "transaction model with funding uses, multi-tranche financing, debt paydown, returns, and full three-statements",
+    "notes": "Hard consultant-grade research fixture only; not deterministic product template logic."
+  },
+  {
+    "id": "multi_business_unit_forecast",
+    "label": "Multi-business-unit integrated forecast",
+    "prompt": "Build a consultant-grade integrated forecast for a company with three business units over a 5-year annual forecast: Products, Services, and Maintenance. Each unit should have distinct revenue drivers, gross margin, operating cost behavior, working-capital assumptions, capex needs, and scenario sensitivities. Produce business-unit schedules, consolidated revenue and margin bridge, consolidated income statement, balance sheet, cash flow statement, KPIs, base/downside/upside cases, and editable assumptions for every major driver. Make assumptions explicit.",
+    "tags": ["live-research", "hard", "consultant-grade", "domain-specific", "multi-business-unit", "three-statement", "consolidation", "acceptance-fixture"],
+    "difficulty": "hard",
+    "prompt_complexity": "multi-entity operating forecast with segment schedules, consolidation, scenarios, and full three-statements",
+    "notes": "Hard consultant-grade research fixture only; not deterministic product template logic."
+  },
+  {
+    "id": "paint_factory_three_statement_dcf",
+    "label": "Atelier Coatings & Tools synthetic three-statement and DCF",
+    "prompt": "Build a five-year annual integrated three-statement model and exit-multiple DCF for the fictional, synthetic EUR company Atelier Coatings & Tools S.A. It has two business lines: manufactured colored paint and purchased/resold painting tools. Opening historical balance sheet: cash EUR 1.5m, receivables EUR 2.2m, inventory EUR 3.5m, net PP&E EUR 12.8m, total assets EUR 20.0m, accounts payable EUR 2.0m, other current liabilities EUR 0.5m, term debt EUR 10.0m (exactly 50% of total assets), revolver EUR 0.0m, and equity EUR 7.5m. Starting operations: 400,000 paint units at EUR 32 per unit with EUR 14 variable production cost per unit and EUR 1.5m manufacturing overhead; 300,000 tools units at EUR 18 per unit with EUR 10 purchase cost per unit and EUR 0.6m storage/logistics expense; consolidated operating expenses EUR 3.0m. Make separate unit growth, price inflation and unit-cost inflation assumptions editable for each line, together with receivable, inventory and payable days, annual capex, mandatory term-debt amortization, a 25% tax rate, 6% cash interest expense on average total debt, 2% interest income on average cash above the EUR 1.0m minimum cash balance, and a 50% optional excess-cash sweep. Apply sweep capacity first to outstanding revolver and then to term debt, prohibit simultaneous draw and sweep, and draw the revolver when cash would otherwise fall below minimum cash. Resolve any cash/debt/interest circularity deterministically and expose a convergence residual. Preserve the reported opening working-capital balances, calculate a days-based normalized opening reference using revenue for receivables and consistent COGS for inventory and payables, and disclose the Year 1 normalization as a separate one-time cash-flow component rather than recurring operating improvement. Treat opening net PP&E as a separate pool with a 10-year remaining life. Depreciate new capex straight-line over 10 years using a half-year convention. Define the 1% annual disposal assumption as retirement of fully depreciated gross cost with exactly matching accumulated depreciation: it reduces gross PP&E and accumulated depreciation equally, has zero net-book-value, no proceeds, no gain/loss, no cash-flow effect, and must never be added to depreciation or FCFF. Do not model impairment. Produce segment units, prices, revenue, variable costs, gross profit and margins; consolidated EBITDA, EBIT, interest expense, interest income, taxes and net income; linked income statements, balance sheets and cash-flow statements; working-capital normalization, PP&E, term debt, revolver, interest and retained-earnings schedules; cash-flow reconciliation and balance-sheet checks; FCFF; an exit-multiple DCF using 9% WACC and 6.0x terminal EBITDA; WACC sensitivity from 7%-11% and exit multiple sensitivity from 5.0x-7.0x; and an enterprise-to-equity bridge. Do not use a perpetuity-growth terminal value and do not silently floor negative terminal EBITDA at zero. Keep base, downside and upside scenarios for backend execution and model stability/direction tests only; do not manufacture cross-scenario values inside a single-case output. All quantities, prices, costs, capex and balances must reject negative or non-finite values. Growth and inflation must be bounded from -50% to +100%; working-capital days 0-365; tax 0-50%; interest rates and WACC 0-30%; terminal multiple 0-15x; cash sweep 0-100%; useful lives 1-40 years; and disposal rate 0-25%. Legitimate zero inputs must not crash or create NaN/infinity; undefined ratios should be null or clearly not applicable. Reusable checks must validate current-case identities and must not hardcode EUR 20.0m assets, 50% leverage, a zero-draw Base case, or saved scenario values. Make all key outputs and schedules available to outputs.py for the existing ad hoc presentation without recalculating financial mechanics there.",
+    "tags": ["live-showcase", "synthetic", "paint", "three-statement", "dcf", "segments", "presentation-agent"],
+    "difficulty": "showcase",
+    "prompt_complexity": "two-segment integrated three-statement forecast with normalized working capital, term debt and revolver mechanics, PP&E vintages, exit-multiple DCF, and independent checks",
+    "notes": "Synthetic live showcase fixture only; not deterministic product template logic."
+  }
+]

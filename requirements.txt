@@ -1,0 +1,2 @@
+# The backend currently uses Python's standard library only.
+# This file is intentionally retained so clean setup commands are stable.

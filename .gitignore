@@ -1,0 +1,45 @@
+# secrets
+.env
+.env.*
+!.env.example
+
+# node
+node_modules/
+frontend/dist/
+dist/
+build/
+.tools/
+
+# python
+.venv/
+venv/
+.pycache/
+__pycache__/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+pip-*/
+*.pyc
+
+# test outputs
+.tmp*/
+playwright-report/
+.playwright-mcp/
+.playwright-cli/
+output/
+!backend/output/
+!backend/output/dashboard_contract.py
+!backend/output/dashboard_templates.py
+test-results/
+tests/.tmp*/
+tests/product_acceptance/reports/*
+!tests/product_acceptance/reports/.gitkeep
+.server/
+.private/
+
+# local runtime model data
+data/
+
+# editors / os
+.DS_Store
+Thumbs.db

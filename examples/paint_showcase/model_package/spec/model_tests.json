@@ -1,0 +1,171 @@
+{
+  "status": "ready",
+  "path": "model_tests.json",
+  "model_tests": [
+    {
+      "id": "input_bounds_and_finiteness",
+      "label": "Input bounds, non-negativity, and finiteness",
+      "test_type": "input_probe",
+      "purpose": "Ensure all editable inputs obey their stated financial domain and reject invalid numeric values before calculations begin.",
+      "logic_description": "Probe each numeric input with a valid zero where permitted, lower bound, upper bound, just-below lower bound, just-above upper bound, negative value where prohibited, NaN, and infinity, including every scalar amount input and every flexible-array member. Verify growth/inflation limits of -50% to 100%; days 0 to 365; tax 0% to 50%; interest and WACC 0% to 30%; exit multiple 0.0x to 15.0x; sweep 0% to 100%; useful lives integer 1 to 40; disposal rate 0% to 25%; and non-negative finite amounts. For annual capex, execute a scalar low-to-high probe and five independent annual-position low-to-high probes through the full schedules; each probe must show at least one downstream PP&E depreciation or closing-net-PP&E result and/or FCFF, cash, or financing result changing, rather than merely echoing capex in the PP&E schedule.",
+      "evidence_expected": "Allowed boundary values are accepted and produce finite model outputs or null/not-applicable ratios. Invalid values are rejected with input-specific validation evidence. Evidence separately records NaN, positive infinity, and negative infinity rejection at FY2-FY5 for every four-transition operating driver and at Y1-Y5 for annual capex. Capex evidence records, for the scalar replication and each independently changed Y1-Y5 capex position, the exact downstream output path, period, baseline value, changed value, and an economic_result_changed status for each downstream PP&E-depreciation and FCFF result, plus an aggregate probe status. Canonical output paths use the resolvable dot convention output_blocks.3.data.ppe.0.depreciation (and analogous FCFF paths), where output_blocks.3.id is financial_model. Useful-life fractional values are rejected rather than silently rounded.",
+      "repair_guidance": "Centralize validation before schedule construction, distinguish amount constraints from rate constraints, and use explicit finite-number checks.",
+      "execution_scope": "case",
+      "severity": "blocker"
+    },
+    {
+      "id": "opening_balance_sheet_identity",
+      "label": "Opening balance-sheet identity",
+      "test_type": "run_check",
+      "purpose": "Validate the opening financial position as an input identity without hardcoding default asset totals or leverage.",
+      "logic_description": "Independently sum opening cash, receivables, inventory, and net PP&E, and compare with independently summed opening payables, other current liabilities, term debt, revolver, and equity.",
+      "evidence_expected": "The opening balance-sheet residual is within tolerance for a coherent input set. An intentionally unbalanced alternative opening structure is rejected or reported as failed; a balanced alternative structure passes.",
+      "repair_guidance": "Use opening inputs directly in the identity and do not test against EUR 20.0m, 50% debt/assets, or any saved default balance.",
+      "execution_scope": "case",
+      "severity": "blocker"
+    },
+    {
+      "id": "base_fixture_default_calibration",
+      "label": "Base fixture default calibration",
+      "test_type": "run_check",
+      "purpose": "Confirm that the saved Base fixture retains the requested opening facts while keeping such facts separate from reusable invariants.",
+      "logic_description": "Compare the submitted raw input object exactly with the saved Base fixture using separately reported raw-key and raw-value matches. Only when both exact raw-key and raw-value matches hold, verify the documented opening cash, receivables, inventory, net PP&E, payables, other current liabilities, term debt, revolver, equity, and starting segment operational inputs and return status passed with passed true. For every overridden or other changed-input case, return this same ID with status skipped, passed false, a precise non-empty reason, and evidence.not_applicable true plus the observed case distinction; do not execute or count a calibration assertion for that case.",
+      "evidence_expected": "Fixture evidence lists the saved Base input values and confirms that they match the approved calibration. Changed-input cases return a top-level machine-readable status skipped with not_applicable true and calibration_assertion_passed null; they are not calibration passes, are separately classified as skipped rather than passed coverage, and do not supply calibration-assertion coverage. Only the unmodified Base fixture has status passed and supplies a true passing calibration assertion.",
+      "repair_guidance": "Keep fixture assertions isolated from general integrity checks and never use fixture values in forecast roll-forward validation.",
+      "execution_scope": "case",
+      "severity": "medium"
+    },
+    {
+      "id": "segment_operations_and_consolidation",
+      "label": "Segment arithmetic and consolidation",
+      "test_type": "run_check",
+      "purpose": "Verify the exact business meaning of segment revenue, direct cost, gross profit, margin, and consolidated EBITDA.",
+      "logic_description": "For each segment/year, independently calculate revenue from units times price; variable or purchase cost from units times unit cost; gross profit from revenue less variable/purchase cost less fixed direct segment expense; and gross margin only when revenue is nonzero. Independently sum segment revenue, cost of sales, and gross profit, then deduct corporate operating expense to test EBITDA.",
+      "evidence_expected": "Segment and consolidated residuals are within tolerance. Zero-unit or zero-price probes return zero revenue and null/not-applicable margin where revenue is zero, with no NaN or infinity.",
+      "repair_guidance": "Retain fixed direct expenses within segment cost of sales and calculate margins only after safely testing the denominator.",
+      "execution_scope": "case",
+      "severity": "high"
+    },
+    {
+      "id": "working_capital_normalization_and_recurring_movement",
+      "label": "Working-capital normalization and recurring movement",
+      "test_type": "run_check",
+      "purpose": "Distinguish the one-time transition from reported opening working capital from recurring activity-driven working-capital cash flow.",
+      "logic_description": "Independently calculate normalized opening receivables from opening revenue and receivable days, and normalized opening inventory/payables from opening consolidated cost of sales and their days. Verify normalized opening NWC, Year 1 normalization cash flow equal to reported opening NWC minus normalized opening NWC, and recurring NWC cash flow using normalized opening NWC as the Year 1 comparator and prior forecast NWC thereafter. Verify the normalization component is zero outside Year 1.",
+      "evidence_expected": "Evidence separately reports reported opening NWC, normalized opening NWC, one-time normalization cash flow, Year 1 recurring movement, and Years 2-5 normalization values. At 0 days normalized balances are zero; at 365 days they equal the relevant annual activity base. Neither branch produces non-finite values.",
+      "repair_guidance": "Do not overwrite reported opening balance-sheet balances. Preserve the distinct normalization line and do not treat it as recurring operating improvement.",
+      "execution_scope": "case",
+      "severity": "blocker"
+    },
+    {
+      "id": "ppe_pool_roll_forward_and_disposal_behavior",
+      "label": "PP&E pool roll-forward, depreciation, and disposal behavior",
+      "test_type": "run_check",
+      "purpose": "Validate net PP&E, active basis reduction, and depreciation behavior by opening pool and capex vintage.",
+      "logic_description": "For every pool and year, independently reconcile closing active net basis to opening active net basis plus capex less depreciation. Independently calculate each capex vintage charge from original capex divided by useful life, with a 50% entry-year charge, full original annual charges thereafter, and only a final remaining-basis cap. Verify aggregate PP&E equals the sum of pools. Execute otherwise identical 0% and positive-disposal fixtures and compare each pool's active gross depreciable basis, accumulated depreciation, closing net basis, and depreciation. Verify retirement gross cost exactly equals retirement accumulated depreciation, retirement changes accumulated depreciation only by that matching amount, and active gross basis, closing net basis, EBIT, taxes, cash flow, and FCFF remain unchanged within tolerance.",
+      "evidence_expected": "All pool and total roll-forward and independently calculated depreciation residuals are within tolerance. Evidence identifies entry half-year, subsequent full-year, and final capped charges. No pool has negative basis or depreciation above remaining depreciable basis. The 0% fixture reports zero retirements; the positive fixture reports positive retirement gross cost equal to retirement accumulated depreciation; side-by-side pool-level active-gross-basis, accumulated-depreciation change versus matching retirement, closing-net-basis, and depreciation comparisons plus EBIT, tax, operating and net cash-flow, and FCFF residuals are within tolerance.",
+      "repair_guidance": "Track opening PP&E separately from capex vintages, allocate disposals proportionally to active pools, and cap depreciation at remaining active basis.",
+      "execution_scope": "case",
+      "severity": "blocker"
+    },
+    {
+      "id": "cash_debt_roll_forward_and_minimum_cash",
+      "label": "Cash, debt, and minimum-cash mechanics",
+      "test_type": "run_check",
+      "purpose": "Validate liquidity protection and the distinct meanings of revolver draw, debt repayment, sweep capacity, and minimum-cash compliance.",
+      "logic_description": "Independently reconcile term debt and revolver balances from opening balances and disclosed mandatory amortization, draws, repayments, and sweeps. Confirm mandatory amortization does not exceed term debt available at its application point. Confirm closing cash is at least minimum cash within tolerance whenever revolver funding is available under the model. Use cases that create a cash shortfall and cases with excess cash to prove both financing branches.",
+      "evidence_expected": "Shortfall evidence shows pre-financing cash below minimum, a revolver draw equal to required funding subject to modeled availability, and post-financing cash at minimum. Excess-cash evidence shows no draw and separately identifies excess cash, sweep capacity, and actual repayments. Debt balances remain non-negative.",
+      "repair_guidance": "Calculate pre-financing cash before draw/sweep, cap every repayment by its respective outstanding debt, and expose separate draw, mandatory amortization, revolver sweep, and term-debt sweep fields.",
+      "execution_scope": "case",
+      "severity": "blocker"
+    },
+    {
+      "id": "sweep_priority_and_draw_sweep_exclusivity",
+      "label": "Sweep priority and draw/sweep exclusivity",
+      "test_type": "run_check",
+      "purpose": "Prove that optional excess-cash sweep is a repayment allocation, not a revolver draw, and that it follows required priority.",
+      "logic_description": "For each year, verify gross revolver draw multiplied by total optional sweep is zero. Where optional sweep capacity is positive and revolver is outstanding, verify revolver optional repayment equals the lesser of sweep capacity and revolver available after other required actions; only residual capacity may repay term debt. Where no revolver is outstanding, term sweep may use available sweep capacity.",
+      "evidence_expected": "Evidence identifies branch conditions, sweep capacity, revolver availability, revolver sweep, residual capacity, term sweep, and gross draw. Test fixtures/probes cover no-sweep, revolver-first sweep, term-only sweep, and draw activation where practical.",
+      "repair_guidance": "Separate gross draw from optional repayments and allocate sweep sequentially rather than proportionally across debt instruments.",
+      "execution_scope": "case",
+      "severity": "high"
+    },
+    {
+      "id": "interest_circularity_convergence",
+      "label": "Interest circularity convergence and average-balance calculation",
+      "test_type": "run_check",
+      "purpose": "Confirm the financing iteration converges and that interest expense and income use their defined average balances.",
+      "logic_description": "For each year, independently calculate interest expense from average opening and closing total debt and the debt rate. Independently calculate qualifying opening and closing cash as max(cash minus minimum cash, 0), then calculate interest income from their average and the income rate. Verify residual is at or below tolerance, convergence status is true, and iteration count does not exceed the configured limit.",
+      "evidence_expected": "Evidence reports opening/closing debt, average debt, opening/closing qualifying cash, both interest amounts, residual, the exact reported production tolerance, iterations, and status. Executed convergence-status fixtures with residuals immediately below and at that tolerance return converged/pass, while the executed above-tolerance fixture returns not-converged/fail; each fixture records tolerance, residual, implemented status, and result. A zero-rate or zero-debt/cash-above-minimum probe produces zero relevant interest without non-finite values.",
+      "repair_guidance": "Use bounded iteration with a deterministic starting value and explicit failure status; do not hide an unconverged solution.",
+      "execution_scope": "case",
+      "severity": "blocker"
+    },
+    {
+      "id": "three_statement_and_retained_earnings_tie_out",
+      "label": "Three-statement, cash-flow, and equity tie-outs",
+      "test_type": "run_check",
+      "purpose": "Validate the integrated linkage between net income, retained earnings, cash flow, ending cash, and the balance sheet.",
+      "logic_description": "Independently test annual balance-sheet residual, ending cash equal beginning cash plus cash-flow net change, and ending equity equal beginning equity plus net income. Confirm cash-flow components reconcile to disclosed operating, investing, and financing subtotals.",
+      "evidence_expected": "All annual residuals are within tolerance. Evidence separately reports balance-sheet residual, cash reconciliation residual, retained-earnings residual, and operating/investing/financing subtotal residuals.",
+      "repair_guidance": "Link schedules into statements once, avoid duplicate calculations in presentation code, and ensure financing principal movements are classified consistently.",
+      "execution_scope": "case",
+      "severity": "blocker"
+    },
+    {
+      "id": "fcff_dcf_and_equity_bridge_tie_out",
+      "label": "FCFF, exit DCF, and enterprise-to-equity bridge",
+      "test_type": "run_check",
+      "purpose": "Validate FCFF construction, exit-multiple terminal value, discounting, enterprise value, and equity value bridge.",
+      "logic_description": "Independently calculate operating tax from positive EBIT, FCFF from NOPAT plus depreciation less capex plus recurring and normalization working-capital cash flows, signed terminal value from Year 5 EBITDA times exit multiple without a floor, terminal discounting, and enterprise value from discounted FCFF plus discounted terminal value. Verify equity value equals opening-date enterprise value plus submitted raw opening cash minus opening term debt and opening revolver, with terminal cash, debt, revolver, and net debt excluded from the bridge. Prove that changing opening cash or debt changes equity value but not FCFF enterprise value, and that changing terminal financing through mandatory amortization or sweep changes neither FCFF enterprise value nor the opening-date bridge. Verify no perpetuity-growth terminal-value output or dependency exists.",
+      "evidence_expected": "Annual FCFF, terminal value, present values, enterprise-value residual, and equity-bridge residual are within tolerance. Evidence explicitly identifies Year 5 EBITDA and selected exit multiple as the sole terminal-value inputs.",
+      "repair_guidance": "Keep financing flows out of FCFF, use operating tax rather than cash tax affected by interest, and derive the bridge cash/debt from submitted raw opening balances and retain terminal financing only as forecast reference metrics.",
+      "execution_scope": "case",
+      "severity": "blocker"
+    },
+    {
+      "id": "valuation_sensitivity_monotonicity",
+      "label": "WACC and exit-multiple sensitivity direction",
+      "test_type": "run_check",
+      "purpose": "Confirm the within-case sensitivity matrix changes valuation in economically consistent directions.",
+      "logic_description": "Independently reconstruct each opening-date equity-value sensitivity cell from discounted FCFF plus signed Year 5 EBITDA times the tested exit multiple discounted at the tested WACC, then add submitted opening cash and deduct submitted opening term debt and revolver, without a terminal-value floor. Require sensitivity_value_type to equal equity_value. Holding exit multiple constant, enforce non-increasing value as WACC rises from 7% to 11% only when every forecast FCFF and terminal EBITDA are non-negative, using an explicit EUR 0.000001 rounding tolerance: adjacent increases below or equal to that tolerance pass and any larger positive movement fails. Independently exercise synthetic adjacent changes immediately below, at, and above the tolerance. When signed FCFF includes negative periods, assess and publish observed WACC direction rather than asserting conventional monotonicity; a materially positive WACC movement must carry a non-monotonic signed-FCFF warning. Holding WACC constant, verify multiple direction follows the sign of terminal EBITDA and is non-flat whenever terminal EBITDA is nonzero. Confirm the matrix contains both dimensions and the selected point ties to the primary DCF when it lies on the grid.",
+      "evidence_expected": "Evidence provides independently reconstructed matrix coordinates, signed FCFF profile, adjacent WACC comparisons, the EUR 0.000001 rounding tolerance, below/at/above synthetic boundary-fixture outcomes, an applicable machine-readable WACC-direction status and warning, and any selected-point tie-out. The test distinguishes discount-rate sensitivity from operating scenario comparison.",
+      "repair_guidance": "Recalculate discount factors and terminal value for each matrix coordinate while retaining current-case FCFF and Year 5 EBITDA; do not impose a conventional WACC direction when negative forecast FCFF makes it economically unsupported.",
+      "execution_scope": "case",
+      "severity": "high"
+    },
+    {
+      "id": "zero_safe_output_behavior",
+      "label": "Zero-safe outputs and undefined ratios",
+      "test_type": "run_check",
+      "purpose": "Ensure legitimate zero operating, investment, financing, and valuation inputs do not create invalid numerical outputs.",
+      "logic_description": "Run coherent zero-permitted cases including zero units, zero price, zero variable cost, zero capex, zero mandatory amortization, zero interest rates, zero sweep rate, zero disposal rate, zero receivable/inventory/payable days, and zero exit multiple. Scan all numeric outputs, schedules, checks, and sensitivities for NaN or infinity and inspect zero-denominator ratios.",
+      "evidence_expected": "All required schedules complete. Numeric outputs are finite; undefined margins or ratios are null/not-applicable; zero exit multiple produces zero terminal value rather than an error.",
+      "repair_guidance": "Guard denominators, use explicit null semantics for undefined ratios, and avoid using zero as a missing-value proxy.",
+      "execution_scope": "case",
+      "severity": "high"
+    },
+    {
+      "id": "scenario_directionality",
+      "label": "Backend scenario directionality and stability",
+      "test_type": "run_check",
+      "purpose": "Confirm Base, Downside, and Upside backend composite cases execute as internally coherent, numerically stable single cases, show economically supported aggregate operating and valuation ordering, and expose activation of material liquidity branches.",
+      "logic_description": "Consume exactly the three backend-executed composite Base, Downside, and Upside raw-input/output pairs. For each supplied pair, validate the raw-input member and rerun the actual schedules from that raw input, requiring the re-executed finalized schedule to match the supplied financial-model output; a replaced or mismatched raw input therefore fails. Require each case to pass core balance-sheet, cash-flow, and convergence checks and remain numerically finite. Assess only aggregate case ordering for Year 5 revenue, EBITDA, and opening-date equity value, plus observed revolver-draw or optional-sweep branch activation. Do not compare a total KPI movement to any individual input or recreate scenario overrides.",
+      "evidence_expected": "Evidence lists the exact three case IDs, raw-input and output/re-execution fingerprints plus pair-match status, aggregate KPI values, ordering result, numerical-stability/core-integrity result, and liquidity-branch activation by composite case. It does not attribute a composite KPI movement to an individual driver, recreate overrides, create scenario values inside a single-case output, or assume zero revolver use.",
+      "repair_guidance": "Use only the three backend-executed composite outputs; assess aggregate case behavior and observed liquidity branches without reconstructing overrides or assigning KPI effects to individual inputs.",
+      "execution_scope": "scenario_suite",
+      "severity": "medium"
+    },
+    {
+      "id": "required_output_presence",
+      "label": "Required schedules and presentation-ready outputs",
+      "test_type": "output_presence",
+      "purpose": "Ensure outputs.py can present all requested model results without recalculating finance mechanics.",
+      "logic_description": "Verify presence of five annual periods in every requested schedule, including paint revenue, variable-cost, and gross-profit per-unit metrics; tools revenue, purchase-cost, and gross-profit per-unit metrics; and consolidated gross margin. Also verify three statements, opening normalization bridge, PP&E pools/vintages with separate retirement gross cost and matching accumulated depreciation, debt schedule, interest residual and status, retained earnings, FCFF, DCF, enterprise-to-equity bridge, sensitivity matrix, and integrity status with minimum-cash headroom plus separate per-period compliance statuses. Independently locate exactly one custom executive_summary block and require current_case_only true, Y5 period metadata, opening_date valuation metadata, Year 5 revenue/EBITDA/EBITDA margin/EBIT/net income, ending cash/term debt/revolver/total debt/net debt, enterprise value, opening-date equity value, terminal present value contribution, all material integrity pass statuses, and maximum interest convergence residual. Tie every summary value and status to finalized financial_model schedules within tolerance; removal of any required summary field fails this existing test. Scenario identity is platform-owned and must not be fabricated.",
+      "evidence_expected": "A structured missing-field report is empty and confirms required time series have five forecast observations. Evidence lists each resolved executive-summary path, field residual, metadata result, and integrity-status tie-out. Required residual and status fields are present separately from KPI values.",
+      "repair_guidance": "Publish finalized schedule objects from the calculation layer and have presentation consume them directly.",
+      "execution_scope": "case",
+      "severity": "high"
+    }
+  ]
+}

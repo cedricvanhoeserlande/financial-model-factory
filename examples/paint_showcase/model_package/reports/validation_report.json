@@ -1,0 +1,361 @@
+{
+  "passed": true,
+  "message": "Technical checks passed; business review required.",
+  "checks": [
+    {
+      "id": "package_imports",
+      "passed": true,
+      "error": ""
+    },
+    {
+      "id": "run_model_callable",
+      "passed": true
+    },
+    {
+      "id": "run_checks_callable",
+      "passed": true
+    },
+    {
+      "id": "input_schema_contract_valid",
+      "passed": true,
+      "scalar_path_count": 42,
+      "editable_numeric_paths": [
+        "capex",
+        "cash_interest_rate",
+        "cash_sweep_pct",
+        "corporate_opex",
+        "corporate_opex_inflation",
+        "debt_interest_rate",
+        "disposal_rate",
+        "exit_multiple",
+        "inventory_days",
+        "mandatory_amortization",
+        "minimum_cash",
+        "new_capex_life",
+        "opening_cash",
+        "opening_equity",
+        "opening_inventory",
+        "opening_other_liabilities",
+        "opening_payables",
+        "opening_ppe",
+        "opening_ppe_life",
+        "opening_receivables",
+        "opening_revolver",
+        "opening_term_debt",
+        "paint_cost_inflation",
+        "paint_overhead",
+        "paint_overhead_inflation",
+        "paint_price",
+        "paint_price_inflation",
+        "paint_unit_cost",
+        "paint_unit_growth",
+        "paint_units",
+        "payable_days",
+        "receivable_days",
+        "tax_rate",
+        "tools_cost_inflation",
+        "tools_price",
+        "tools_price_inflation",
+        "tools_storage",
+        "tools_storage_inflation",
+        "tools_unit_cost",
+        "tools_unit_growth",
+        "tools_units",
+        "wacc"
+      ]
+    },
+    {
+      "id": "output_contract_valid",
+      "passed": true,
+      "report": {
+        "passed": true,
+        "message": "Output data-library contract passed.",
+        "output_version": "2026-05-25",
+        "supported_block_types": [
+          "custom",
+          "kpi",
+          "scenario_comparison",
+          "table",
+          "time_series"
+        ],
+        "first_class_block_types": [
+          "kpi",
+          "scenario_comparison",
+          "table",
+          "time_series"
+        ],
+        "block_types": {
+          "custom": 4,
+          "table": 1,
+          "time_series": 1
+        },
+        "custom_block_ids": [
+          "executive_summary",
+          "financial_model",
+          "current_case_integrity_status",
+          "valuation"
+        ],
+        "dashboard_report": {
+          "passed": true,
+          "legacy_auto_layout": true,
+          "version": null,
+          "errors": [],
+          "message": "Legacy dashboard accepted for deterministic auto-layout."
+        },
+        "errors": [],
+        "checks": [
+          {
+            "id": "output_is_object",
+            "passed": true
+          },
+          {
+            "id": "output_version_current",
+            "passed": true,
+            "expected": "2026-05-25",
+            "actual": "2026-05-25"
+          },
+          {
+            "id": "output_blocks_present",
+            "passed": true,
+            "block_count": 6
+          },
+          {
+            "id": "output_block_ids_unique",
+            "passed": true,
+            "duplicate_ids": []
+          },
+          {
+            "id": "output_block_shapes_valid",
+            "passed": true,
+            "errors": [],
+            "custom_block_ids": [
+              "executive_summary",
+              "financial_model",
+              "current_case_integrity_status",
+              "valuation"
+            ]
+          },
+          {
+            "id": "dashboard_spec_present",
+            "passed": true
+          },
+          {
+            "id": "dashboard_spec_valid",
+            "passed": true,
+            "details": {
+              "passed": true,
+              "legacy_auto_layout": true,
+              "version": null,
+              "errors": [],
+              "message": "Legacy dashboard accepted for deterministic auto-layout."
+            }
+          },
+          {
+            "id": "metadata_openai_false",
+            "passed": true
+          },
+          {
+            "id": "output_top_level_keys_exact",
+            "passed": true,
+            "unexpected_keys": []
+          }
+        ]
+      }
+    },
+    {
+      "id": "missing_required_inputs_fail",
+      "passed": true,
+      "tested_paths": [
+        "capex",
+        "cash_interest_rate",
+        "cash_sweep_pct",
+        "corporate_opex",
+        "corporate_opex_inflation",
+        "debt_interest_rate",
+        "disposal_rate",
+        "exit_multiple",
+        "inventory_days",
+        "mandatory_amortization",
+        "minimum_cash",
+        "new_capex_life",
+        "opening_cash",
+        "opening_equity",
+        "opening_inventory",
+        "opening_other_liabilities",
+        "opening_payables",
+        "opening_ppe",
+        "opening_ppe_life",
+        "opening_receivables",
+        "opening_revolver",
+        "opening_term_debt",
+        "paint_cost_inflation",
+        "paint_overhead",
+        "paint_overhead_inflation",
+        "paint_price",
+        "paint_price_inflation",
+        "paint_unit_cost",
+        "paint_unit_growth",
+        "paint_units",
+        "payable_days",
+        "receivable_days",
+        "tax_rate",
+        "tools_cost_inflation",
+        "tools_price",
+        "tools_price_inflation",
+        "tools_storage",
+        "tools_storage_inflation",
+        "tools_unit_cost",
+        "tools_unit_growth",
+        "tools_units",
+        "wacc"
+      ],
+      "fallback_paths": [],
+      "expected_error_paths": [
+        "capex",
+        "cash_interest_rate",
+        "cash_sweep_pct",
+        "corporate_opex",
+        "corporate_opex_inflation",
+        "debt_interest_rate",
+        "disposal_rate",
+        "exit_multiple",
+        "inventory_days",
+        "mandatory_amortization",
+        "minimum_cash",
+        "new_capex_life",
+        "opening_cash",
+        "opening_equity",
+        "opening_inventory",
+        "opening_other_liabilities",
+        "opening_payables",
+        "opening_ppe",
+        "opening_ppe_life",
+        "opening_receivables",
+        "opening_revolver",
+        "opening_term_debt",
+        "paint_cost_inflation",
+        "paint_overhead",
+        "paint_overhead_inflation",
+        "paint_price",
+        "paint_price_inflation",
+        "paint_unit_cost",
+        "paint_unit_growth",
+        "paint_units",
+        "payable_days",
+        "receivable_days",
+        "tax_rate",
+        "tools_cost_inflation",
+        "tools_price",
+        "tools_price_inflation",
+        "tools_storage",
+        "tools_storage_inflation",
+        "tools_unit_cost",
+        "tools_unit_growth",
+        "tools_units",
+        "wacc"
+      ],
+      "sample_errors": {
+        "capex": "Generated package execution failed in sandbox: Traceback (most recent call last):\n  File \"<string>\", line 64, in <module>\n  File \"<isolated-workspace>\\financial-model-showcase-66c62b3c\\version_20260721_005747_33fedf06\\model_package\\model\\main.py\", line 7, in run_model\n  File \"<isolated-workspace>\\financial-model-showcase-66c62b3c\\version_20260721_005747_33fedf06\\model_package\\model\\assumptions.py\", line 13, in load_inputs\nValueError: missing required input: capex",
+        "cash_interest_rate": "Generated package execution failed in sandbox: Traceback (most recent call last):\n  File \"<string>\", line 64, in <module>\n  File \"<isolated-workspace>\\financial-model-showcase-66c62b3c\\version_20260721_005747_33fedf06\\model_package\\model\\main.py\", line 7, in run_model\n  File \"<isolated-workspace>\\financial-model-showcase-66c62b3c\\version_20260721_005747_33fedf06\\model_package\\model\\assumptions.py\", line 13, in load_inputs\nValueError: missing required input: cash_interest_rate",
+        "cash_sweep_pct": "Generated package execution failed in sandbox: Traceback (most recent call last):\n  File \"<string>\", line 64, in <module>\n  File \"<isolated-workspace>\\financial-model-showcase-66c62b3c\\version_20260721_005747_33fedf06\\model_package\\model\\main.py\", line 7, in run_model\n  File \"<isolated-workspace>\\financial-model-showcase-66c62b3c\\version_20260721_005747_33fedf06\\model_package\\model\\assumptions.py\", line 13, in load_inputs\nValueError: missing required input: cash_sweep_pct",
+        "corporate_opex": "Generated package execution failed in sandbox: Traceback (most recent call last):\n  File \"<string>\", line 64, in <module>\n  File \"<isolated-workspace>\\financial-model-showcase-66c62b3c\\version_20260721_005747_33fedf06\\model_package\\model\\main.py\", line 7, in run_model\n  File \"<isolated-workspace>\\financial-model-showcase-66c62b3c\\version_20260721_005747_33fedf06\\model_package\\model\\assumptions.py\", line 13, in load_inputs\nValueError: missing required input: corporate_opex",
+        "corporate_opex_inflation": "Generated package execution failed in sandbox: Traceback (most recent call last):\n  File \"<string>\", line 64, in <module>\n  File \"<isolated-workspace>\\financial-model-showcase-66c62b3c\\version_20260721_005747_33fedf06\\model_package\\model\\main.py\", line 7, in run_model\n  File \"<isolated-workspace>\\financial-model-showcase-66c62b3c\\version_20260721_005747_33fedf06\\model_package\\model\\assumptions.py\", line 13, in load_inputs\nValueError: missing required input: corporate_opex_inflation"
+      },
+      "error": ""
+    }
+  ],
+  "output_contract_report": {
+    "passed": true,
+    "message": "Output data-library contract passed.",
+    "output_version": "2026-05-25",
+    "supported_block_types": [
+      "custom",
+      "kpi",
+      "scenario_comparison",
+      "table",
+      "time_series"
+    ],
+    "first_class_block_types": [
+      "kpi",
+      "scenario_comparison",
+      "table",
+      "time_series"
+    ],
+    "block_types": {
+      "custom": 4,
+      "table": 1,
+      "time_series": 1
+    },
+    "custom_block_ids": [
+      "executive_summary",
+      "financial_model",
+      "current_case_integrity_status",
+      "valuation"
+    ],
+    "dashboard_report": {
+      "passed": true,
+      "legacy_auto_layout": true,
+      "version": null,
+      "errors": [],
+      "message": "Legacy dashboard accepted for deterministic auto-layout."
+    },
+    "errors": [],
+    "checks": [
+      {
+        "id": "output_is_object",
+        "passed": true
+      },
+      {
+        "id": "output_version_current",
+        "passed": true,
+        "expected": "2026-05-25",
+        "actual": "2026-05-25"
+      },
+      {
+        "id": "output_blocks_present",
+        "passed": true,
+        "block_count": 6
+      },
+      {
+        "id": "output_block_ids_unique",
+        "passed": true,
+        "duplicate_ids": []
+      },
+      {
+        "id": "output_block_shapes_valid",
+        "passed": true,
+        "errors": [],
+        "custom_block_ids": [
+          "executive_summary",
+          "financial_model",
+          "current_case_integrity_status",
+          "valuation"
+        ]
+      },
+      {
+        "id": "dashboard_spec_present",
+        "passed": true
+      },
+      {
+        "id": "dashboard_spec_valid",
+        "passed": true,
+        "details": {
+          "passed": true,
+          "legacy_auto_layout": true,
+          "version": null,
+          "errors": [],
+          "message": "Legacy dashboard accepted for deterministic auto-layout."
+        }
+      },
+      {
+        "id": "metadata_openai_false",
+        "passed": true
+      },
+      {
+        "id": "output_top_level_keys_exact",
+        "passed": true,
+        "unexpected_keys": []
+      }
+    ]
+  }
+}

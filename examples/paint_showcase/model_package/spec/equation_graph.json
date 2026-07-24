@@ -1,0 +1,294 @@
+{
+  "status": "ready",
+  "path": "equation_graph.json",
+  "equation_graph": {
+    "graph_version": "2026-05-31",
+    "nodes": [
+      {
+        "id": "validated_inputs",
+        "label": "Validated inputs",
+        "description": "All editable inputs are finite and within specified bounds; opening balance sheet is balanced before forecasting.",
+        "depends_on": []
+      },
+      {
+        "id": "opening_operating_reference",
+        "label": "Opening operating reference",
+        "description": "Opening paint and tools revenue and consolidated cost of sales used exclusively for normalized opening working-capital reference.",
+        "depends_on": [
+          "validated_inputs"
+        ]
+      },
+      {
+        "id": "segment_operations",
+        "label": "Segment operations",
+        "description": "FY1 units, prices, unit costs, segment direct expenses, and corporate operating expense equal submitted starting values. Four operating growth/inflation transitions, labeled FY2 through FY5, roll each relevant driver only from the prior fiscal year; revenue equals units times price and direct cost equals units times unit cost plus segment fixed direct expense. Finalized segment schedules expose revenue, direct-cost, and gross-profit per-unit metrics and consolidated operations expose gross margin, all null when their denominator is zero.",
+        "depends_on": [
+          "validated_inputs"
+        ]
+      },
+      {
+        "id": "consolidated_operations",
+        "label": "Consolidated operations",
+        "description": "Consolidates segment revenue, cost of sales, gross profit, corporate operating expenses, and EBITDA.",
+        "depends_on": [
+          "segment_operations"
+        ]
+      },
+      {
+        "id": "opening_working_capital_reference",
+        "label": "Normalized opening working-capital reference",
+        "description": "Normalized opening receivables equal opening revenue times receivable days divided by 365; normalized inventory and payables equal opening consolidated cost of sales times their respective days divided by 365. Normalized opening NWC equals receivables plus inventory minus payables.",
+        "depends_on": [
+          "opening_operating_reference",
+          "validated_inputs"
+        ]
+      },
+      {
+        "id": "forecast_working_capital",
+        "label": "Forecast working capital",
+        "description": "Annual receivables equal current revenue times receivable days divided by 365. Inventory and payables equal current consolidated cost of sales times their respective days divided by 365. Forecast NWC equals receivables plus inventory minus payables.",
+        "depends_on": [
+          "consolidated_operations",
+          "validated_inputs"
+        ]
+      },
+      {
+        "id": "working_capital_cash_flow",
+        "label": "Working-capital cash flow",
+        "description": "One-time Year 1 normalization cash flow equals reported opening NWC minus normalized opening NWC. Recurring cash-flow contribution equals normalized opening NWC minus Year 1 NWC in Year 1, then prior-year NWC minus current-year NWC thereafter.",
+        "depends_on": [
+          "opening_working_capital_reference",
+          "forecast_working_capital",
+          "validated_inputs"
+        ]
+      },
+      {
+        "id": "ppe_schedule",
+        "label": "PP&E and depreciation schedule",
+        "description": "Opening pool and capex vintages roll active net depreciable basis from opening net basis plus capex less depreciation to closing net PP&E. The disposal percentage retires fully depreciated gross cost and exactly matching accumulated depreciation, separately reported with zero net-book-value and no effect on active basis, depreciation, EBIT, tax, cash flow, or FCFF. Depreciation follows remaining useful life for opening PP&E and half-year-first-year/full-year-later straight-line convention for capex vintages.",
+        "depends_on": [
+          "validated_inputs"
+        ]
+      },
+      {
+        "id": "pre_interest_earnings",
+        "label": "Pre-interest earnings",
+        "description": "EBIT equals EBITDA less depreciation. This is the operating earnings base for tax, FCFF, and the iterative financing solution.",
+        "depends_on": [
+          "consolidated_operations",
+          "ppe_schedule"
+        ]
+      },
+      {
+        "id": "interest_financing_solution",
+        "label": "Interest, cash, and debt solution",
+        "description": "Fixed-point iteration solves closing cash, term debt, revolver, interest expense, and interest income. Interest expense equals debt rate times average opening and closing total debt. Interest income equals cash rate times average qualifying opening and closing cash above minimum cash. Mandatory term amortization precedes optional sweep; sweep repays revolver then term debt; a required revolver draw and optional sweep cannot both be positive.",
+        "depends_on": [
+          "pre_interest_earnings",
+          "working_capital_cash_flow",
+          "forecast_working_capital",
+          "ppe_schedule",
+          "validated_inputs"
+        ]
+      },
+      {
+        "id": "income_statement",
+        "label": "Income statement",
+        "description": "Pre-tax income equals EBIT minus interest expense plus interest income. Taxes equal tax rate times positive pre-tax income. Net income equals pre-tax income minus taxes.",
+        "depends_on": [
+          "pre_interest_earnings",
+          "interest_financing_solution",
+          "validated_inputs"
+        ]
+      },
+      {
+        "id": "retained_earnings_schedule",
+        "label": "Retained earnings schedule",
+        "description": "Closing equity equals opening equity plus net income, with no distributions or other equity movements.",
+        "depends_on": [
+          "income_statement",
+          "validated_inputs"
+        ]
+      },
+      {
+        "id": "cash_flow_statement",
+        "label": "Cash-flow statement",
+        "description": "Operating cash flow combines net income, depreciation, recurring working-capital cash flow, and one-time normalization cash flow. Investing cash flow is capex. Financing cash flow contains mandatory amortization, revolver draws or repayments, and optional sweeps. Net cash change reconciles beginning to ending cash.",
+        "depends_on": [
+          "income_statement",
+          "ppe_schedule",
+          "working_capital_cash_flow",
+          "interest_financing_solution"
+        ]
+      },
+      {
+        "id": "balance_sheet",
+        "label": "Balance sheet",
+        "description": "Assets equal cash plus receivables plus inventory plus net PP&E. Liabilities and equity equal payables plus other current liabilities plus term debt plus revolver plus ending equity.",
+        "depends_on": [
+          "forecast_working_capital",
+          "ppe_schedule",
+          "interest_financing_solution",
+          "retained_earnings_schedule",
+          "validated_inputs"
+        ]
+      },
+      {
+        "id": "fcff_schedule",
+        "label": "FCFF schedule",
+        "description": "FCFF equals EBIT after operating tax plus depreciation less capex plus recurring working-capital cash flow plus one-time normalization cash flow. Operating tax is tax rate times positive EBIT.",
+        "depends_on": [
+          "pre_interest_earnings",
+          "ppe_schedule",
+          "working_capital_cash_flow",
+          "validated_inputs"
+        ]
+      },
+      {
+        "id": "dcf_valuation",
+        "label": "Exit-multiple DCF",
+        "description": "Discount annual FCFF at WACC. Terminal value equals Year 5 EBITDA times exit EBITDA multiple and is discounted at Year 5. Enterprise value equals present value of FCFF plus present value of terminal value.",
+        "depends_on": [
+          "fcff_schedule",
+          "consolidated_operations",
+          "validated_inputs"
+        ]
+      },
+      {
+        "id": "enterprise_to_equity_bridge",
+        "label": "Enterprise-to-equity bridge",
+        "description": "FCFF and terminal value are discounted to the opening valuation date. Equity value equals opening-date enterprise value plus submitted opening cash minus submitted opening term debt minus submitted opening revolver; terminal financing balances are forecast liquidity/reference metrics only.",
+        "depends_on": [
+          "dcf_valuation",
+          "interest_financing_solution"
+        ]
+      },
+      {
+        "id": "valuation_sensitivity",
+        "label": "WACC and exit-multiple sensitivity",
+        "description": "Within the current operating case, recomputes signed opening-date enterprise value for WACC values from 7% to 11% and exit multiples from 5.0x to 7.0x using signed Year 5 EBITDA times each multiple without a terminal-value floor, then applies the submitted opening cash, term debt, and revolver bridge to every coordinate; sensitivity_value_type is equity_value. It publishes a conventional non-increasing WACC-direction assessment only when all forecast FCFF and terminal EBITDA are non-negative; adjacent increases may be treated as rounding only up to EUR 0.000001, while any larger positive movement fails that claim. Otherwise it reports a signed-FCFF direction status and warning when higher WACC increases value by more than that tolerance.",
+        "depends_on": [
+          "fcff_schedule",
+          "consolidated_operations",
+          "interest_financing_solution"
+        ]
+      }
+    ],
+    "edges": [
+      {
+        "id": "segment_to_consolidated",
+        "label": "Segment consolidation",
+        "description": "Paint and tools schedules supply consolidated revenue and cost of sales."
+      },
+      {
+        "id": "operations_to_working_capital",
+        "label": "Activity-driven working capital",
+        "description": "Revenue drives receivables; consolidated cost of sales consistently drives inventory and payables."
+      },
+      {
+        "id": "ppe_to_earnings_and_cash",
+        "label": "PP&E linkage",
+        "description": "Depreciation reduces EBITDA to EBIT and is added back in operating cash flow; capex is investing cash flow."
+      },
+      {
+        "id": "financing_to_income_and_cash",
+        "label": "Financing linkage",
+        "description": "Solved interest affects pre-tax income and cash generation; cash and debt actions determine closing financing balances."
+      },
+      {
+        "id": "income_to_equity",
+        "label": "Net-income retention",
+        "description": "Net income is retained in equity."
+      },
+      {
+        "id": "cash_flow_to_balance_sheet",
+        "label": "Cash reconciliation",
+        "description": "Cash-flow statement net change updates balance-sheet cash."
+      },
+      {
+        "id": "operations_to_valuation",
+        "label": "Operations-to-DCF linkage",
+        "description": "EBIT, depreciation, capex, and working capital determine FCFF; Year 5 EBITDA determines terminal value."
+      }
+    ],
+    "calculation_order": [
+      "validated_inputs",
+      "opening_operating_reference",
+      "segment_operations",
+      "consolidated_operations",
+      "opening_working_capital_reference",
+      "forecast_working_capital",
+      "working_capital_cash_flow",
+      "ppe_schedule",
+      "pre_interest_earnings",
+      "interest_financing_solution",
+      "income_statement",
+      "retained_earnings_schedule",
+      "cash_flow_statement",
+      "balance_sheet",
+      "fcff_schedule",
+      "dcf_valuation",
+      "enterprise_to_equity_bridge",
+      "valuation_sensitivity"
+    ],
+    "key_tie_outs": [
+      {
+        "id": "opening_balance_sheet_tie_out",
+        "label": "Opening balance-sheet tie-out",
+        "description": "Opening assets equal opening liabilities plus opening equity; this validates the saved opening inputs without imposing a fixed asset amount or leverage ratio."
+      },
+      {
+        "id": "forecast_balance_sheet_tie_out",
+        "label": "Forecast balance-sheet tie-out",
+        "description": "For every forecast year, total assets equal total liabilities plus equity within tolerance."
+      },
+      {
+        "id": "cash_flow_reconciliation_tie_out",
+        "label": "Cash-flow reconciliation",
+        "description": "Ending cash equals beginning cash plus net change in cash, and matches the closing cash from the financing solution."
+      },
+      {
+        "id": "working_capital_tie_out",
+        "label": "Working-capital bridge tie-out",
+        "description": "Reported and normalized opening NWC bridge to the separately disclosed Year 1 normalization component; recurring NWC movement is separately calculated and excludes repeated normalization."
+      },
+      {
+        "id": "ppe_roll_forward_tie_out",
+        "label": "PP&E roll-forward tie-out",
+        "description": "For total PP&E and each active pool/vintage, closing net basis equals opening net basis plus capex less disposals less depreciation, subject to non-negative basis."
+      },
+      {
+        "id": "debt_roll_forward_tie_out",
+        "label": "Debt roll-forward tie-out",
+        "description": "Closing debt equals opening debt plus revolver draw less mandatory amortization, revolver repayments, and term-debt sweep repayments, with each repayment capped by available debt."
+      },
+      {
+        "id": "fcff_tie_out",
+        "label": "FCFF construction tie-out",
+        "description": "FCFF reconciles to EBIT after operating tax, depreciation, capex, recurring working-capital cash flow, and separately shown normalization cash flow."
+      },
+      {
+        "id": "valuation_bridge_tie_out",
+        "label": "Enterprise-to-equity bridge tie-out",
+        "description": "Opening-date equity value equals opening-date enterprise value plus submitted opening cash minus submitted opening total debt; terminal financing is excluded from the bridge."
+      }
+    ],
+    "output_dependencies": [
+      {
+        "id": "summary_dependencies",
+        "label": "Executive summary dependencies",
+        "description": "The current-case executive-summary headline block consumes finalized consolidated operations, income statement, financing solution, balance sheet, DCF valuation, equity bridge, and integrity-status schedules without recalculating finance mechanics; it carries Y5 and opening-date metadata."
+      },
+      {
+        "id": "statement_dependencies",
+        "label": "Financial-statement dependencies",
+        "description": "Statements consume finalized operating, working-capital, PP&E, financing, interest, and retained-earnings schedules and do not recalculate mechanics in presentation."
+      },
+      {
+        "id": "valuation_dependencies",
+        "label": "Valuation-output dependencies",
+        "description": "DCF and sensitivity outputs consume FCFF, Year 5 EBITDA, current-case valuation assumptions, and submitted opening cash/debt for the opening-date equity bridge; terminal cash/debt are forecast reference metrics only."
+      }
+    ]
+  }
+}

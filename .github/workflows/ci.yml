@@ -1,0 +1,31 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Install backend requirements
+        run: python -m pip install -r requirements.txt
+      - name: Run deterministic backend tests
+        run: python -m unittest discover -s tests -p 'test_*.py'
+      - name: Verify accepted paint example
+        run: python examples/paint_showcase/verify.py
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm ci
+      - name: Type-check and build frontend
+        working-directory: frontend
+        run: npm run build

@@ -1,0 +1,17 @@
+{
+  "test": "Edit WACC from 9% to 10% and execute the saved package",
+  "execution_mode": "saved_python_package",
+  "technical_checks_passed": true,
+  "check_status": {
+    "passed": 13,
+    "failed": 0,
+    "not_applicable": 1
+  },
+  "base_equity_value_eur": 25738656.320056863,
+  "edited_equity_value_eur": 24397632.700175762,
+  "base_enterprise_value_eur": 34238656.32005686,
+  "edited_enterprise_value_eur": 32897632.700175762,
+  "outputs_changed": true,
+  "openai_called": false,
+  "openai_call_delta": 0
+}

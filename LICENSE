@@ -1,0 +1,38 @@
+Portfolio Evaluation License 1.0
+
+Copyright (c) 2026 Cedric Van Hoeserlande
+
+Permission is granted, without charge, to a prospective employer, recruiter,
+client, investor, or technical evaluator (the "Evaluator") to:
+
+1. download, clone, and make private copies of this repository;
+2. install and run the software in a local evaluation environment;
+3. inspect, test, and assess the software and documentation for recruitment,
+   due-diligence, or other non-commercial evaluation purposes; and
+4. make temporary internal modifications solely as necessary to conduct that
+   evaluation.
+
+The Evaluator may share private copies and evaluation results only with people
+within the same organization who are directly participating in the evaluation.
+All copyright and license notices must be retained.
+
+No permission is granted to:
+
+- use the software or documentation in production or for any commercial
+  purpose;
+- sell, license, sublicense, publish, publicly distribute, or publicly display
+  the software or documentation;
+- incorporate any part of the software or documentation into another product,
+  service, codebase, dataset, or derivative work; or
+- use the software or documentation to develop or provide a competing product
+  or service.
+
+All rights not expressly granted are reserved by the copyright holder. This
+license does not transfer ownership or grant any patent, trademark, or other
+intellectual-property rights.
+
+THE SOFTWARE AND DOCUMENTATION ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY
+KIND, EXPRESS OR IMPLIED, INCLUDING WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+PARTICULAR PURPOSE, TITLE, AND NON-INFRINGEMENT. IN NO EVENT SHALL THE COPYRIGHT
+HOLDER BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY ARISING FROM THE
+SOFTWARE, DOCUMENTATION, OR THEIR USE.

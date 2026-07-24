@@ -1,0 +1,390 @@
+{
+  "fields": [
+    {
+      "path": "opening_cash",
+      "label": "Opening cash",
+      "type": "number",
+      "editable": true,
+      "min_value": 0
+    },
+    {
+      "path": "opening_receivables",
+      "label": "Opening receivables",
+      "type": "number",
+      "editable": true,
+      "min_value": 0
+    },
+    {
+      "path": "opening_inventory",
+      "label": "Opening inventory",
+      "type": "number",
+      "editable": true,
+      "min_value": 0
+    },
+    {
+      "path": "opening_ppe",
+      "label": "Opening PP&E",
+      "type": "number",
+      "editable": true,
+      "min_value": 0
+    },
+    {
+      "path": "opening_payables",
+      "label": "Opening payables",
+      "type": "number",
+      "editable": true,
+      "min_value": 0
+    },
+    {
+      "path": "opening_other_liabilities",
+      "label": "Opening other liabilities",
+      "type": "number",
+      "editable": true,
+      "min_value": 0
+    },
+    {
+      "path": "opening_term_debt",
+      "label": "Opening term debt",
+      "type": "number",
+      "editable": true,
+      "min_value": 0
+    },
+    {
+      "path": "opening_revolver",
+      "label": "Opening revolver",
+      "type": "number",
+      "editable": true,
+      "min_value": 0
+    },
+    {
+      "path": "opening_equity",
+      "label": "Opening equity",
+      "type": "number",
+      "editable": true,
+      "min_value": 0
+    },
+    {
+      "path": "paint_units",
+      "label": "Paint starting units",
+      "type": "number",
+      "editable": true,
+      "min_value": 0
+    },
+    {
+      "path": "paint_price",
+      "label": "Paint starting price",
+      "type": "number",
+      "editable": true,
+      "min_value": 0
+    },
+    {
+      "path": "paint_unit_cost",
+      "label": "Paint starting unit cost",
+      "type": "number",
+      "editable": true,
+      "min_value": 0
+    },
+    {
+      "path": "paint_overhead",
+      "label": "Paint overhead",
+      "type": "number",
+      "editable": true,
+      "min_value": 0
+    },
+    {
+      "path": "tools_units",
+      "label": "Tools starting units",
+      "type": "number",
+      "editable": true,
+      "min_value": 0
+    },
+    {
+      "path": "tools_price",
+      "label": "Tools starting price",
+      "type": "number",
+      "editable": true,
+      "min_value": 0
+    },
+    {
+      "path": "tools_unit_cost",
+      "label": "Tools starting unit cost",
+      "type": "number",
+      "editable": true,
+      "min_value": 0
+    },
+    {
+      "path": "tools_storage",
+      "label": "Tools storage",
+      "type": "number",
+      "editable": true,
+      "min_value": 0
+    },
+    {
+      "path": "corporate_opex",
+      "label": "Corporate operating expense",
+      "type": "number",
+      "editable": true,
+      "min_value": 0
+    },
+    {
+      "path": "paint_unit_growth",
+      "label": "Paint unit growth (FY1-to-FY5 transitions)",
+      "type": "number_or_number_array",
+      "editable": true,
+      "min_value": -0.5,
+      "max_value": 1,
+      "period_count": 4,
+      "period_labels": [
+        "FY2",
+        "FY3",
+        "FY4",
+        "FY5"
+      ]
+    },
+    {
+      "path": "paint_price_inflation",
+      "label": "Paint price inflation (FY1-to-FY5 transitions)",
+      "type": "number_or_number_array",
+      "editable": true,
+      "min_value": -0.5,
+      "max_value": 1,
+      "period_count": 4,
+      "period_labels": [
+        "FY2",
+        "FY3",
+        "FY4",
+        "FY5"
+      ]
+    },
+    {
+      "path": "paint_cost_inflation",
+      "label": "Paint cost inflation (FY1-to-FY5 transitions)",
+      "type": "number_or_number_array",
+      "editable": true,
+      "min_value": -0.5,
+      "max_value": 1,
+      "period_count": 4,
+      "period_labels": [
+        "FY2",
+        "FY3",
+        "FY4",
+        "FY5"
+      ]
+    },
+    {
+      "path": "paint_overhead_inflation",
+      "label": "Paint overhead inflation (FY1-to-FY5 transitions)",
+      "type": "number_or_number_array",
+      "editable": true,
+      "min_value": -0.5,
+      "max_value": 1,
+      "period_count": 4,
+      "period_labels": [
+        "FY2",
+        "FY3",
+        "FY4",
+        "FY5"
+      ]
+    },
+    {
+      "path": "tools_unit_growth",
+      "label": "Tools unit growth (FY1-to-FY5 transitions)",
+      "type": "number_or_number_array",
+      "editable": true,
+      "min_value": -0.5,
+      "max_value": 1,
+      "period_count": 4,
+      "period_labels": [
+        "FY2",
+        "FY3",
+        "FY4",
+        "FY5"
+      ]
+    },
+    {
+      "path": "tools_price_inflation",
+      "label": "Tools price inflation (FY1-to-FY5 transitions)",
+      "type": "number_or_number_array",
+      "editable": true,
+      "min_value": -0.5,
+      "max_value": 1,
+      "period_count": 4,
+      "period_labels": [
+        "FY2",
+        "FY3",
+        "FY4",
+        "FY5"
+      ]
+    },
+    {
+      "path": "tools_cost_inflation",
+      "label": "Tools cost inflation (FY1-to-FY5 transitions)",
+      "type": "number_or_number_array",
+      "editable": true,
+      "min_value": -0.5,
+      "max_value": 1,
+      "period_count": 4,
+      "period_labels": [
+        "FY2",
+        "FY3",
+        "FY4",
+        "FY5"
+      ]
+    },
+    {
+      "path": "tools_storage_inflation",
+      "label": "Tools storage inflation (FY1-to-FY5 transitions)",
+      "type": "number_or_number_array",
+      "editable": true,
+      "min_value": -0.5,
+      "max_value": 1,
+      "period_count": 4,
+      "period_labels": [
+        "FY2",
+        "FY3",
+        "FY4",
+        "FY5"
+      ]
+    },
+    {
+      "path": "corporate_opex_inflation",
+      "label": "Corporate opex inflation (FY1-to-FY5 transitions)",
+      "type": "number_or_number_array",
+      "editable": true,
+      "min_value": -0.5,
+      "max_value": 1,
+      "period_count": 4,
+      "period_labels": [
+        "FY2",
+        "FY3",
+        "FY4",
+        "FY5"
+      ]
+    },
+    {
+      "path": "receivable_days",
+      "label": "Receivable days",
+      "type": "number",
+      "editable": true,
+      "min_value": 0,
+      "max_value": 365
+    },
+    {
+      "path": "inventory_days",
+      "label": "Inventory days",
+      "type": "number",
+      "editable": true,
+      "min_value": 0,
+      "max_value": 365
+    },
+    {
+      "path": "payable_days",
+      "label": "Payable days",
+      "type": "number",
+      "editable": true,
+      "min_value": 0,
+      "max_value": 365
+    },
+    {
+      "path": "capex",
+      "label": "Annual capex",
+      "type": "number_or_number_array",
+      "editable": true,
+      "min_value": 0,
+      "period_count": 5,
+      "period_labels": [
+        "Y1",
+        "Y2",
+        "Y3",
+        "Y4",
+        "Y5"
+      ]
+    },
+    {
+      "path": "opening_ppe_life",
+      "label": "Opening PP&E life",
+      "type": "number",
+      "editable": true,
+      "min_value": 1,
+      "max_value": 40
+    },
+    {
+      "path": "new_capex_life",
+      "label": "New capex life",
+      "type": "number",
+      "editable": true,
+      "min_value": 1,
+      "max_value": 40
+    },
+    {
+      "path": "disposal_rate",
+      "label": "Disposal rate",
+      "type": "number",
+      "editable": true,
+      "min_value": 0,
+      "max_value": 0.25
+    },
+    {
+      "path": "minimum_cash",
+      "label": "Minimum cash",
+      "type": "number",
+      "editable": true,
+      "min_value": 0
+    },
+    {
+      "path": "mandatory_amortization",
+      "label": "Mandatory amortization",
+      "type": "number",
+      "editable": true,
+      "min_value": 0
+    },
+    {
+      "path": "debt_interest_rate",
+      "label": "Debt interest rate",
+      "type": "number",
+      "editable": true,
+      "min_value": 0,
+      "max_value": 0.3
+    },
+    {
+      "path": "cash_interest_rate",
+      "label": "Cash interest rate",
+      "type": "number",
+      "editable": true,
+      "min_value": 0,
+      "max_value": 0.3
+    },
+    {
+      "path": "cash_sweep_pct",
+      "label": "Cash sweep percentage",
+      "type": "number",
+      "editable": true,
+      "min_value": 0,
+      "max_value": 1
+    },
+    {
+      "path": "tax_rate",
+      "label": "Tax rate",
+      "type": "number",
+      "editable": true,
+      "min_value": 0,
+      "max_value": 0.5
+    },
+    {
+      "path": "wacc",
+      "label": "WACC",
+      "type": "number",
+      "editable": true,
+      "min_value": 0,
+      "max_value": 0.3
+    },
+    {
+      "path": "exit_multiple",
+      "label": "Exit EBITDA multiple",
+      "type": "number",
+      "editable": true,
+      "min_value": 0,
+      "max_value": 15
+    }
+  ]
+}

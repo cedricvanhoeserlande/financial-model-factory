@@ -1,0 +1,8 @@
+{
+  "accepted_package_version": "version_20260721_005747_33fedf06",
+  "source_model_id": "financial-model-showcase-66c62b3c",
+  "review_status": "approved_with_advisory_findings",
+  "modeler_model": "gpt-5.6-terra",
+  "final_review_model": "gpt-5.6-luna",
+  "accepted_on": "2026-07-21"
+}

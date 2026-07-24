@@ -1,0 +1,735 @@
+{
+  "created_utc": "2026-07-21T01:03:57Z",
+  "max_repair_attempts": 3,
+  "repairs_used": 2,
+  "status": "approved",
+  "rounds": [
+    {
+      "approved": false,
+      "repair_required": true,
+      "summary": "The package implements the three requested production amendments and the finalized Base/Downside/Upside outputs are economically coherent on the reviewed cases. However, the audit found unresolved high/medium test-coverage defects: the scenario-suite check does not verify the raw-input/output-pair contract, and several declared independent mechanics tests are weaker than their stated coverage claims. The package should not be approved until these checks are strengthened and rerun.",
+      "findings": [
+        {
+          "severity": "high",
+          "area": "test_coverage",
+          "claim_tested": "The scenario_directionality suite check consumes exactly the three backend-executed Base, Downside, and Upside raw-input/output pairs without recreating or accepting substitute cases.",
+          "symptom": "The implementation of run_suite_checks only verifies that cases is a dictionary with keys base, downside, and upside, then reads case['output']. It never inspects or validates the raw input object in each case. A fabricated or mismatched output could therefore satisfy the declared exact-pair contract if its aggregate metrics and integrity statuses pass.",
+          "root_cause": "model_package/model/checks.py::run_suite_checks unpacks only output data and ignores the raw-input member of each case. The declared test contract in model_package/spec/model_tests.json promises exact backend-executed raw-input/output pairs.",
+          "message": "This is implementation-conformance failure against the canonical runtime verification contract, not merely a disclosed limitation. The current suite evidence proves only three output objects were supplied under the expected IDs; it does not prove they correspond to the authoritative backend-executed raw inputs.",
+          "repair_instruction": "Strengthen run_suite_checks(cases) so it validates the exact three backend-executed case records, including the raw input object and finalized output object for each case, without recreating scenario overrides. Verify that each case's output is the result for its submitted raw input and retain the exact Base/Downside/Upside IDs. Do not add a model-local scenario selector.",
+          "evidence": {
+            "artifact": "model_package/model/checks.py",
+            "observed": "run_suite_checks defines unpack(case) and immediately accesses case['output']['output_blocks']; no raw-input extraction, identity check, or raw-input/output consistency check exists.",
+            "declared_contract_artifact": "model_package/spec/model_tests.json",
+            "declared_behavior": "scenario_directionality must consume exactly the three backend-executed composite Base, Downside, and Upside raw-input/output pairs.",
+            "observed_suite_artifact": "model_package/reports/model_tests_report.json",
+            "observed_result": "scenario_suite passed with exact_case_ids ['base','downside','upside'], but the evidence contains only aggregate output metrics and no raw-input fingerprints or input/output pairing evidence.",
+            "artifacts": [
+              "model_package/model/checks.py"
+            ]
+          },
+          "requires_human_decision": false
+        },
+        {
+          "severity": "medium",
+          "area": "test_coverage",
+          "claim_tested": "ppe_pool_roll_forward_and_disposal_behavior independently proves that disposal behavior has no effect on active depreciable basis, depreciation, EBIT, tax, cash flow, or FCFF.",
+          "symptom": "The declared test promises a 0%-versus-positive-disposal comparison of economic outputs. The implementation only checks that zero disposal produces zero retirement cost and positive disposal produces positive retirement cost. It does not compare depreciation, EBIT, tax, cash flow, or FCFF between the two disposal cases.",
+          "root_cause": "model_package/model/checks.py computes disposal_probes from retirement_gross_cost only. The positive-disposal fixture is not reconciled against an otherwise identical zero-disposal fixture for the specified no-economic-impact invariants.",
+          "message": "The production schedule currently appears consistent with the accepted disposal convention, but the packaged test does not support the full claim made in model_tests.json. This is unsupported coverage rather than a proven model-logic failure.",
+          "repair_instruction": "Within the existing ppe_pool_roll_forward_and_disposal_behavior check, execute identical zero-disposal and positive-disposal fixtures and compare active basis, depreciation, EBIT, tax, cash flow, FCFF, and relevant PP&E outputs within tolerance. Preserve the existing declared test ID.",
+          "evidence": {
+            "artifact": "model_package/spec/model_tests.json",
+            "declared_behavior": "The test must verify retirement gross cost equals matching accumulated depreciation, has zero net book value, and does not enter active depreciable basis or depreciation; the evidence expectation also names no effect on depreciation and related economics.",
+            "implementation_artifact": "model_package/model/checks.py",
+            "observed": "disposal_ok only evaluates zero_retirement values and whether any positive_retirement value is greater than zero; no side-by-side economic equality checks are present.",
+            "output_artifact": "model_package/outputs/output.json",
+            "observed_behavior": "Base has zero disposal in the five forecast periods, so the finalized Base output does not itself exercise the positive disposal branch.",
+            "artifacts": [
+              "model_package/spec/model_tests.json"
+            ]
+          },
+          "requires_human_decision": false
+        },
+        {
+          "severity": "medium",
+          "area": "test_coverage",
+          "claim_tested": "interest_circularity_convergence independently exercises production convergence behavior at residuals immediately below, exactly at, and above the configured tolerance.",
+          "symptom": "The test evidence reports hardcoded synthetic booleans for below/at/above tolerance. No model-local residual fixture is passed through the convergence check, and no altered financing iteration result is executed for those boundary values.",
+          "root_cause": "model_package/model/checks.py constructs convergence_boundary_fixtures as literal numeric comparisons such as 0.0001 <= 0.0001. These comparisons do not exercise the production convergence implementation or its failure status.",
+          "message": "The production Base and Downside interest residuals are below the reported 0.0001 tolerance and the finalized outputs are numerically stable, but the claimed boundary-branch coverage is unsupported.",
+          "repair_instruction": "Replace the tautological literal boundary comparisons with an executable convergence-boundary probe that invokes the relevant model-local convergence/status logic or a declared test helper using residuals immediately below, at, and above tolerance. Evidence must show the resulting status and pass/fail outcome from the implemented mechanics.",
+          "evidence": {
+            "artifact": "model_package/model/checks.py",
+            "observed": "convergence_boundary_fixtures contains literal residual values and pass booleans; convergence_boundary_ok is derived from those literals and is not connected to run_all or a model-local convergence-status function.",
+            "report_artifact": "model_package/reports/model_tests_report.json",
+            "observed_result": "The test passes with boundary_fixtures_passed=true, but the evidence contains no executed model output or failure status for an above-tolerance production fixture.",
+            "artifacts": [
+              "model_package/model/checks.py"
+            ]
+          },
+          "requires_human_decision": false
+        },
+        {
+          "severity": "advisory",
+          "area": "model_logic",
+          "claim_tested": "The finalized Base DCF bridge and terminal-value contribution are internally reconciled.",
+          "symptom": "No defect was found. Independent recalculation produced PV of FCFF EUR 10.5945m, terminal PV EUR 23.6442m, enterprise value EUR 34.2387m, and opening-date equity value EUR 25.7387m, matching the finalized output within floating-point rounding.",
+          "root_cause": "None identified.",
+          "message": "The independent calculation supports the accepted opening-date valuation convention. Terminal PV contributes approximately 69.06% of enterprise value, which is a material concentration risk for business review but not a package defect under the accepted specification.",
+          "repair_instruction": "No automatic repair required. Business users should understand the high terminal-value dependence when interpreting the DCF.",
+          "evidence": {
+            "artifact": "model_package/outputs/output.json",
+            "observed": "enterprise_value=34238656.32005686, terminal_present_value=23644157.073112544, opening_date_equity_value=25738656.320056863.",
+            "independent_calculation": "PV(FCFF)=10594499.24694432; PV(terminal)=23644157.073112547; EV=34238656.32005687; terminal PV share=0.6905690705876765; bridge equity=25738656.32005687.",
+            "artifacts": [
+              "model_package/outputs/output.json"
+            ]
+          },
+          "requires_human_decision": false
+        }
+      ],
+      "required_amendments": [
+        {
+          "issue_id": "scenario_suite_raw_pair_contract",
+          "severity": "high",
+          "category": "test_coverage",
+          "observed": "run_suite_checks verifies only the three case IDs and output contents; it ignores the raw input member of each case and provides no evidence that each output is paired with the exact backend-executed raw inputs.",
+          "required_change": "Implement exact three-case raw-input/output-pair validation in run_suite_checks(cases), using the pairs supplied by the platform and without recreating scenario overrides or adding a model-local selector.",
+          "artifacts": [
+            "model_package/model/checks.py",
+            "model_package/spec/model_tests.json",
+            "model_package/reports/model_tests_report.json"
+          ],
+          "acceptance_criteria": [
+            "The suite check rejects a case whose raw input is replaced while output is unchanged or mismatched.",
+            "The suite evidence lists the exact case IDs plus raw-input and output-pair evidence or fingerprints.",
+            "The check still accepts the authoritative Base, Downside, and Upside backend executions.",
+            "No hardcoded scenario overrides are recreated in checks.py."
+          ],
+          "human_decision_required": false,
+          "verification_probe": {
+            "input_path": "paint_unit_growth",
+            "changed_value": -0.05,
+            "output_path": "output_blocks.3.data.operations.4.revenue",
+            "expected_behavior": "change"
+          }
+        },
+        {
+          "issue_id": "ppe_disposal_economic_invariance_coverage",
+          "severity": "medium",
+          "category": "test_coverage",
+          "observed": "The disposal test proves only retirement-cost activation. It does not prove that positive disposal leaves active basis, depreciation, EBIT, tax, cash flow, and FCFF unchanged versus an otherwise identical zero-disposal fixture.",
+          "required_change": "Strengthen the existing ppe_pool_roll_forward_and_disposal_behavior check with an executed zero-disposal versus positive-disposal comparison covering all declared no-economic-impact outputs.",
+          "artifacts": [
+            "model_package/model/checks.py",
+            "model_package/spec/model_tests.json",
+            "model_package/reports/model_tests_report.json"
+          ],
+          "acceptance_criteria": [
+            "The check reports positive retirement gross cost and equal retirement accumulated depreciation in the positive-disposal case.",
+            "Active depreciable basis and depreciation match between zero- and positive-disposal cases within tolerance.",
+            "EBIT, tax, cash flow, and FCFF match between the two cases within tolerance.",
+            "The check remains within the existing declared test ID."
+          ],
+          "human_decision_required": false,
+          "verification_probe": {
+            "input_path": "disposal_rate",
+            "changed_value": 0.25,
+            "output_path": "output_blocks.3.data.ppe.0.retirement_gross_cost",
+            "expected_behavior": "not_null"
+          }
+        },
+        {
+          "issue_id": "interest_convergence_boundary_execution",
+          "severity": "medium",
+          "category": "test_coverage",
+          "observed": "Below/at/above convergence tolerance evidence is generated from literal boolean comparisons rather than executed convergence mechanics.",
+          "required_change": "Execute the convergence status logic for residuals immediately below, at, and above the configured tolerance and report the actual resulting statuses.",
+          "artifacts": [
+            "model_package/model/checks.py",
+            "model_package/spec/model_tests.json",
+            "model_package/reports/model_tests_report.json"
+          ],
+          "acceptance_criteria": [
+            "Below-tolerance fixture returns pass/converged.",
+            "At-tolerance fixture returns pass/converged.",
+            "Above-tolerance fixture returns fail/not-converged.",
+            "Evidence includes the configured tolerance, fixture input or residual, implemented status result, and pass/fail result.",
+            "The existing interest_circularity_convergence test ID is retained."
+          ],
+          "human_decision_required": false
+        }
+      ],
+      "repair_instructions": [
+        "Repair the scenario-suite raw-input/output pairing validation first because it is a high-severity contract gap.",
+        "Strengthen disposal invariance evidence and convergence-boundary execution inside the existing declared tests; do not add new standalone test IDs.",
+        "Rerun the authoritative Base, Downside, Upside, model-local, deterministic, output, and scenario-suite gates after repair.",
+        "Retain the accepted valuation date, opening-date enterprise-to-equity bridge, composite-scenario design, minimum-cash headroom semantics, current-case executive summary, and platform-owned scenario selection."
+      ],
+      "human_questions": [],
+      "failure_reasons": [
+        "Approval is withheld because one high-severity scenario-suite contract defect and two repairable medium-severity unsupported test-coverage claims remain.",
+        "The finalized outputs themselves reconcile on the reviewed Base case, and the independent DCF calculation matches the output; the rejection is driven by unsupported declared coverage, not by dashboard presentation or the accepted economics."
+      ],
+      "attempt": "initial",
+      "execution_evidence": {
+        "path": "model_package/reports/review_execution_evidence.json",
+        "code_interpreter_required": true,
+        "code_interpreter_call_count": 1
+      },
+      "function_tool_evidence": {
+        "path": "model_package/reports/agent_tool_calls_report.json",
+        "function_tool_call_count": 12,
+        "tools_used": [
+          "execute_input_probe",
+          "execute_model_test",
+          "list_package_artifacts",
+          "read_package_artifact"
+        ]
+      },
+      "usage_report": {
+        "stage": "review_agent_audit",
+        "model": "gpt-5.6-luna",
+        "usage_summary": {
+          "input_tokens": 936110,
+          "cached_input_tokens": 703242,
+          "output_tokens": 4695,
+          "reasoning_tokens": 1806,
+          "total_tokens": 940805,
+          "api_call_count": 1
+        },
+        "cost_summary": {
+          "estimated_cost_usd": 0.331362,
+          "pricing_note": "Estimate based on local standard-processing price table; billing dashboard is authoritative.",
+          "pricing_source": "https://developers.openai.com/api/docs/pricing",
+          "rates_usd_per_1m_tokens": {
+            "input": 1.0,
+            "cached_input": 0.1,
+            "output": 6.0
+          },
+          "billable_input_tokens": 232868
+        },
+        "openai_called": true
+      },
+      "required_amendments_report": {
+        "path": "model_package/reports/required_amendments_report.json",
+        "round_path": "model_package/reports/required_amendments_report_round_0.json",
+        "amendment_count": 3,
+        "executable_probe_count": 2,
+        "passed": true,
+        "report": {
+          "created_utc": "2026-07-21T01:00:00Z",
+          "passed": true,
+          "amendment_count": 3,
+          "executable_probe_count": 2,
+          "amendments": [
+            {
+              "issue_id": "scenario_suite_raw_pair_contract",
+              "severity": "high",
+              "category": "test_coverage",
+              "artifacts": [
+                "model_package/model/checks.py",
+                "model_package/spec/model_tests.json",
+                "model_package/reports/model_tests_report.json"
+              ],
+              "human_decision_required": false,
+              "observed": "run_suite_checks verifies only the three case IDs and output contents; it ignores the raw input member of each case and provides no evidence that each output is paired with the exact backend-executed raw inputs.",
+              "required_change": "Implement exact three-case raw-input/output-pair validation in run_suite_checks(cases), using the pairs supplied by the platform and without recreating scenario overrides or adding a model-local selector.",
+              "acceptance_criteria": [
+                "The suite check rejects a case whose raw input is replaced while output is unchanged or mismatched.",
+                "The suite evidence lists the exact case IDs plus raw-input and output-pair evidence or fingerprints.",
+                "The check still accepts the authoritative Base, Downside, and Upside backend executions.",
+                "No hardcoded scenario overrides are recreated in checks.py."
+              ],
+              "executed": true,
+              "verification_probe": {
+                "input_path": "paint_unit_growth",
+                "changed_value": -0.05,
+                "output_path": "output_blocks.3.data.operations.4.revenue",
+                "expected_behavior": "change"
+              },
+              "probe_valid": true,
+              "input_path_valid": true,
+              "output_path_valid": true,
+              "base_output_value": 21921033.390946053,
+              "changed_output_value": 17612051.979281034,
+              "changed_output_fingerprint": "{\"dashboard_spec\":{\"sections\":[\"Performance overview\",\"Cash generation and leverage\",\"Working capital and investment\",\"Valuation\"],\"title\":\"Atelier Coatings & Tools S.A.\"},\"metadata\":{\"openai_called\":false},\"output_blocks\":[{\"data\":{\"current_case_only\":true,\"ending_cash\":1874887.64295502,\"ending_revolver\":0.0,\"ending_term_debt\":1493811.2681296752,\"ending_total_debt\":1493811.2681296752,\"enterprise_value\":22168955.335394036,\"integrity_pass_statuses\":{\"balance_sheet\":true,\"cash_flow\":true,\"debt_sweep\":true,\"enterprise_to_equity_bridge\":true,\"interest_convergence\":true,\"minimum_cash\":true,\"ppe\":true,\"retained_earnings\":true},\"maximum_interest_convergence_residual\":1.5068799257278442e-05,\"net_debt\":-381076.3748253449,\"opening_date_equity_value\":13668955.335394036,\"period\":\"Y5\",\"terminal_present_value_contribution\":14192326.937454348,\"valuation_date\":\"opening_date\",\"year_5_ebit\":1684442.3669566368,\"year_5_ebitda\":3639442.366956637,\"year_5_ebitda_margin\":0.20664499351001844,\"year_5_net_income\":1171790.851942605,\"year_5_revenue\":17612051.979281034},\"id\":\"executive_summary\",\"label\":\"Current-Case Executive Summary\",\"type\":\"custom\"},{\"data\":{\"series\":[{\"id\":\"revenue\",\"label\":\"Revenue\",\"values\":[18200000.0,18021360.0,17863834.464,17727398.1392256,17612051.979281034]},{\"id\":\"ebitda\",\"label\":\"EBITDA\",\"values\":[4500000.0,4271760.0,4052316.3840000015,3841572.111033598,3639442.366956637]}],\"x\":[\"Y1\",\"Y2\",\"Y3\",\"Y4\",\"Y5\"]},\"id\":\"performance_trend\",\"label\":\"Revenue and EBITDA\",\"type\":\"time_series\"},{\"data\":{\"columns\":[{\"id\":\"year\",\"label\":\"Year\"},{\"id\":\"revenue\",\"label\":\"Revenue\"},{\"id\":\"ebitda\",\"label\":\"EBITDA\"},{\"id\":\"ebit\",\"label\":\"EBIT\"},{\"id\":\"net_income\",\"label\":\"Net Income\"}],\"rows\":[{\"cost_of_sales\":10700000.0,\"depreciation\":1355000.0,\"ebit\":3145000.0,\"ebitda\":4500000.0,\"gross_profit\":7500000.0,\"interest_expense\":549956.9918647242,\"interest_income\":13681.002711758567,\"net_income\":1956543.008135276,\"operating_expenses\":3000000.0,\"pretax_income\":2608724.0108470344,\"revenue\":18200000.0,\"taxes\":652181.0027117586,\"year\":\"Y1\"},{\"cost_of_sales\":10689600.0,\"depreciation\":1505000.0,\"ebit\":2766760.0,\"ebitda\":4271760.0,\"gross_profit\":7331760.0,\"interest_expense\":448116.3763123429,\"interest_income\":17946.87185064311,\"net_income\":1752442.8716537254,\"operating_expenses\":3060000.0,\"pretax_income\":2336590.4955383004,\"revenue\":18021360.0,\"taxes\":584147.6238845751,\"year\":\"Y2\"},{\"cost_of_sales\":10690318.08,\"depreciation\":1655000.0,\"ebit\":2397316.3840000015,\"ebitda\":4052316.3840000015,\"gross_profit\":7173516.3840000015,\"interest_expense\":344435.9455234409,\"interest_income\":18560.14359615374,\"net_income\":1553580.4365545358,\"operating_expenses\":3121200.0,\"pretax_income\":2071440.5820727143,\"revenue\":17863834.464,\"taxes\":517860.1455181786,\"year\":\"Y3\"},{\"cost_of_sales\":10702202.028192,\"depreciation\":1805000.0,\"ebit\":2036572.111033598,\"ebitda\":3841572.111033598,\"gross_profit\":7025196.111033598,\"interest_expense\":241337.5284083442,\"interest_income\":18366.139038219968,\"net_income\":1360200.5412476053,\"operating_expenses\":3183624.0,\"pretax_income\":1813600.7216634739,\"revenue\":17727398.1392256,\"taxes\":453400.18041586847,\"year\":\"Y4\"},{\"cost_of_sales\":10725313.132324398,\"depreciation\":1955000.0,\"ebit\":1684442.3669566368,\"ebitda\":3639442.366956637,\"gross_profit\":6886738.846956637,\"interest_expense\":139875.3053768512,\"interest_income\":17820.741010354624,\"net_income\":1171790.851942605,\"operating_expenses\":3247296.48,\"pretax_income\":1562387.8025901401,\"revenue\":17612051.979281034,\"taxes\":390596.95064753504,\"year\":\"Y5\"}]},\"id\":\"income_statement\",\"label\":\"Income Statement\",\"type\":\"table\"},{\"data\":{\"balance_sheet\":[{\"balance_sheet_check\":0.0,\"cash\":1868100.2711909255,\"equity\":9456543.008135276,\"inventory\":2198630.1369863013,\"net_ppe\":12945000.0,\"other_current_liabilities\":500000.0,\"payables\":1465753.4246575343,\"receivables\":2742465.7534246575,\"revolver\":0.0,\"term_debt\":8331899.7288090745,\"total_assets\":19754196.161601886,\"total_liabilities_equity\":19754196.161601886,\"year\":\"Y1\"},{\"balance_sheet_check\":0.0,\"cash\":1926586.913888079,\"equity\":11208985.879789002,\"inventory\":2196493.1506849313,\"net_ppe\":12940000.0,\"other_current_liabilities\":500000.0,\"payables\":1464328.7671232878,\"receivables\":2715547.397260274,\"revolver\":0.0,\"term_debt\":6605312.814920995,\"total_assets\":19778627.461833283,\"total_liabilities_equity\":19778627.461833283,\"year\":\"Y2\"},{\"balance_sheet_check\":-3.725290298461914e-09,\"cash\":1929427.445741855,\"equity\":12762566.316343538,\"inventory\":2196640.701369863,\"net_ppe\":12785000.0,\"other_current_liabilities\":500000.0,\"payables\":1464427.1342465754,\"receivables\":2691810.6726575345,\"revolver\":0.0,\"term_debt\":4875885.369179141,\"total_assets\":19602878.819769252,\"total_liabilities_equity\":19602878.819769256,\"year\":\"Y3\"},{\"balance_sheet_check\":-3.725290298461914e-09,\"cash\":1907186.4580944455,\"equity\":14122766.857591145,\"inventory\":2199082.608532603,\"net_ppe\":12480000.0,\"other_current_liabilities\":500000.0,\"payables\":1466055.0723550685,\"receivables\":2671251.774403857,\"revolver\":0.0,\"term_debt\":3168698.9110846953,\"total_assets\":19257520.841030907,\"total_liabilities_equity\":19257520.84103091,\"year\":\"Y4\"},{\"balance_sheet_check\":-3.725290298461914e-09,\"cash\":1874887.64295502,\"equity\":15294557.70953375,\"inventory\":2203831.465546109,\"net_ppe\":12025000.0,\"other_current_liabilities\":500000.0,\"payables\":1469220.9770307394,\"receivables\":2653870.846193033,\"revolver\":0.0,\"term_debt\":1493811.2681296752,\"total_assets\":18757589.95469416,\"total_liabilities_equity\":18757589.954694163,\"year\":\"Y5\"}],\"cash_flow\":[{\"beginning_cash\":1500000.0,\"capex\":1500000.0,\"cash_reconciliation_residual\":-4.656612873077393e-10,\"depreciation\":1355000.0,\"ending_cash\":1868100.2711909255,\"financing_cash_flow\":-1668100.2711909255,\"investing_cash_flow\":-1500000.0,\"mandatory_amortization\":-800000.0,\"net_change_cash\":368100.27119092597,\"net_income\":1956543.008135276,\"normalization_working_capital\":224657.53424657555,\"operating_cash_flow\":3536200.5423818515,\"recurring_working_capital\":0.0,\"revolver_draw\":0.0,\"revolver_sweep\":-0.0,\"term_sweep\":-868100.2711909255,\"year\":\"Y1\"},{\"beginning_cash\":1868100.2711909255,\"capex\":1500000.0,\"cash_reconciliation_residual\":4.656612873077393e-10,\"depreciation\":1505000.0,\"ending_cash\":1926586.913888079,\"financing_cash_flow\":-1726586.913888079,\"investing_cash_flow\":-1500000.0,\"mandatory_amortization\":-800000.0,\"net_change_cash\":58486.64269715315,\"net_income\":1752442.8716537254,\"normalization_working_capital\":0.0,\"operating_cash_flow\":3285073.5565852323,\"recurring_working_capital\":27630.68493150687,\"revolver_draw\":0.0,\"revolver_sweep\":-0.0,\"term_sweep\":-926586.9138880791,\"year\":\"Y2\"},{\"beginning_cash\":1926586.913888079,\"capex\":1500000.0,\"cash_reconciliation_residual\":-4.656612873077393e-10,\"depreciation\":1655000.0,\"ending_cash\":1929427.445741855,\"financing_cash_flow\":-1729427.445741855,\"investing_cash_flow\":-1500000.0,\"mandatory_amortization\":-800000.0,\"net_change_cash\":2840.531853776425,\"net_income\":1553580.4365545358,\"normalization_working_capital\":0.0,\"operating_cash_flow\":3232267.9775956315,\"recurring_working_capital\":23687.54104109574,\"revolver_draw\":0.0,\"revolver_sweep\":-0.0,\"term_sweep\":-929427.4457418551,\"year\":\"Y3\"},{\"beginning_cash\":1929427.445741855,\"capex\":1500000.0,\"cash_reconciliation_residual\":4.656612873077393e-10,\"depreciation\":1805000.0,\"ending_cash\":1907186.4580944455,\"financing_cash_flow\":-1707186.4580944455,\"investing_cash_flow\":-1500000.0,\"mandatory_amortization\":-800000.0,\"net_change_cash\":-22240.987647410017,\"net_income\":1360200.5412476053,\"normalization_working_capital\":0.0,\"operating_cash_flow\":3184945.4704470355,\"recurring_working_capital\":19744.92919943016,\"revolver_draw\":0.0,\"revolver_sweep\":-0.0,\"term_sweep\":-907186.4580944455,\"year\":\"Y4\"},{\"beginning_cash\":1907186.4580944455,\"capex\":1500000.0,\"cash_reconciliation_residual\":-4.656612873077393e-10,\"depreciation\":1955000.0,\"ending_cash\":1874887.64295502,\"financing_cash_flow\":-1674887.64295502,\"investing_cash_flow\":-1500000.0,\"mandatory_amortization\":-800000.0,\"net_change_cash\":-32298.815139424987,\"net_income\":1171790.851942605,\"normalization_working_capital\":0.0,\"operating_cash_flow\":3142588.827815595,\"recurring_working_capital\":15797.975872989744,\"revolver_draw\":0.0,\"revolver_sweep\":-0.0,\"term_sweep\":-874887.6429550201,\"year\":\"Y5\"}],\"fcff\":[{\"discount_factor\":0.9174311926605504,\"fcff\":2438407.5342465756,\"operating_tax\":786250.0,\"present_value\":2237071.132336308,\"year\":\"Y1\"},{\"discount_factor\":0.84167999326656,\"fcff\":2107700.684931507,\"operating_tax\":691690.0,\"present_value\":1774009.4983010746,\"year\":\"Y2\"},{\"discount_factor\":0.7721834800610642,\"fcff\":1976674.8290410968,\"operating_tax\":599329.0960000004,\"present_value\":1526355.6484380632,\"year\":\"Y3\"},{\"discount_factor\":0.7084252110651963,\"fcff\":1852174.0124746286,\"operating_tax\":509143.0277583995,\"present_value\":1312126.7657168102,\"year\":\"Y4\"},{\"discount_factor\":0.6499313862983452,\"fcff\":1734129.7510904674,\"operating_tax\":421110.5917391592,\"present_value\":1127065.353147432,\"year\":\"Y5\"}],\"financing\":[{\"closing_cash\":1868100.2711909255,\"closing_revolver\":0.0,\"closing_term_debt\":8331899.7288090745,\"converged\":true,\"convergence_residual\":1.5068799257278442e-05,\"convergence_tolerance\":0.0001,\"interest_expense\":549956.9918647242,\"interest_income\":13681.002711758567,\"iterations\":7,\"mandatory_amortization\":800000.0,\"opening_cash\":1500000.0,\"opening_revolver\":0.0,\"opening_term_debt\":10000000.0,\"pre_financing_cash\":2736200.542381851,\"qualifying_average_cash\":684050.1355879284,\"revolver_draw\":0.0,\"revolver_sweep\":0.0,\"sweep_capacity\":868100.2711909255,\"term_sweep\":868100.2711909255,\"year\":\"Y1\"},{\"closing_cash\":1926586.913888079,\"closing_revolver\":0.0,\"closing_term_debt\":6605312.814920995,\"converged\":true,\"convergence_residual\":1.4693476259708405e-05,\"convergence_tolerance\":0.0001,\"interest_expense\":448116.3763123429,\"interest_income\":17946.87185064311,\"iterations\":7,\"mandatory_amortization\":800000.0,\"opening_cash\":1868100.2711909255,\"opening_revolver\":0.0,\"opening_term_debt\":8331899.7288090745,\"pre_financing_cash\":2853173.827776158,\"qualifying_average_cash\":897343.5925321556,\"revolver_draw\":0.0,\"revolver_sweep\":0.0,\"sweep_capacity\":926586.9138880791,\"term_sweep\":926586.9138880791,\"year\":\"Y2\"},{\"closing_cash\":1929427.445741855,\"closing_revolver\":0.0,\"closing_term_debt\":4875885.369179141,\"converged\":true,\"convergence_residual\":1.4560297131538391e-05,\"convergence_tolerance\":0.0001,\"interest_expense\":344435.9455234409,\"interest_income\":18560.14359615374,\"iterations\":7,\"mandatory_amortization\":800000.0,\"opening_cash\":1926586.913888079,\"opening_revolver\":0.0,\"opening_term_debt\":6605312.814920995,\"pre_financing_cash\":2858854.89148371,\"qualifying_average_cash\":928007.179807687,\"revolver_draw\":0.0,\"revolver_sweep\":0.0,\"sweep_capacity\":929427.4457418551,\"term_sweep\":929427.4457418551,\"year\":\"Y3\"},{\"closing_cash\":1907186.4580944455,\"closing_revolver\":0.0,\"closing_term_debt\":3168698.9110846953,\"converged\":true,\"convergence_residual\":1.4303717762231827e-05,\"convergence_tolerance\":0.0001,\"interest_expense\":241337.5284083442,\"interest_income\":18366.139038219968,\"iterations\":7,\"mandatory_amortization\":800000.0,\"opening_cash\":1929427.445741855,\"opening_revolver\":0.0,\"opening_term_debt\":4875885.369179141,\"pre_financing_cash\":2814372.916188891,\"qualifying_average_cash\":918306.9519109984,\"revolver_draw\":0.0,\"revolver_sweep\":0.0,\"sweep_capacity\":907186.4580944455,\"term_sweep\":907186.4580944455,\"year\":\"Y4\"},{\"closing_cash\":1874887.64295502,\"closing_revolver\":0.0,\"closing_term_debt\":1493811.2681296752,\"converged\":true,\"convergence_residual\":1.4003366231918335e-05,\"convergence_tolerance\":0.0001,\"interest_expense\":139875.3053768512,\"interest_income\":17820.741010354624,\"iterations\":7,\"mandatory_amortization\":800000.0,\"opening_cash\":1907186.4580944455,\"opening_revolver\":0.0,\"opening_term_debt\":3168698.9110846953,\"pre_financing_cash\":2749775.28591004,\"qualifying_average_cash\":891037.0505177311,\"revolver_draw\":0.0,\"revolver_sweep\":0.0,\"sweep_capacity\":874887.6429550201,\"term_sweep\":874887.6429550201,\"year\":\"Y5\"}],\"income_statement\":[{\"cost_of_sales\":10700000.0,\"depreciation\":1355000.0,\"ebit\":3145000.0,\"ebitda\":4500000.0,\"gross_profit\":7500000.0,\"interest_expense\":549956.9918647242,\"interest_income\":13681.002711758567,\"net_income\":1956543.008135276,\"operating_expenses\":3000000.0,\"pretax_income\":2608724.0108470344,\"revenue\":18200000.0,\"taxes\":652181.0027117586,\"year\":\"Y1\"},{\"cost_of_sales\":10689600.0,\"depreciation\":1505000.0,\"ebit\":2766760.0,\"ebitda\":4271760.0,\"gross_profit\":7331760.0,\"interest_expense\":448116.3763123429,\"interest_income\":17946.87185064311,\"net_income\":1752442.8716537254,\"operating_expenses\":3060000.0,\"pretax_income\":2336590.4955383004,\"revenue\":18021360.0,\"taxes\":584147.6238845751,\"year\":\"Y2\"},{\"cost_of_sales\":10690318.08,\"depreciation\":1655000.0,\"ebit\":2397316.3840000015,\"ebitda\":4052316.3840000015,\"gross_profit\":7173516.3840000015,\"interest_expense\":344435.9455234409,\"interest_income\":18560.14359615374,\"net_income\":1553580.4365545358,\"operating_expenses\":3121200.0,\"pretax_income\":2071440.5820727143,\"revenue\":17863834.464,\"taxes\":517860.1455181786,\"year\":\"Y3\"},{\"cost_of_sales\":10702202.028192,\"depreciation\":1805000.0,\"ebit\":2036572.111033598,\"ebitda\":3841572.111033598,\"gross_profit\":7025196.111033598,\"interest_expense\":241337.5284083442,\"interest_income\":18366.139038219968,\"net_income\":1360200.5412476053,\"operating_expenses\":3183624.0,\"pretax_income\":1813600.7216634739,\"revenue\":17727398.1392256,\"taxes\":453400.18041586847,\"year\":\"Y4\"},{\"cost_of_sales\":10725313.132324398,\"depreciation\":1955000.0,\"ebit\":1684442.3669566368,\"ebitda\":3639442.366956637,\"gross_profit\":6886738.846956637,\"interest_expense\":139875.3053768512,\"interest_income\":17820.741010354624,\"net_income\":1171790.851942605,\"operating_expenses\":3247296.48,\"pretax_income\":1562387.8025901401,\"revenue\":17612051.979281034,\"taxes\":390596.95064753504,\"year\":\"Y5\"}],\"integrity_status\":{\"balance_sheet\":{\"passed\":true,\"residuals\":[0.0,0.0,-3.725290298461914e-09,-3.725290298461914e-09,-3.725290298461914e-09]},\"cash_flow\":{\"passed\":true,\"residuals\":[-4.656612873077393e-10,4.656612873077393e-10,-4.656612873077393e-10,4.656612873077393e-10,-4.656612873077393e-10]},\"debt_sweep\":{\"debt_nonnegative_statuses\":[true,true,true,true,true],\"draw_sweep_exclusivity_residuals\":[0.0,0.0,0.0,0.0,0.0],\"mandatory_amortization_cap_statuses\":[true,true,true,true,true],\"passed\":true,\"repayment_availability_statuses\":[true,true,true,true,true],\"revolver_first_allocation_statuses\":[true,true,true,true,true],\"revolver_rollforward_residuals\":[0.0,0.0,0.0,0.0,0.0],\"term_rollforward_residuals\":[0.0,0.0,0.0,0.0,0.0]},\"enterprise_to_equity_bridge\":{\"opening_cash\":1500000.0,\"opening_revolver\":0.0,\"opening_term_debt\":10000000.0,\"passed\":true,\"residual\":0.0},\"interest_convergence\":{\"maximum_convergence_residual\":1.5068799257278442e-05,\"passed\":true,\"residuals\":[1.5068799257278442e-05,1.4693476259708405e-05,1.4560297131538391e-05,1.4303717762231827e-05,1.4003366231918335e-05],\"statuses\":[true,true,true,true,true]},\"minimum_cash\":{\"compliance_statuses\":[true,true,true,true,true],\"headroom\":[868100.2711909255,926586.9138880791,929427.4457418551,907186.4580944455,874887.6429550201],\"passed\":true},\"ppe\":{\"active_basis_rollforward_residuals\":[0.0,0.0,0.0,0.0,0.0],\"passed\":true,\"residuals\":[0.0,0.0,0.0,0.0,0.0]},\"retained_earnings\":{\"passed\":true,\"residuals\":[0.0,9.313225746154785e-10,4.656612873077393e-10,9.313225746154785e-10,-6.984919309616089e-10]}},\"opening_working_capital\":{\"normalization_cash_flow\":224657.53424657555,\"normalized_nwc\":3475342.4657534244,\"reported_nwc\":3700000.0},\"operations\":[{\"corporate_opex\":3000000.0,\"corporate_opex_inflation\":null,\"cost_of_sales\":10700000.0,\"ebit\":3145000.0,\"ebitda\":4500000.0,\"ebitda_margin\":0.24725274725274726,\"gross_margin\":0.41208791208791207,\"gross_profit\":7500000.0,\"revenue\":18200000.0,\"year\":\"Y1\"},{\"corporate_opex\":3060000.0,\"corporate_opex_inflation\":0.02,\"cost_of_sales\":10689600.0,\"ebit\":2766760.0,\"ebitda\":4271760.0,\"ebitda_margin\":0.23703871405931629,\"gross_margin\":0.40683721983246546,\"gross_profit\":7331760.0,\"revenue\":18021360.0,\"year\":\"Y2\"},{\"corporate_opex\":3121200.0,\"corporate_opex_inflation\":0.02,\"cost_of_sales\":10690318.08,\"ebit\":2397316.3840000015,\"ebitda\":4052316.3840000015,\"ebitda_margin\":0.22684471198870604,\"gross_margin\":0.40156643851891893,\"gross_profit\":7173516.3840000015,\"revenue\":17863834.464,\"year\":\"Y3\"},{\"corporate_opex\":3183624.0,\"corporate_opex_inflation\":0.02,\"cost_of_sales\":10702202.028192,\"ebit\":2036572.111033598,\"ebitda\":3841572.111033598,\"ebitda_margin\":0.21670253473538856,\"gross_margin\":0.396290310391849,\"gross_profit\":7025196.111033598,\"revenue\":17727398.1392256,\"year\":\"Y4\"},{\"corporate_opex\":3247296.48,\"corporate_opex_inflation\":0.02,\"cost_of_sales\":10725313.132324398,\"ebit\":1684442.3669566368,\"ebitda\":3639442.366956637,\"ebitda_margin\":0.20664499351001844,\"gross_margin\":0.39102421768106604,\"gross_profit\":6886738.846956637,\"revenue\":17612051.979281034,\"year\":\"Y5\"}],\"paint\":[{\"gross_margin\":0.4453125,\"gross_profit\":5700000.0,\"gross_profit_per_unit\":14.25,\"overhead\":1500000.0,\"overhead_inflation\":null,\"price\":32.0,\"price_inflation\":null,\"revenue\":12800000.0,\"revenue_per_unit\":32.0,\"unit_cost\":14.0,\"unit_cost_inflation\":null,\"unit_growth\":null,\"units\":400000.0,\"variable_cost\":5600000.0,\"variable_cost_per_unit\":14.0,\"year\":\"Y1\"},{\"gross_margin\":0.43914473684210525,\"gross_profit\":5446800.0,\"gross_profit_per_unit\":14.333684210526316,\"overhead\":1530000.0,\"overhead_inflation\":0.02,\"price\":32.64,\"price_inflation\":0.02,\"revenue\":12403200.0,\"revenue_per_unit\":32.64,\"unit_cost\":14.280000000000001,\"unit_cost_inflation\":0.02,\"unit_growth\":-0.05,\"units\":380000.0,\"variable_cost\":5426400.0,\"variable_cost_per_unit\":14.28,\"year\":\"Y2\"},{\"gross_margin\":0.4326523545706371,\"gross_profit\":5199919.2,\"gross_profit_per_unit\":14.404208310249308,\"overhead\":1560600.0,\"overhead_inflation\":0.02,\"price\":33.2928,\"price_inflation\":0.02,\"revenue\":12018700.8,\"revenue_per_unit\":33.2928,\"unit_cost\":14.565600000000002,\"unit_cost_inflation\":0.02,\"unit_growth\":-0.05,\"units\":361000.0,\"variable_cost\":5258181.600000001,\"variable_cost_per_unit\":14.565600000000002,\"year\":\"Y3\"},{\"gross_margin\":0.42581826796909167,\"gross_profit\":4959131.104799999,\"gross_profit_per_unit\":14.460216080478201,\"overhead\":1591812.0,\"overhead_inflation\":0.02,\"price\":33.958656,\"price_inflation\":0.02,\"revenue\":11646121.075199999,\"revenue_per_unit\":33.958656,\"unit_cost\":14.856912000000001,\"unit_cost_inflation\":0.02,\"unit_growth\":-0.05,\"units\":342950.0,\"variable_cost\":5095177.9704,\"variable_cost_per_unit\":14.856912,\"year\":\"Y4\"},{\"gross_margin\":0.41862449259904383,\"gross_profit\":4724215.628551199,\"gross_profit_per_unit\":14.500243640092384,\"overhead\":1623648.24,\"overhead_inflation\":0.02,\"price\":34.63782912,\"price_inflation\":0.02,\"revenue\":11285091.3218688,\"revenue_per_unit\":34.63782912,\"unit_cost\":15.154050240000002,\"unit_cost_inflation\":0.02,\"unit_growth\":-0.05,\"units\":325802.5,\"variable_cost\":4937227.4533176,\"variable_cost_per_unit\":15.15405024,\"year\":\"Y5\"}],\"periods\":[\"Y1\",\"Y2\",\"Y3\",\"Y4\",\"Y5\"],\"ppe\":[{\"capex\":1500000.0,\"closing_net_ppe\":12945000.0,\"depreciation\":1355000.0,\"disposals\":0.0,\"pools\":[{\"capex\":0.0,\"closing_accumulated_depreciation\":1280000.0,\"closing_gross\":12800000.0,\"closing_net\":11520000.0,\"depreciation\":1280000.0,\"disposals\":0.0,\"fully_depreciated_retirement_availability\":0.0,\"id\":\"opening\",\"opening_accumulated_depreciation\":0.0,\"opening_gross\":12800000.0,\"opening_net\":12800000.0,\"pre_retirement_net_book_value\":12800000.0,\"retirement_accumulated_depreciation\":0.0,\"retirement_gross_cost\":0.0},{\"capex\":1500000.0,\"closing_accumulated_depreciation\":75000.0,\"closing_gross\":1500000.0,\"closing_net\":1425000.0,\"depreciation\":75000.0,\"disposals\":0.0,\"fully_depreciated_retirement_availability\":0.0,\"id\":\"capex_1\",\"opening_accumulated_depreciation\":0.0,\"opening_gross\":1500000.0,\"opening_net\":1500000.0,\"pre_retirement_net_book_value\":1500000.0,\"retirement_accumulated_depreciation\":0.0,\"retirement_gross_cost\":0.0}],\"retirement_accumulated_depreciation\":0.0,\"retirement_gross_cost\":0.0,\"year\":\"Y1\"},{\"capex\":1500000.0,\"closing_net_ppe\":12940000.0,\"depreciation\":1505000.0,\"disposals\":0.0,\"pools\":[{\"capex\":0.0,\"closing_accumulated_depreciation\":2560000.0,\"closing_gross\":12800000.0,\"closing_net\":10240000.0,\"depreciation\":1280000.0,\"disposals\":0.0,\"fully_depreciated_retirement_availability\":0.0,\"id\":\"opening\",\"opening_accumulated_depreciation\":1280000.0,\"opening_gross\":12800000.0,\"opening_net\":11520000.0,\"pre_retirement_net_book_value\":11520000.0,\"retirement_accumulated_depreciation\":0.0,\"retirement_gross_cost\":0.0},{\"capex\":0.0,\"closing_accumulated_depreciation\":225000.0,\"closing_gross\":1500000.0,\"closing_net\":1275000.0,\"depreciation\":150000.0,\"disposals\":0.0,\"fully_depreciated_retirement_availability\":0.0,\"id\":\"capex_1\",\"opening_accumulated_depreciation\":75000.0,\"opening_gross\":1500000.0,\"opening_net\":1425000.0,\"pre_retirement_net_book_value\":1425000.0,\"retirement_accumulated_depreciation\":0.0,\"retirement_gross_cost\":0.0},{\"capex\":1500000.0,\"closing_accumulated_depreciation\":75000.0,\"closing_gross\":1500000.0,\"closing_net\":1425000.0,\"depreciation\":75000.0,\"disposals\":0.0,\"fully_depreciated_retirement_availability\":0.0,\"id\":\"capex_2\",\"opening_accumulated_depreciation\":0.0,\"opening_gross\":1500000.0,\"opening_net\":1500000.0,\"pre_retirement_net_book_value\":1500000.0,\"retirement_accumulated_depreciation\":0.0,\"retirement_gross_cost\":0.0}],\"retirement_accumulated_depreciation\":0.0,\"retirement_gross_cost\":0.0,\"year\":\"Y2\"},{\"capex\":1500000.0,\"closing_net_ppe\":12785000.0,\"depreciation\":1655000.0,\"disposals\":0.0,\"pools\":[{\"capex\":0.0,\"closing_accumulated_depreciation\":3840000.0,\"closing_gross\":12800000.0,\"closing_net\":8960000.0,\"depreciation\":1280000.0,\"disposals\":0.0,\"fully_depreciated_retirement_availability\":0.0,\"id\":\"opening\",\"opening_accumulated_depreciation\":2560000.0,\"opening_gross\":12800000.0,\"opening_net\":10240000.0,\"pre_retirement_net_book_value\":10240000.0,\"retirement_accumulated_depreciation\":0.0,\"retirement_gross_cost\":0.0},{\"capex\":0.0,\"closing_accumulated_depreciation\":375000.0,\"closing_gross\":1500000.0,\"closing_net\":1125000.0,\"depreciation\":150000.0,\"disposals\":0.0,\"fully_depreciated_retirement_availability\":0.0,\"id\":\"capex_1\",\"opening_accumulated_depreciation\":225000.0,\"opening_gross\":1500000.0,\"opening_net\":1275000.0,\"pre_retirement_net_book_value\":1275000.0,\"retirement_accumulated_depreciation\":0.0,\"retirement_gross_cost\":0.0},{\"capex\":0.0,\"closing_accumulated_depreciation\":225000.0,\"closing_gross\":1500000.0,\"closing_net\":1275000.0,\"depreciation\":150000.0,\"disposals\":0.0,\"fully_depreciated_retirement_availability\":0.0,\"id\":\"capex_2\",\"opening_accumulated_depreciation\":75000.0,\"opening_gross\":1500000.0,\"opening_net\":1425000.0,\"pre_retirement_net_book_value\":1425000.0,\"retirement_accumulated_depreciation\":0.0,\"retirement_gross_cost\":0.0},{\"capex\":1500000.0,\"closing_accumulated_depreciation\":75000.0,\"closing_gross\":1500000.0,\"closing_net\":1425000.0,\"depreciation\":75000.0,\"disposals\":0.0,\"fully_depreciated_retirement_availability\":0.0,\"id\":\"capex_3\",\"opening_accumulated_depreciation\":0.0,\"opening_gross\":1500000.0,\"opening_net\":1500000.0,\"pre_retirement_net_book_value\":1500000.0,\"retirement_accumulated_depreciation\":0.0,\"retirement_gross_cost\":0.0}],\"retirement_accumulated_depreciation\":0.0,\"retirement_gross_cost\":0.0,\"year\":\"Y3\"},{\"capex\":1500000.0,\"closing_net_ppe\":12480000.0,\"depreciation\":1805000.0,\"disposals\":0.0,\"pools\":[{\"capex\":0.0,\"closing_accumulated_depreciation\":5120000.0,\"closing_gross\":12800000.0,\"closing_net\":7680000.0,\"depreciation\":1280000.0,\"disposals\":0.0,\"fully_depreciated_retirement_availability\":0.0,\"id\":\"opening\",\"opening_accumulated_depreciation\":3840000.0,\"opening_gross\":12800000.0,\"opening_net\":8960000.0,\"pre_retirement_net_book_value\":8960000.0,\"retirement_accumulated_depreciation\":0.0,\"retirement_gross_cost\":0.0},{\"capex\":0.0,\"closing_accumulated_depreciation\":525000.0,\"closing_gross\":1500000.0,\"closing_net\":975000.0,\"depreciation\":150000.0,\"disposals\":0.0,\"fully_depreciated_retirement_availability\":0.0,\"id\":\"capex_1\",\"opening_accumulated_depreciation\":375000.0,\"opening_gross\":1500000.0,\"opening_net\":1125000.0,\"pre_retirement_net_book_value\":1125000.0,\"retirement_accumulated_depreciation\":0.0,\"retirement_gross_cost\":0.0},{\"capex\":0.0,\"closing_accumulated_depreciation\":375000.0,\"closing_gross\":1500000.0,\"closing_net\":1125000.0,\"depreciation\":150000.0,\"disposals\":0.0,\"fully_depreciated_retirement_availability\":0.0,\"id\":\"capex_2\",\"opening_accumulated_depreciation\":225000.0,\"opening_gross\":1500000.0,\"opening_net\":1275000.0,\"pre_retirement_net_book_value\":1275000.0,\"retirement_accumulated_depreciation\":0.0,\"retirement_gross_cost\":0.0},{\"capex\":0.0,\"closing_accumulated_depreciation\":225000.0,\"closing_gross\":1500000.0,\"closing_net\":1275000.0,\"depreciation\":150000.0,\"disposals\":0.0,\"fully_depreciated_retirement_availability\":0.0,\"id\":\"capex_3\",\"opening_accumulated_depreciation\":75000.0,\"opening_gross\":1500000.0,\"opening_net\":1425000.0,\"pre_retirement_net_book_value\":1425000.0,\"retirement_accumulated_depreciation\":0.0,\"retirement_gross_cost\":0.0},{\"capex\":1500000.0,\"closing_accumulated_depreciation\":75000.0,\"closing_gross\":1500000.0,\"closing_net\":1425000.0,\"depreciation\":75000.0,\"disposals\":0.0,\"fully_depreciated_retirement_availability\":0.0,\"id\":\"capex_4\",\"opening_accumulated_depreciation\":0.0,\"opening_gross\":1500000.0,\"opening_net\":1500000.0,\"pre_retirement_net_book_value\":1500000.0,\"retirement_accumulated_depreciation\":0.0,\"retirement_gross_cost\":0.0}],\"retirement_accumulated_depreciation\":0.0,\"retirement_gross_cost\":0.0,\"year\":\"Y4\"},{\"capex\":1500000.0,\"closing_net_ppe\":12025000.0,\"depreciation\":1955000.0,\"disposals\":0.0,\"pools\":[{\"capex\":0.0,\"closing_accumulated_depreciation\":6400000.0,\"closing_gross\":12800000.0,\"closing_net\":6400000.0,\"depreciation\":1280000.0,\"disposals\":0.0,\"fully_depreciated_retirement_availability\":0.0,\"id\":\"opening\",\"opening_accumulated_depreciation\":5120000.0,\"opening_gross\":12800000.0,\"opening_net\":7680000.0,\"pre_retirement_net_book_value\":7680000.0,\"retirement_accumulated_depreciation\":0.0,\"retirement_gross_cost\":0.0},{\"capex\":0.0,\"closing_accumulated_depreciation\":675000.0,\"closing_gross\":1500000.0,\"closing_net\":825000.0,\"depreciation\":150000.0,\"disposals\":0.0,\"fully_depreciated_retirement_availability\":0.0,\"id\":\"capex_1\",\"opening_accumulated_depreciation\":525000.0,\"opening_gross\":1500000.0,\"opening_net\":975000.0,\"pre_retirement_net_book_value\":975000.0,\"retirement_accumulated_depreciation\":0.0,\"retirement_gross_cost\":0.0},{\"capex\":0.0,\"closing_accumulated_depreciation\":525000.0,\"closing_gross\":1500000.0,\"closing_net\":975000.0,\"depreciation\":150000.0,\"disposals\":0.0,\"fully_depreciated_retirement_availability\":0.0,\"id\":\"capex_2\",\"opening_accumulated_depreciation\":375000.0,\"opening_gross\":1500000.0,\"opening_net\":1125000.0,\"pre_retirement_net_book_value\":1125000.0,\"retirement_accumulated_depreciation\":0.0,\"retirement_gross_cost\":0.0},{\"capex\":0.0,\"closing_accumulated_depreciation\":375000.0,\"closing_gross\":1500000.0,\"closing_net\":1125000.0,\"depreciation\":150000.0,\"disposals\":0.0,\"fully_depreciated_retirement_availability\":0.0,\"id\":\"capex_3\",\"opening_accumulated_depreciation\":225000.0,\"opening_gross\":1500000.0,\"opening_net\":1275000.0,\"pre_retirement_net_book_value\":1275000.0,\"retirement_accumulated_depreciation\":0.0,\"retirement_gross_cost\":0.0},{\"capex\":0.0,\"closing_accumulated_depreciation\":225000.0,\"closing_gross\":1500000.0,\"closing_net\":1275000.0,\"depreciation\":150000.0,\"disposals\":0.0,\"fully_depreciated_retirement_availability\":0.0,\"id\":\"capex_4\",\"opening_accumulated_depreciation\":75000.0,\"opening_gross\":1500000.0,\"opening_net\":1425000.0,\"pre_retirement_net_book_value\":1425000.0,\"retirement_accumulated_depreciation\":0.0,\"retirement_gross_cost\":0.0},{\"capex\":1500000.0,\"closing_accumulated_depreciation\":75000.0,\"closing_gross\":1500000.0,\"closing_net\":1425000.0,\"depreciation\":75000.0,\"disposals\":0.0,\"fully_depreciated_retirement_availability\":0.0,\"id\":\"capex_5\",\"opening_accumulated_depreciation\":0.0,\"opening_gross\":1500000.0,\"opening_net\":1500000.0,\"pre_retirement_net_book_value\":1500000.0,\"retirement_accumulated_depreciation\":0.0,\"retirement_gross_cost\":0.0}],\"retirement_accumulated_depreciation\":0.0,\"retirement_gross_cost\":0.0,\"year\":\"Y5\"}],\"retained_earnings\":[{\"closing_equity\":9456543.008135276,\"net_income\":1956543.008135276,\"opening_equity\":7500000.0,\"year\":\"Y1\"},{\"closing_equity\":11208985.879789002,\"net_income\":1752442.8716537254,\"opening_equity\":9456543.008135276,\"year\":\"Y2\"},{\"closing_equity\":12762566.316343538,\"net_income\":1553580.4365545358,\"opening_equity\":11208985.879789002,\"year\":\"Y3\"},{\"closing_equity\":14122766.857591145,\"net_income\":1360200.5412476053,\"opening_equity\":12762566.316343538,\"year\":\"Y4\"},{\"closing_equity\":15294557.70953375,\"net_income\":1171790.851942605,\"opening_equity\":14122766.857591145,\"year\":\"Y5\"}],\"tools\":[{\"gross_margin\":0.3333333333333333,\"gross_profit\":1800000.0,\"gross_profit_per_unit\":6.0,\"price\":18.0,\"price_inflation\":null,\"purchase_cost\":3000000.0,\"purchase_cost_per_unit\":10.0,\"revenue\":5400000.0,\"revenue_per_unit\":18.0,\"storage\":600000.0,\"storage_inflation\":null,\"unit_cost\":10.0,\"unit_cost_inflation\":null,\"unit_growth\":null,\"units\":300000.0,\"year\":\"Y1\"},{\"gross_margin\":0.3355119825708061,\"gross_profit\":1884960.0,\"gross_profit_per_unit\":6.16,\"price\":18.36,\"price_inflation\":0.02,\"purchase_cost\":3121200.0,\"purchase_cost_per_unit\":10.2,\"revenue\":5618160.0,\"revenue_per_unit\":18.36,\"storage\":612000.0,\"storage_inflation\":0.02,\"unit_cost\":10.2,\"unit_cost_inflation\":0.02,\"unit_growth\":0.02,\"units\":306000.0,\"year\":\"Y2\"},{\"gross_margin\":0.3376479131957794,\"gross_profit\":1973597.184,\"gross_profit_per_unit\":6.3232,\"price\":18.7272,\"price_inflation\":0.02,\"purchase_cost\":3247296.48,\"purchase_cost_per_unit\":10.404,\"revenue\":5845133.664,\"revenue_per_unit\":18.7272,\"storage\":624240.0,\"storage_inflation\":0.02,\"unit_cost\":10.404,\"unit_cost_inflation\":0.02,\"unit_growth\":0.02,\"units\":312120.0,\"year\":\"Y3\"},{\"gross_margin\":0.33974196282810615,\"gross_profit\":2066065.0062336,\"gross_profit_per_unit\":6.489663999999999,\"price\":19.101744,\"price_inflation\":0.02,\"purchase_cost\":3378487.2577920007,\"purchase_cost_per_unit\":10.61208,\"revenue\":6081277.0640256,\"revenue_per_unit\":19.101744,\"storage\":636724.8,\"storage_inflation\":0.02,\"unit_cost\":10.61208,\"unit_cost_inflation\":0.02,\"unit_growth\":0.02,\"units\":318362.4,\"year\":\"Y4\"},{\"gross_margin\":0.34179495266372056,\"gross_profit\":2162523.218405437,\"gross_profit_per_unit\":6.659457279999998,\"price\":19.48377888,\"price_inflation\":0.02,\"purchase_cost\":3514978.1430067974,\"purchase_cost_per_unit\":10.824321600000001,\"revenue\":6326960.657412235,\"revenue_per_unit\":19.48377888,\"storage\":649459.2960000001,\"storage_inflation\":0.02,\"unit_cost\":10.824321600000001,\"unit_cost_inflation\":0.02,\"unit_growth\":0.02,\"units\":324729.64800000004,\"year\":\"Y5\"}],\"valuation\":{\"conventional_wacc_direction_supported\":true,\"enterprise_value\":22168955.335394036,\"equity_value\":13668955.335394036,\"exit_multiple\":6.0,\"net_debt\":-381076.3748253449,\"opening_cash\":1500000.0,\"opening_net_debt\":8500000.0,\"opening_revolver\":0.0,\"opening_term_debt\":10000000.0,\"sensitivity\":[{\"exit_multiple\":5.0,\"values\":[12857174.193393584,12060285.95143463,11303567.512484979,10584595.330218196,9901113.827098895]},{\"exit_multiple\":5.5,\"values\":[14154610.24772729,13298757.612196349,12486261.423939507,11714499.015062325,10981029.780130394]},{\"exit_multiple\":6.0,\"values\":[15452046.302060995,14537229.27295807,13668955.335394036,12844402.699906453,12060945.733161896]},{\"exit_multiple\":6.5,\"values\":[16749482.3563947,15775700.933719784,14851649.246848565,13974306.384750582,13140861.686193395]},{\"exit_multiple\":7.0,\"values\":[18046918.410728406,17014172.594481505,16034343.158303093,15104210.069594711,14220777.639224894]}],\"sensitivity_value_type\":\"equity_value\",\"sensitivity_wacc_adjacent_changes\":[[-796888.2419589534,-756718.438949652,-718972.182266783,-683481.503119301],[-855852.6355309412,-812496.1882568412,-771762.4088771828,-733469.2349319309],[-914817.0291029252,-868273.937564034,-824552.6354875825,-783456.966744557],[-973781.4226749167,-924051.6868712194,-877342.8620979823,-833444.6985571869],[-1032745.8162469007,-979829.4361784123,-930133.0887083821,-883432.4303698167]],\"sensitivity_wacc_rates\":[0.07,0.08,0.09,0.1,0.11],\"signed_fcff_profile\":[2438407.5342465756,2107700.684931507,1976674.8290410968,1852174.0124746286,1734129.7510904674],\"terminal_cash\":1874887.64295502,\"terminal_discount_factor\":0.6499313862983452,\"terminal_ebitda\":3639442.366956637,\"terminal_present_value\":14192326.937454348,\"terminal_revolver\":0.0,\"terminal_term_debt\":1493811.2681296752,\"terminal_total_debt\":1493811.2681296752,\"terminal_value\":21836654.20173982,\"wacc_direction_rounding_tolerance\":1e-06,\"wacc_direction_status\":\"conventional_non_increasing_verified\",\"wacc_direction_warning\":null},\"working_capital\":[{\"inventory\":2198630.1369863013,\"normalization_cash_flow\":224657.53424657555,\"nwc\":3475342.4657534244,\"payables\":1465753.4246575343,\"receivables\":2742465.7534246575,\"recurring_cash_flow\":0.0,\"year\":\"Y1\"},{\"inventory\":2196493.1506849313,\"normalization_cash_flow\":0.0,\"nwc\":3447711.7808219176,\"payables\":1464328.7671232878,\"receivables\":2715547.397260274,\"recurring_cash_flow\":27630.68493150687,\"year\":\"Y2\"},{\"inventory\":2196640.701369863,\"normalization_cash_flow\":0.0,\"nwc\":3424024.239780822,\"payables\":1464427.1342465754,\"receivables\":2691810.6726575345,\"recurring_cash_flow\":23687.54104109574,\"year\":\"Y3\"},{\"inventory\":2199082.608532603,\"normalization_cash_flow\":0.0,\"nwc\":3404279.3105813917,\"payables\":1466055.0723550685,\"receivables\":2671251.774403857,\"recurring_cash_flow\":19744.92919943016,\"year\":\"Y4\"},{\"inventory\":2203831.465546109,\"normalization_cash_flow\":0.0,\"nwc\":3388481.334708402,\"payables\":1469220.9770307394,\"receivables\":2653870.846193033,\"recurring_cash_flow\":15797.975872989744,\"year\":\"Y5\"}]},\"id\":\"financial_model\",\"label\":\"Integrated Financial Schedules\",\"type\":\"custom\"},{\"data\":{\"balance_sheet\":{\"passed\":true,\"residuals\":[0.0,0.0,-3.725290298461914e-09,-3.725290298461914e-09,-3.725290298461914e-09]},\"cash_flow\":{\"passed\":true,\"residuals\":[-4.656612873077393e-10,4.656612873077393e-10,-4.656612873077393e-10,4.656612873077393e-10,-4.656612873077393e-10]},\"debt_sweep\":{\"debt_nonnegative_statuses\":[true,true,true,true,true],\"draw_sweep_exclusivity_residuals\":[0.0,0.0,0.0,0.0,0.0],\"mandatory_amortization_cap_statuses\":[true,true,true,true,true],\"passed\":true,\"repayment_availability_statuses\":[true,true,true,true,true],\"revolver_first_allocation_statuses\":[true,true,true,true,true],\"revolver_rollforward_residuals\":[0.0,0.0,0.0,0.0,0.0],\"term_rollforward_residuals\":[0.0,0.0,0.0,0.0,0.0]},\"enterprise_to_equity_bridge\":{\"opening_cash\":1500000.0,\"opening_revolver\":0.0,\"opening_term_debt\":10000000.0,\"passed\":true,\"residual\":0.0},\"interest_convergence\":{\"maximum_convergence_residual\":1.5068799257278442e-05,\"passed\":true,\"residuals\":[1.5068799257278442e-05,1.4693476259708405e-05,1.4560297131538391e-05,1.4303717762231827e-05,1.4003366231918335e-05],\"statuses\":[true,true,true,true,true]},\"minimum_cash\":{\"compliance_statuses\":[true,true,true,true,true],\"headroom\":[868100.2711909255,926586.9138880791,929427.4457418551,907186.4580944455,874887.6429550201],\"passed\":true},\"ppe\":{\"active_basis_rollforward_residuals\":[0.0,0.0,0.0,0.0,0.0],\"passed\":true,\"residuals\":[0.0,0.0,0.0,0.0,0.0]},\"retained_earnings\":{\"passed\":true,\"residuals\":[0.0,9.313225746154785e-10,4.656612873077393e-10,9.313225746154785e-10,-6.984919309616089e-10]}},\"id\":\"current_case_integrity_status\",\"label\":\"Current-Case Integrity Status\",\"type\":\"custom\"},{\"data\":{\"conventional_wacc_direction_supported\":true,\"ending_cash\":1874887.64295502,\"enterprise_value\":22168955.335394036,\"equity_value\":13668955.335394036,\"equity_value_valuation_date\":\"opening_date\",\"exit_multiple\":6.0,\"opening_cash\":1500000.0,\"opening_net_debt\":8500000.0,\"opening_revolver\":0.0,\"opening_term_debt\":10000000.0,\"sensitivity\":[{\"exit_multiple\":5.0,\"values\":[12857174.193393584,12060285.95143463,11303567.512484979,10584595.330218196,9901113.827098895]},{\"exit_multiple\":5.5,\"values\":[14154610.24772729,13298757.612196349,12486261.423939507,11714499.015062325,10981029.780130394]},{\"exit_multiple\":6.0,\"values\":[15452046.302060995,14537229.27295807,13668955.335394036,12844402.699906453,12060945.733161896]},{\"exit_multiple\":6.5,\"values\":[16749482.3563947,15775700.933719784,14851649.246848565,13974306.384750582,13140861.686193395]},{\"exit_multiple\":7.0,\"values\":[18046918.410728406,17014172.594481505,16034343.158303093,15104210.069594711,14220777.639224894]}],\"sensitivity_value_type\":\"equity_value\",\"sensitivity_wacc_adjacent_changes\":[[-796888.2419589534,-756718.438949652,-718972.182266783,-683481.503119301],[-855852.6355309412,-812496.1882568412,-771762.4088771828,-733469.2349319309],[-914817.0291029252,-868273.937564034,-824552.6354875825,-783456.966744557],[-973781.4226749167,-924051.6868712194,-877342.8620979823,-833444.6985571869],[-1032745.8162469007,-979829.4361784123,-930133.0887083821,-883432.4303698167]],\"signed_fcff_profile\":[2438407.5342465756,2107700.684931507,1976674.8290410968,1852174.0124746286,1734129.7510904674],\"terminal_cash_reference_metric\":1874887.64295502,\"terminal_debt_reference_metric\":1493811.2681296752,\"terminal_discount_factor\":0.6499313862983452,\"terminal_ebitda\":3639442.366956637,\"terminal_net_debt_reference_metric\":-381076.3748253449,\"terminal_present_value\":14192326.937454348,\"terminal_value\":21836654.20173982,\"wacc_direction_rounding_tolerance_eur\":1e-06,\"wacc_direction_status\":\"conventional_non_increasing_verified\",\"wacc_direction_warning\":null,\"year_5_ebitda\":3639442.366956637,\"year_5_revenue\":17612051.979281034},\"id\":\"valuation\",\"label\":\"Exit Multiple DCF and Enterprise-to-Equity Bridge\",\"type\":\"custom\"}],\"output_version\":\"2026-05-25\"}",
+              "expected_behavior": "change",
+              "expected_behavior_met": true,
+              "expected_behavior_evaluable": true,
+              "observed_behavior": "changed",
+              "confirmed_issue": false
+            },
+            {
+              "issue_id": "ppe_disposal_economic_invariance_coverage",
+              "severity": "medium",
+              "category": "test_coverage",
+              "artifacts": [
+                "model_package/model/checks.py",
+                "model_package/spec/model_tests.json",
+                "model_package/reports/model_tests_report.json"
+              ],
+              "human_decision_required": false,
+              "observed": "The disposal test proves only retirement-cost activation. It does not prove that positive disposal leaves active basis, depreciation, EBIT, tax, cash flow, and FCFF unchanged versus an otherwise identical zero-disposal fixture.",
+              "required_change": "Strengthen the existing ppe_pool_roll_forward_and_disposal_behavior check with an executed zero-disposal versus positive-disposal comparison covering all declared no-economic-impact outputs.",
+              "acceptance_criteria": [
+                "The check reports positive retirement gross cost and equal retirement accumulated depreciation in the positive-disposal case.",
+                "Active depreciable basis and depreciation match between zero- and positive-disposal cases within tolerance.",
+                "EBIT, tax, cash flow, and FCFF match between the two cases within tolerance.",
+                "The check remains within the existing declared test ID."
+              ],
+              "executed": true,
+              "verification_probe": {
+                "input_path": "disposal_rate",
+                "changed_value": 0.25,
+                "output_path": "output_blocks.3.data.ppe.0.retirement_gross_cost",
+                "expected_behavior": "not_null"
+              },
+              "probe_valid": true,
+              "input_path_valid": true,
+              "output_path_valid": true,
+              "base_output_value": 0.0,
+              "changed_output_value": 0.0,
+              "changed_output_fingerprint": "{\"dashboard_spec\":{\"sections\":[\"Performance overview\",\"Cash generation and leverage\",\"Working capital and investment\",\"Valuation\"],\"title\":\"Atelier Coatings & Tools S.A.\"},\"metadata\":{\"openai_called\":false},\"output_blocks\":[{\"data\":{\"current_case_only\":true,\"ending_cash\":4263626.954525416,\"ending_revolver\":0.0,\"ending_term_debt\":0.0,\"ending_total_debt\":0.0,\"enterprise_value\":34238656.32005686,\"integrity_pass_statuses\":{\"balance_sheet\":true,\"cash_flow\":true,\"debt_sweep\":true,\"enterprise_to_equity_bridge\":true,\"interest_convergence\":true,\"minimum_cash\":true,\"ppe\":true,\"retained_earnings\":true},\"maximum_interest_convergence_residual\":2.2246036678552628e-05,\"net_debt\":-4263626.954525416,\"opening_date_equity_value\":25738656.320056863,\"period\":\"Y5\",\"terminal_present_value_contribution\":23644157.073112544,\"valuation_date\":\"opening_date\",\"year_5_ebit\":4108244.4110182077,\"year_5_ebitda\":6063244.411018208,\"year_5_ebitda_margin\":0.2765948257495234,\"year_5_net_income\":3077955.233477984,\"year_5_revenue\":21921033.390946053},\"id\":\"executive_summary\",\"label\":\"Current-Case Executive Summary\",\"type\":\"custom\"},{\"data\":{\"series\":[{\"id\":\"revenue\",\"label\":\"Revenue\",\"values\":[18200000.0,19065840.0,19973266.272,20924293.1819904,21921033.390946053]},{\"id\":\"ebitda\",\"label\":\"EBITDA\",\"values\":[4500000.0,4859280.0,5238871.775999999,5639825.5725887995,6063244.411018208]}],\"x\":[\"Y1\",\"Y2\",\"Y3\",\"Y4\",\"Y5\"]},\"id\":\"performance_trend\",\"label\":\"Revenue and EBITDA\",\"type\":\"time_series\"},{\"data\":{\"columns\":[{\"id\":\"year\",\"label\":\"Year\"},{\"id\":\"revenue\",\"label\":\"Revenue\"},{\"id\":\"ebitda\",\"label\":\"EBITDA\"},{\"id\":\"ebit\",\"label\":\"EBIT\"},{\"id\":\"net_income\",\"label\":\"Net Income\"}],\"rows\":[{\"cost_of_sales\":10700000.0,\"depreciation\":1355000.0,\"ebit\":3145000.0,\"ebitda\":4500000.0,\"gross_profit\":7500000.0,\"interest_expense\":549956.9918647242,\"interest_income\":13681.002711758567,\"net_income\":1956543.008135276,\"operating_expenses\":3000000.0,\"pretax_income\":2608724.0108470344,\"revenue\":18200000.0,\"taxes\":652181.0027117586,\"year\":\"Y1\"},{\"cost_of_sales\":11146560.0,\"depreciation\":1505000.0,\"ebit\":3354280.0,\"ebitda\":4859280.0,\"gross_profit\":7919280.0,\"interest_expense\":444279.51378544135,\"interest_income\":19225.826026276965,\"net_income\":2196919.734180627,\"operating_expenses\":3060000.0,\"pretax_income\":2929226.3122408357,\"revenue\":19065840.0,\"taxes\":732306.5780602089,\"year\":\"Y2\"},{\"cost_of_sales\":11613194.496000001,\"depreciation\":1655000.0,\"ebit\":3583871.7759999987,\"ebitda\":5238871.775999999,\"gross_profit\":8360071.775999999,\"interest_expense\":324090.0042648213,\"interest_income\":24063.1698400454,\"net_income\":2462883.706181417,\"operating_expenses\":3121200.0,\"pretax_income\":3283844.9415752226,\"revenue\":19973266.272,\"taxes\":820961.2353938057,\"year\":\"Y3\"},{\"cost_of_sales\":12100843.6094016,\"depreciation\":1805000.0,\"ebit\":3834825.5725887995,\"ebitda\":5639825.5725887995,\"gross_profit\":8823449.5725888,\"interest_expense\":183914.6298747302,\"interest_income\":30725.12479650763,\"net_income\":2761227.0506329327,\"operating_expenses\":3183624.0,\"pretax_income\":3681636.067510577,\"revenue\":20924293.1819904,\"taxes\":920409.0168776442,\"year\":\"Y4\"},{\"cost_of_sales\":12610492.499927845,\"depreciation\":1955000.0,\"ebit\":4108244.4110182077,\"ebitda\":6063244.411018208,\"gross_profit\":9310540.891018208,\"interest_expense\":54147.14753049502,\"interest_income\":49843.04781626614,\"net_income\":3077955.233477984,\"operating_expenses\":3247296.48,\"pretax_income\":4103940.311303979,\"revenue\":21921033.390946053,\"taxes\":1025985.0778259947,\"year\":\"Y5\"}]},\"id\":\"income_statement\",\"label\":\"Income Statement\",\"type\":\"table\"},{\"data\":{\"balance_sheet\":[{\"balance_sheet_check\":0.0,\"cash\":1868100.2711909255,\"equity\":9456543.008135276,\"inventory\":2198630.1369863013,\"net_ppe\":12945000.0,\"other_current_liabilities\":500000.0,\"payables\":1465753.4246575343,\"receivables\":2742465.7534246575,\"revolver\":0.0,\"term_debt\":8331899.7288090745,\"total_assets\":19754196.161601886,\"total_liabilities_equity\":19754196.161601886,\"year\":\"Y1\"},{\"balance_sheet_check\":0.0,\"cash\":2054482.3314528987,\"equity\":11653462.742315903,\"inventory\":2290389.0410958906,\"net_ppe\":12940000.0,\"other_current_liabilities\":500000.0,\"payables\":1526926.0273972603,\"receivables\":2872934.794520548,\"revolver\":0.0,\"term_debt\":6477417.397356176,\"total_assets\":20157806.16706934,\"total_liabilities_equity\":20157806.16706934,\"year\":\"Y2\"},{\"balance_sheet_check\":-3.725290298461914e-09,\"cash\":2351834.6525705825,\"equity\":14116346.448497321,\"inventory\":2386272.841643836,\"net_ppe\":12785000.0,\"other_current_liabilities\":500000.0,\"payables\":1590848.5610958906,\"receivables\":3009670.260164384,\"revolver\":0.0,\"term_debt\":4325582.744785594,\"total_assets\":20532777.754378803,\"total_liabilities_equity\":20532777.754378807,\"year\":\"Y3\"},{\"balance_sheet_check\":-3.725290298461914e-09,\"cash\":2720677.8271024264,\"equity\":16877573.499130253,\"inventory\":2486474.714260603,\"net_ppe\":12480000.0,\"other_current_liabilities\":500000.0,\"payables\":1657649.8095070685,\"receivables\":3152975.6849574572,\"revolver\":0.0,\"term_debt\":1804904.9176831674,\"total_assets\":20840128.226320487,\"total_liabilities_equity\":20840128.22632049,\"year\":\"Y4\"},{\"balance_sheet_check\":0.0,\"cash\":4263626.954525416,\"equity\":19955528.732608236,\"inventory\":2591197.0890262695,\"net_ppe\":12025000.0,\"other_current_liabilities\":500000.0,\"payables\":1727464.726017513,\"receivables\":3303169.415074063,\"revolver\":0.0,\"term_debt\":0.0,\"total_assets\":22182993.45862575,\"total_liabilities_equity\":22182993.45862575,\"year\":\"Y5\"}],\"cash_flow\":[{\"beginning_cash\":1500000.0,\"capex\":1500000.0,\"cash_reconciliation_residual\":-4.656612873077393e-10,\"depreciation\":1355000.0,\"ending_cash\":1868100.2711909255,\"financing_cash_flow\":-1668100.2711909255,\"investing_cash_flow\":-1500000.0,\"mandatory_amortization\":-800000.0,\"net_change_cash\":368100.27119092597,\"net_income\":1956543.008135276,\"normalization_working_capital\":224657.53424657555,\"operating_cash_flow\":3536200.5423818515,\"recurring_working_capital\":0.0,\"revolver_draw\":0.0,\"revolver_sweep\":-0.0,\"term_sweep\":-868100.2711909255,\"year\":\"Y1\"},{\"beginning_cash\":1868100.2711909255,\"capex\":1500000.0,\"cash_reconciliation_residual\":-9.313225746154785e-10,\"depreciation\":1505000.0,\"ending_cash\":2054482.3314528987,\"financing_cash_flow\":-1854482.3314528987,\"investing_cash_flow\":-1500000.0,\"mandatory_amortization\":-800000.0,\"net_change_cash\":186382.0602619741,\"net_income\":2196919.734180627,\"normalization_working_capital\":0.0,\"operating_cash_flow\":3540864.391714873,\"recurring_working_capital\":-161055.34246575413,\"revolver_draw\":0.0,\"revolver_sweep\":-0.0,\"term_sweep\":-1054482.3314528987,\"year\":\"Y2\"},{\"beginning_cash\":2054482.3314528987,\"capex\":1500000.0,\"cash_reconciliation_residual\":0.0,\"depreciation\":1655000.0,\"ending_cash\":2351834.6525705825,\"financing_cash_flow\":-2151834.6525705825,\"investing_cash_flow\":-1500000.0,\"mandatory_amortization\":-800000.0,\"net_change_cash\":297352.3211176838,\"net_income\":2462883.706181417,\"normalization_working_capital\":0.0,\"operating_cash_flow\":3949186.9736882662,\"recurring_working_capital\":-168696.73249315098,\"revolver_draw\":0.0,\"revolver_sweep\":-0.0,\"term_sweep\":-1351834.6525705825,\"year\":\"Y3\"},{\"beginning_cash\":2351834.6525705825,\"capex\":1500000.0,\"cash_reconciliation_residual\":-4.656612873077393e-10,\"depreciation\":1805000.0,\"ending_cash\":2720677.8271024264,\"financing_cash_flow\":-2520677.8271024264,\"investing_cash_flow\":-1500000.0,\"mandatory_amortization\":-800000.0,\"net_change_cash\":368843.17453184444,\"net_income\":2761227.0506329327,\"normalization_working_capital\":0.0,\"operating_cash_flow\":4389521.001634271,\"recurring_working_capital\":-176706.04899866227,\"revolver_draw\":0.0,\"revolver_sweep\":-0.0,\"term_sweep\":-1720677.8271024264,\"year\":\"Y4\"},{\"beginning_cash\":2720677.8271024264,\"capex\":1500000.0,\"cash_reconciliation_residual\":0.0,\"depreciation\":1955000.0,\"ending_cash\":4263626.954525416,\"financing_cash_flow\":-1804904.9176831674,\"investing_cash_flow\":-1500000.0,\"mandatory_amortization\":-800000.0,\"net_change_cash\":1542949.1274229893,\"net_income\":3077955.233477984,\"normalization_working_capital\":0.0,\"operating_cash_flow\":4847854.045106157,\"recurring_working_capital\":-185101.1883718269,\"revolver_draw\":0.0,\"revolver_sweep\":-0.0,\"term_sweep\":-1004904.9176831674,\"year\":\"Y5\"}],\"fcff\":[{\"discount_factor\":0.9174311926605504,\"fcff\":2438407.5342465756,\"operating_tax\":786250.0,\"present_value\":2237071.132336308,\"year\":\"Y1\"},{\"discount_factor\":0.84167999326656,\"fcff\":2359654.657534246,\"operating_tax\":838570.0,\"present_value\":1986074.1162648308,\"year\":\"Y2\"},{\"discount_factor\":0.7721834800610642,\"fcff\":2674207.0995068476,\"operating_tax\":895967.9439999997,\"present_value\":2064978.5445012022,\"year\":\"Y3\"},{\"discount_factor\":0.7084252110651963,\"fcff\":3004413.130442937,\"operating_tax\":958706.3931471999,\"present_value\":2128402.0060610846,\"year\":\"Y4\"},{\"discount_factor\":0.6499313862983452,\"fcff\":3351082.119891829,\"operating_tax\":1027061.1027545519,\"present_value\":2177973.447780894,\"year\":\"Y5\"}],\"financing\":[{\"closing_cash\":1868100.2711909255,\"closing_revolver\":0.0,\"closing_term_debt\":8331899.7288090745,\"converged\":true,\"convergence_residual\":1.5068799257278442e-05,\"convergence_tolerance\":0.0001,\"interest_expense\":549956.9918647242,\"interest_income\":13681.002711758567,\"iterations\":7,\"mandatory_amortization\":800000.0,\"opening_cash\":1500000.0,\"opening_revolver\":0.0,\"opening_term_debt\":10000000.0,\"pre_financing_cash\":2736200.542381851,\"qualifying_average_cash\":684050.1355879284,\"revolver_draw\":0.0,\"revolver_sweep\":0.0,\"sweep_capacity\":868100.2711909255,\"term_sweep\":868100.2711909255,\"year\":\"Y1\"},{\"closing_cash\":2054482.3314528987,\"closing_revolver\":0.0,\"closing_term_debt\":6477417.397356176,\"converged\":true,\"convergence_residual\":1.612771302461624e-05,\"convergence_tolerance\":0.0001,\"interest_expense\":444279.51378544135,\"interest_income\":19225.826026276965,\"iterations\":7,\"mandatory_amortization\":800000.0,\"opening_cash\":1868100.2711909255,\"opening_revolver\":0.0,\"opening_term_debt\":8331899.7288090745,\"pre_financing_cash\":3108964.6629057974,\"qualifying_average_cash\":961291.3013138482,\"revolver_draw\":0.0,\"revolver_sweep\":0.0,\"sweep_capacity\":1054482.3314528987,\"term_sweep\":1054482.3314528987,\"year\":\"Y2\"},{\"closing_cash\":2351834.6525705825,\"closing_revolver\":0.0,\"closing_term_debt\":4325582.744785594,\"converged\":true,\"convergence_residual\":1.8941238522529602e-05,\"convergence_tolerance\":0.0001,\"interest_expense\":324090.0042648213,\"interest_income\":24063.1698400454,\"iterations\":7,\"mandatory_amortization\":800000.0,\"opening_cash\":2054482.3314528987,\"opening_revolver\":0.0,\"opening_term_debt\":6477417.397356176,\"pre_financing_cash\":3703669.305141165,\"qualifying_average_cash\":1203158.49200227,\"revolver_draw\":0.0,\"revolver_sweep\":0.0,\"sweep_capacity\":1351834.6525705825,\"term_sweep\":1351834.6525705825,\"year\":\"Y3\"},{\"closing_cash\":2720677.8271024264,\"closing_revolver\":0.0,\"closing_term_debt\":1804904.9176831674,\"converged\":true,\"convergence_residual\":2.2246036678552628e-05,\"convergence_tolerance\":0.0001,\"interest_expense\":183914.6298747302,\"interest_income\":30725.12479650763,\"iterations\":7,\"mandatory_amortization\":800000.0,\"opening_cash\":2351834.6525705825,\"opening_revolver\":0.0,\"opening_term_debt\":4325582.744785594,\"pre_financing_cash\":4441355.654204853,\"qualifying_average_cash\":1536256.2398253814,\"revolver_draw\":0.0,\"revolver_sweep\":0.0,\"sweep_capacity\":1720677.8271024264,\"term_sweep\":1720677.8271024264,\"year\":\"Y4\"},{\"closing_cash\":4263626.954525416,\"closing_revolver\":0.0,\"closing_term_debt\":0.0,\"converged\":true,\"convergence_residual\":1.2284144759178162e-06,\"convergence_tolerance\":0.0001,\"interest_expense\":54147.14753049502,\"interest_income\":49843.04781626614,\"iterations\":7,\"mandatory_amortization\":800000.0,\"opening_cash\":2720677.8271024264,\"opening_revolver\":0.0,\"opening_term_debt\":1804904.9176831674,\"pre_financing_cash\":5268531.872208583,\"qualifying_average_cash\":2492152.390813307,\"revolver_draw\":0.0,\"revolver_sweep\":0.0,\"sweep_capacity\":2134265.9361042916,\"term_sweep\":1004904.9176831674,\"year\":\"Y5\"}],\"income_statement\":[{\"cost_of_sales\":10700000.0,\"depreciation\":1355000.0,\"ebit\":3145000.0,\"ebitda\":4500000.0,\"gross_profit\":7500000.0,\"interest_expense\":549956.9918647242,\"interest_income\":13681.002711758567,\"net_income\":1956543.008135276,\"operating_expenses\":3000000.0,\"pretax_income\":2608724.0108470344,\"revenue\":18200000.0,\"taxes\":652181.0027117586,\"year\":\"Y1\"},{\"cost_of_sales\":11146560.0,\"depreciation\":1505000.0,\"ebit\":3354280.0,\"ebitda\":4859280.0,\"gross_profit\":7919280.0,\"interest_expense\":444279.51378544135,\"interest_income\":19225.826026276965,\"net_income\":2196919.734180627,\"operating_expenses\":3060000.0,\"pretax_income\":2929226.3122408357,\"revenue\":19065840.0,\"taxes\":732306.5780602089,\"year\":\"Y2\"},{\"cost_of_sales\":11613194.496000001,\"depreciation\":1655000.0,\"ebit\":3583871.7759999987,\"ebitda\":5238871.775999999,\"gross_profit\":8360071.775999999,\"interest_expense\":324090.0042648213,\"interest_income\":24063.1698400454,\"net_income\":2462883.706181417,\"operating_expenses\":3121200.0,\"pretax_income\":3283844.9415752226,\"revenue\":19973266.272,\"taxes\":820961.2353938057,\"year\":\"Y3\"},{\"cost_of_sales\":12100843.6094016,\"depreciation\":1805000.0,\"ebit\":3834825.5725887995,\"ebitda\":5639825.5725887995,\"gross_profit\":8823449.5725888,\"interest_expense\":183914.6298747302,\"interest_income\":30725.12479650763,\"net_income\":2761227.0506329327,\"operating_expenses\":3183624.0,\"pretax_income\":3681636.067510577,\"revenue\":20924293.1819904,\"taxes\":920409.0168776442,\"year\":\"Y4\"},{\"cost_of_sales\":12610492.499927845,\"depreciation\":1955000.0,\"ebit\":4108244.4110182077,\"ebitda\":6063244.411018208,\"gross_profit\":9310540.891018208,\"interest_expense\":54147.14753049502,\"interest_income\":49843.04781626614,\"net_income\":3077955.233477984,\"operating_expenses\":3247296.48,\"pretax_income\":4103940.311303979,\"revenue\":21921033.390946053,\"taxes\":1025985.0778259947,\"year\":\"Y5\"}],\"integrity_status\":{\"balance_sheet\":{\"passed\":true,\"residuals\":[0.0,0.0,-3.725290298461914e-09,-3.725290298461914e-09,0.0]},\"cash_flow\":{\"passed\":true,\"residuals\":[-4.656612873077393e-10,-9.313225746154785e-10,0.0,-4.656612873077393e-10,0.0]},\"debt_sweep\":{\"debt_nonnegative_statuses\":[true,true,true,true,true],\"draw_sweep_exclusivity_residuals\":[0.0,0.0,0.0,0.0,0.0],\"mandatory_amortization_cap_statuses\":[true,true,true,true,true],\"passed\":true,\"repayment_availability_statuses\":[true,true,true,true,true],\"revolver_first_allocation_statuses\":[true,true,true,true,true],\"revolver_rollforward_residuals\":[0.0,0.0,0.0,0.0,0.0],\"term_rollforward_residuals\":[0.0,0.0,0.0,0.0,0.0]},\"enterprise_to_equity_bridge\":{\"opening_cash\":1500000.0,\"opening_revolver\":0.0,\"opening_term_debt\":10000000.0,\"passed\":true,\"residual\":0.0},\"interest_convergence\":{\"maximum_convergence_residual\":2.2246036678552628e-05,\"passed\":true,\"residuals\":[1.5068799257278442e-05,1.612771302461624e-05,1.8941238522529602e-05,2.2246036678552628e-05,1.2284144759178162e-06],\"statuses\":[true,true,true,true,true]},\"minimum_cash\":{\"compliance_statuses\":[true,true,true,true,true],\"headroom\":[868100.2711909255,1054482.3314528987,1351834.6525705825,1720677.8271024264,3263626.954525416],\"passed\":true},\"ppe\":{\"active_basis_rollforward_residuals\":[0.0,0.0,0.0,0.0,0.0],\"passed\":true,\"residuals\":[0.0,0.0,0.0,0.0,0.0]},\"retained_earnings\":{\"passed\":true,\"residuals\":[0.0,4.656612873077393e-10,9.313225746154785e-10,-1.3969838619232178e-09,-4.656612873077393e-10]}},\"opening_working_capital\":{\"normalization_cash_flow\":224657.53424657555,\"normalized_nwc\":3475342.4657534244,\"reported_nwc\":3700000.0},\"operations\":[{\"corporate_opex\":3000000.0,\"corporate_opex_inflation\":null,\"cost_of_sales\":10700000.0,\"ebit\":3145000.0,\"ebitda\":4500000.0,\"ebitda_margin\":0.24725274725274726,\"gross_margin\":0.41208791208791207,\"gross_profit\":7500000.0,\"revenue\":18200000.0,\"year\":\"Y1\"},{\"corporate_opex\":3060000.0,\"corporate_opex_inflation\":0.02,\"cost_of_sales\":11146560.0,\"ebit\":3354280.0,\"ebitda\":4859280.0,\"ebitda_margin\":0.2548683928953563,\"gross_margin\":0.41536486197303657,\"gross_profit\":7919280.0,\"revenue\":19065840.0,\"year\":\"Y2\"},{\"corporate_opex\":3121200.0,\"corporate_opex_inflation\":0.02,\"cost_of_sales\":11613194.496000001,\"ebit\":3583871.7759999987,\"ebitda\":5238871.775999999,\"ebitda_margin\":0.2622941938817607,\"gross_margin\":0.4185630763717282,\"gross_profit\":8360071.775999999,\"revenue\":19973266.272,\"year\":\"Y3\"},{\"corporate_opex\":3183624.0,\"corporate_opex_inflation\":0.02,\"cost_of_sales\":12100843.6094016,\"ebit\":3834825.5725887995,\"ebitda\":5639825.5725887995,\"ebitda_margin\":0.2695348188603577,\"gross_margin\":0.4216844743975949,\"gross_profit\":8823449.5725888,\"revenue\":20924293.1819904,\"year\":\"Y4\"},{\"corporate_opex\":3247296.48,\"corporate_opex_inflation\":0.02,\"cost_of_sales\":12610492.499927845,\"ebit\":4108244.4110182077,\"ebitda\":6063244.411018208,\"ebitda_margin\":0.2765948257495234,\"gross_margin\":0.4247309296496806,\"gross_profit\":9310540.891018208,\"revenue\":21921033.390946053,\"year\":\"Y5\"}],\"paint\":[{\"gross_margin\":0.4453125,\"gross_profit\":5700000.0,\"gross_profit_per_unit\":14.25,\"overhead\":1500000.0,\"overhead_inflation\":null,\"price\":32.0,\"price_inflation\":null,\"revenue\":12800000.0,\"revenue_per_unit\":32.0,\"unit_cost\":14.0,\"unit_cost_inflation\":null,\"unit_growth\":null,\"units\":400000.0,\"variable_cost\":5600000.0,\"variable_cost_per_unit\":14.0,\"year\":\"Y1\"},{\"gross_margin\":0.44872572815533973,\"gross_profit\":6034319.999999999,\"gross_profit_per_unit\":14.646407766990288,\"overhead\":1530000.0,\"overhead_inflation\":0.02,\"price\":32.64,\"price_inflation\":0.02,\"revenue\":13447680.0,\"revenue_per_unit\":32.64,\"unit_cost\":14.280000000000001,\"unit_cost_inflation\":0.02,\"unit_growth\":0.03,\"units\":412000.0,\"variable_cost\":5883360.000000001,\"variable_cost_per_unit\":14.280000000000003,\"year\":\"Y2\"},{\"gross_margin\":0.4520395418983881,\"gross_profit\":6386474.591999998,\"gross_profit_per_unit\":15.049662060514654,\"overhead\":1560600.0,\"overhead_inflation\":0.02,\"price\":33.2928,\"price_inflation\":0.02,\"revenue\":14128132.608,\"revenue_per_unit\":33.2928,\"unit_cost\":14.565600000000002,\"unit_cost_inflation\":0.02,\"unit_growth\":0.03,\"units\":424360.0,\"variable_cost\":6181058.016000001,\"variable_cost_per_unit\":14.565600000000002,\"year\":\"Y3\"},{\"gross_margin\":0.4552568367945516,\"gross_profit\":6757384.566355199,\"gross_profit_per_unit\":15.459910312354317,\"overhead\":1591812.0,\"overhead_inflation\":0.02,\"price\":33.958656,\"price_inflation\":0.02,\"revenue\":14843016.117964799,\"revenue_per_unit\":33.958656,\"unit_cost\":14.856912000000001,\"unit_cost_inflation\":0.02,\"unit_growth\":0.03,\"units\":437090.8,\"variable_cost\":6493819.5516096,\"variable_cost_per_unit\":14.856912,\"year\":\"Y4\"},{\"gross_margin\":0.4583804240723801,\"gross_profit\":7148017.672612771,\"gross_profit_per_unit\":15.877302800972236,\"overhead\":1623648.24,\"overhead_inflation\":0.02,\"price\":34.63782912,\"price_inflation\":0.02,\"revenue\":15594072.733533818,\"revenue_per_unit\":34.63782912,\"unit_cost\":15.154050240000002,\"unit_cost_inflation\":0.02,\"unit_growth\":0.03,\"units\":450203.524,\"variable_cost\":6822406.820921047,\"variable_cost_per_unit\":15.154050240000004,\"year\":\"Y5\"}],\"periods\":[\"Y1\",\"Y2\",\"Y3\",\"Y4\",\"Y5\"],\"ppe\":[{\"capex\":1500000.0,\"closing_net_ppe\":12945000.0,\"depreciation\":1355000.0,\"disposals\":0.0,\"pools\":[{\"capex\":0.0,\"closing_accumulated_depreciation\":1280000.0,\"closing_gross\":12800000.0,\"closing_net\":11520000.0,\"depreciation\":1280000.0,\"disposals\":0.0,\"fully_depreciated_retirement_availability\":0.0,\"id\":\"opening\",\"opening_accumulated_depreciation\":0.0,\"opening_gross\":12800000.0,\"opening_net\":12800000.0,\"pre_retirement_net_book_value\":12800000.0,\"retirement_accumulated_depreciation\":0.0,\"retirement_gross_cost\":0.0},{\"capex\":1500000.0,\"closing_accumulated_depreciation\":75000.0,\"closing_gross\":1500000.0,\"closing_net\":1425000.0,\"depreciation\":75000.0,\"disposals\":0.0,\"fully_depreciated_retirement_availability\":0.0,\"id\":\"capex_1\",\"opening_accumulated_depreciation\":0.0,\"opening_gross\":1500000.0,\"opening_net\":1500000.0,\"pre_retirement_net_book_value\":1500000.0,\"retirement_accumulated_depreciation\":0.0,\"retirement_gross_cost\":0.0}],\"retirement_accumulated_depreciation\":0.0,\"retirement_gross_cost\":0.0,\"year\":\"Y1\"},{\"capex\":1500000.0,\"closing_net_ppe\":12940000.0,\"depreciation\":1505000.0,\"disposals\":0.0,\"pools\":[{\"capex\":0.0,\"closing_accumulated_depreciation\":2560000.0,\"closing_gross\":12800000.0,\"closing_net\":10240000.0,\"depreciation\":1280000.0,\"disposals\":0.0,\"fully_depreciated_retirement_availability\":0.0,\"id\":\"opening\",\"opening_accumulated_depreciation\":1280000.0,\"opening_gross\":12800000.0,\"opening_net\":11520000.0,\"pre_retirement_net_book_value\":11520000.0,\"retirement_accumulated_depreciation\":0.0,\"retirement_gross_cost\":0.0},{\"capex\":0.0,\"closing_accumulated_depreciation\":225000.0,\"closing_gross\":1500000.0,\"closing_net\":1275000.0,\"depreciation\":150000.0,\"disposals\":0.0,\"fully_depreciated_retirement_availability\":0.0,\"id\":\"capex_1\",\"opening_accumulated_depreciation\":75000.0,\"opening_gross\":1500000.0,\"opening_net\":1425000.0,\"pre_retirement_net_book_value\":1425000.0,\"retirement_accumulated_depreciation\":0.0,\"retirement_gross_cost\":0.0},{\"capex\":1500000.0,\"closing_accumulated_depreciation\":75000.0,\"closing_gross\":1500000.0,\"closing_net\":1425000.0,\"depreciation\":75000.0,\"disposals\":0.0,\"fully_depreciated_retirement_availability\":0.0,\"id\":\"capex_2\",\"opening_accumulated_depreciation\":0.0,\"opening_gross\":1500000.0,\"opening_net\":1500000.0,\"pre_retirement_net_book_value\":1500000.0,\"retirement_accumulated_depreciation\":0.0,\"retirement_gross_cost\":0.0}],\"retirement_accumulated_depreciation\":0.0,\"retirement_gross_cost\":0.0,\"year\":\"Y2\"},{\"capex\":1500000.0,\"closing_net_ppe\":12785000.0,\"depreciation\":1655000.0,\"disposals\":0.0,\"pools\":[{\"capex\":0.0,\"closing_accumulated_depreciation\":3840000.0,\"closing_gross\":12800000.0,\"closing_net\":8960000.0,\"depreciation\":1280000.0,\"disposals\":0.0,\"fully_depreciated_retirement_availability\":0.0,\"id\":\"opening\",\"opening_accumulated_depreciation\":2560000.0,\"opening_gross\":12800000.0,\"opening_net\":10240000.0,\"pre_retirement_net_book_value\":10240000.0,\"retirement_accumulated_depreciation\":0.0,\"retirement_gross_cost\":0.0},{\"capex\":0.0,\"closing_accumulated_depreciation\":375000.0,\"closing_gross\":1500000.0,\"closing_net\":1125000.0,\"depreciation\":150000.0,\"disposals\":0.0,\"fully_depreciated_retirement_availability\":0.0,\"id\":\"capex_1\",\"opening_accumulated_depreciation\":225000.0,\"opening_gross\":1500000.0,\"opening_net\":1275000.0,\"pre_retirement_net_book_value\":1275000.0,\"retirement_accumulated_depreciation\":0.0,\"retirement_gross_cost\":0.0},{\"capex\":0.0,\"closing_accumulated_depreciation\":225000.0,\"closing_gross\":1500000.0,\"closing_net\":1275000.0,\"depreciation\":150000.0,\"disposals\":0.0,\"fully_depreciated_retirement_availability\":0.0,\"id\":\"capex_2\",\"opening_accumulated_depreciation\":75000.0,\"opening_gross\":1500000.0,\"opening_net\":1425000.0,\"pre_retirement_net_book_value\":1425000.0,\"retirement_accumulated_depreciation\":0.0,\"retirement_gross_cost\":0.0},{\"capex\":1500000.0,\"closing_accumulated_depreciation\":75000.0,\"closing_gross\":1500000.0,\"closing_net\":1425000.0,\"depreciation\":75000.0,\"disposals\":0.0,\"fully_depreciated_retirement_availability\":0.0,\"id\":\"capex_3\",\"opening_accumulated_depreciation\":0.0,\"opening_gross\":1500000.0,\"opening_net\":1500000.0,\"pre_retirement_net_book_value\":1500000.0,\"retirement_accumulated_depreciation\":0.0,\"retirement_gross_cost\":0.0}],\"retirement_accumulated_depreciation\":0.0,\"retirement_gross_cost\":0.0,\"year\":\"Y3\"},{\"capex\":1500000.0,\"closing_net_ppe\":12480000.0,\"depreciation\":1805000.0,\"disposals\":0.0,\"pools\":[{\"capex\":0.0,\"closing_accumulated_depreciation\":5120000.0,\"closing_gross\":12800000.0,\"closing_net\":7680000.0,\"depreciation\":1280000.0,\"disposals\":0.0,\"fully_depreciated_retirement_availability\":0.0,\"id\":\"opening\",\"opening_accumulated_depreciation\":3840000.0,\"opening_gross\":12800000.0,\"opening_net\":8960000.0,\"pre_retirement_net_book_value\":8960000.0,\"retirement_accumulated_depreciation\":0.0,\"retirement_gross_cost\":0.0},{\"capex\":0.0,\"closing_accumulated_depreciation\":525000.0,\"closing_gross\":1500000.0,\"closing_net\":975000.0,\"depreciation\":150000.0,\"disposals\":0.0,\"fully_depreciated_retirement_availability\":0.0,\"id\":\"capex_1\",\"opening_accumulated_depreciation\":375000.0,\"opening_gross\":1500000.0,\"opening_net\":1125000.0,\"pre_retirement_net_book_value\":1125000.0,\"retirement_accumulated_depreciation\":0.0,\"retirement_gross_cost\":0.0},{\"capex\":0.0,\"closing_accumulated_depreciation\":375000.0,\"closing_gross\":1500000.0,\"closing_net\":1125000.0,\"depreciation\":150000.0,\"disposals\":0.0,\"fully_depreciated_retirement_availability\":0.0,\"id\":\"capex_2\",\"opening_accumulated_depreciation\":225000.0,\"opening_gross\":1500000.0,\"opening_net\":1275000.0,\"pre_retirement_net_book_value\":1275000.0,\"retirement_accumulated_depreciation\":0.0,\"retirement_gross_cost\":0.0},{\"capex\":0.0,\"closing_accumulated_depreciation\":225000.0,\"closing_gross\":1500000.0,\"closing_net\":1275000.0,\"depreciation\":150000.0,\"disposals\":0.0,\"fully_depreciated_retirement_availability\":0.0,\"id\":\"capex_3\",\"opening_accumulated_depreciation\":75000.0,\"opening_gross\":1500000.0,\"opening_net\":1425000.0,\"pre_retirement_net_book_value\":1425000.0,\"retirement_accumulated_depreciation\":0.0,\"retirement_gross_cost\":0.0},{\"capex\":1500000.0,\"closing_accumulated_depreciation\":75000.0,\"closing_gross\":1500000.0,\"closing_net\":1425000.0,\"depreciation\":75000.0,\"disposals\":0.0,\"fully_depreciated_retirement_availability\":0.0,\"id\":\"capex_4\",\"opening_accumulated_depreciation\":0.0,\"opening_gross\":1500000.0,\"opening_net\":1500000.0,\"pre_retirement_net_book_value\":1500000.0,\"retirement_accumulated_depreciation\":0.0,\"retirement_gross_cost\":0.0}],\"retirement_accumulated_depreciation\":0.0,\"retirement_gross_cost\":0.0,\"year\":\"Y4\"},{\"capex\":1500000.0,\"closing_net_ppe\":12025000.0,\"depreciation\":1955000.0,\"disposals\":0.0,\"pools\":[{\"capex\":0.0,\"closing_accumulated_depreciation\":6400000.0,\"closing_gross\":12800000.0,\"closing_net\":6400000.0,\"depreciation\":1280000.0,\"disposals\":0.0,\"fully_depreciated_retirement_availability\":0.0,\"id\":\"opening\",\"opening_accumulated_depreciation\":5120000.0,\"opening_gross\":12800000.0,\"opening_net\":7680000.0,\"pre_retirement_net_book_value\":7680000.0,\"retirement_accumulated_depreciation\":0.0,\"retirement_gross_cost\":0.0},{\"capex\":0.0,\"closing_accumulated_depreciation\":675000.0,\"closing_gross\":1500000.0,\"closing_net\":825000.0,\"depreciation\":150000.0,\"disposals\":0.0,\"fully_depreciated_retirement_availability\":0.0,\"id\":\"capex_1\",\"opening_accumulated_depreciation\":525000.0,\"opening_gross\":1500000.0,\"opening_net\":975000.0,\"pre_retirement_net_book_value\":975000.0,\"retirement_accumulated_depreciation\":0.0,\"retirement_gross_cost\":0.0},{\"capex\":0.0,\"closing_accumulated_depreciation\":525000.0,\"closing_gross\":1500000.0,\"closing_net\":975000.0,\"depreciation\":150000.0,\"disposals\":0.0,\"fully_depreciated_retirement_availability\":0.0,\"id\":\"capex_2\",\"opening_accumulated_depreciation\":375000.0,\"opening_gross\":1500000.0,\"opening_net\":1125000.0,\"pre_retirement_net_book_value\":1125000.0,\"retirement_accumulated_depreciation\":0.0,\"retirement_gross_cost\":0.0},{\"capex\":0.0,\"closing_accumulated_depreciation\":375000.0,\"closing_gross\":1500000.0,\"closing_net\":1125000.0,\"depreciation\":150000.0,\"disposals\":0.0,\"fully_depreciated_retirement_availability\":0.0,\"id\":\"capex_3\",\"opening_accumulated_depreciation\":225000.0,\"opening_gross\":1500000.0,\"opening_net\":1275000.0,\"pre_retirement_net_book_value\":1275000.0,\"retirement_accumulated_depreciation\":0.0,\"retirement_gross_cost\":0.0},{\"capex\":0.0,\"closing_accumulated_depreciation\":225000.0,\"closing_gross\":1500000.0,\"closing_net\":1275000.0,\"depreciation\":150000.0,\"disposals\":0.0,\"fully_depreciated_retirement_availability\":0.0,\"id\":\"capex_4\",\"opening_accumulated_depreciation\":75000.0,\"opening_gross\":1500000.0,\"opening_net\":1425000.0,\"pre_retirement_net_book_value\":1425000.0,\"retirement_accumulated_depreciation\":0.0,\"retirement_gross_cost\":0.0},{\"capex\":1500000.0,\"closing_accumulated_depreciation\":75000.0,\"closing_gross\":1500000.0,\"closing_net\":1425000.0,\"depreciation\":75000.0,\"disposals\":0.0,\"fully_depreciated_retirement_availability\":0.0,\"id\":\"capex_5\",\"opening_accumulated_depreciation\":0.0,\"opening_gross\":1500000.0,\"opening_net\":1500000.0,\"pre_retirement_net_book_value\":1500000.0,\"retirement_accumulated_depreciation\":0.0,\"retirement_gross_cost\":0.0}],\"retirement_accumulated_depreciation\":0.0,\"retirement_gross_cost\":0.0,\"year\":\"Y5\"}],\"retained_earnings\":[{\"closing_equity\":9456543.008135276,\"net_income\":1956543.008135276,\"opening_equity\":7500000.0,\"year\":\"Y1\"},{\"closing_equity\":11653462.742315903,\"net_income\":2196919.734180627,\"opening_equity\":9456543.008135276,\"year\":\"Y2\"},{\"closing_equity\":14116346.448497321,\"net_income\":2462883.706181417,\"opening_equity\":11653462.742315903,\"year\":\"Y3\"},{\"closing_equity\":16877573.499130253,\"net_income\":2761227.0506329327,\"opening_equity\":14116346.448497321,\"year\":\"Y4\"},{\"closing_equity\":19955528.732608236,\"net_income\":3077955.233477984,\"opening_equity\":16877573.499130253,\"year\":\"Y5\"}],\"tools\":[{\"gross_margin\":0.3333333333333333,\"gross_profit\":1800000.0,\"gross_profit_per_unit\":6.0,\"price\":18.0,\"price_inflation\":null,\"purchase_cost\":3000000.0,\"purchase_cost_per_unit\":10.0,\"revenue\":5400000.0,\"revenue_per_unit\":18.0,\"storage\":600000.0,\"storage_inflation\":null,\"unit_cost\":10.0,\"unit_cost_inflation\":null,\"unit_growth\":null,\"units\":300000.0,\"year\":\"Y1\"},{\"gross_margin\":0.3355119825708061,\"gross_profit\":1884960.0,\"gross_profit_per_unit\":6.16,\"price\":18.36,\"price_inflation\":0.02,\"purchase_cost\":3121200.0,\"purchase_cost_per_unit\":10.2,\"revenue\":5618160.0,\"revenue_per_unit\":18.36,\"storage\":612000.0,\"storage_inflation\":0.02,\"unit_cost\":10.2,\"unit_cost_inflation\":0.02,\"unit_growth\":0.02,\"units\":306000.0,\"year\":\"Y2\"},{\"gross_margin\":0.3376479131957794,\"gross_profit\":1973597.184,\"gross_profit_per_unit\":6.3232,\"price\":18.7272,\"price_inflation\":0.02,\"purchase_cost\":3247296.48,\"purchase_cost_per_unit\":10.404,\"revenue\":5845133.664,\"revenue_per_unit\":18.7272,\"storage\":624240.0,\"storage_inflation\":0.02,\"unit_cost\":10.404,\"unit_cost_inflation\":0.02,\"unit_growth\":0.02,\"units\":312120.0,\"year\":\"Y3\"},{\"gross_margin\":0.33974196282810615,\"gross_profit\":2066065.0062336,\"gross_profit_per_unit\":6.489663999999999,\"price\":19.101744,\"price_inflation\":0.02,\"purchase_cost\":3378487.2577920007,\"purchase_cost_per_unit\":10.61208,\"revenue\":6081277.0640256,\"revenue_per_unit\":19.101744,\"storage\":636724.8,\"storage_inflation\":0.02,\"unit_cost\":10.61208,\"unit_cost_inflation\":0.02,\"unit_growth\":0.02,\"units\":318362.4,\"year\":\"Y4\"},{\"gross_margin\":0.34179495266372056,\"gross_profit\":2162523.218405437,\"gross_profit_per_unit\":6.659457279999998,\"price\":19.48377888,\"price_inflation\":0.02,\"purchase_cost\":3514978.1430067974,\"purchase_cost_per_unit\":10.824321600000001,\"revenue\":6326960.657412235,\"revenue_per_unit\":19.48377888,\"storage\":649459.2960000001,\"storage_inflation\":0.02,\"unit_cost\":10.824321600000001,\"unit_cost_inflation\":0.02,\"unit_growth\":0.02,\"units\":324729.64800000004,\"year\":\"Y5\"}],\"valuation\":{\"conventional_wacc_direction_supported\":true,\"enterprise_value\":34238656.32005686,\"equity_value\":25738656.320056863,\"exit_multiple\":6.0,\"net_debt\":-4263626.954525416,\"opening_cash\":1500000.0,\"opening_net_debt\":8500000.0,\"opening_revolver\":0.0,\"opening_term_debt\":10000000.0,\"sensitivity\":[{\"exit_multiple\":5.0,\"values\":[24319223.85642261,23025414.961022463,21797963.474538106,20632834.95845531,19526275.745048855]},{\"exit_multiple\":5.5,\"values\":[26480728.5903664,25088686.093846366,23768309.897297487,22515233.829315536,21325395.96908005]},{\"exit_multiple\":6.0,\"values\":[28642233.32431019,27151957.226670265,25738656.32005687,24397632.700175762,23124516.193111245]},{\"exit_multiple\":6.5,\"values\":[30803738.05825398,29215228.359494165,27709002.74281624,26280031.57103599,24923636.417142436]},{\"exit_multiple\":7.0,\"values\":[32965242.792197764,31278499.49231807,29679349.165575624,28162430.441896215,26722756.64117363]}],\"sensitivity_value_type\":\"equity_value\",\"sensitivity_wacc_adjacent_changes\":[[-1293808.895400148,-1227451.4864843562,-1165128.5160827972,-1106559.2134064548],[-1392042.496520035,-1320376.1965488791,-1253076.067981951,-1189837.8602354862],[-1490276.0976399258,-1413300.9066133946,-1341023.6198811084,-1273116.5070645176],[-1588509.6987598166,-1506225.616677925,-1428971.171780251,-1356395.1538935527],[-1686743.2998796925,-1599150.326742448,-1516918.7236794084,-1439673.8007225841]],\"sensitivity_wacc_rates\":[0.07,0.08,0.09,0.1,0.11],\"signed_fcff_profile\":[2438407.5342465756,2359654.657534246,2674207.0995068476,3004413.130442937,3351082.119891829],\"terminal_cash\":4263626.954525416,\"terminal_discount_factor\":0.6499313862983452,\"terminal_ebitda\":6063244.411018208,\"terminal_present_value\":23644157.073112544,\"terminal_revolver\":0.0,\"terminal_term_debt\":0.0,\"terminal_total_debt\":0.0,\"terminal_value\":36379466.466109246,\"wacc_direction_rounding_tolerance\":1e-06,\"wacc_direction_status\":\"conventional_non_increasing_verified\",\"wacc_direction_warning\":null},\"working_capital\":[{\"inventory\":2198630.1369863013,\"normalization_cash_flow\":224657.53424657555,\"nwc\":3475342.4657534244,\"payables\":1465753.4246575343,\"receivables\":2742465.7534246575,\"recurring_cash_flow\":0.0,\"year\":\"Y1\"},{\"inventory\":2290389.0410958906,\"normalization_cash_flow\":0.0,\"nwc\":3636397.8082191786,\"payables\":1526926.0273972603,\"receivables\":2872934.794520548,\"recurring_cash_flow\":-161055.34246575413,\"year\":\"Y2\"},{\"inventory\":2386272.841643836,\"normalization_cash_flow\":0.0,\"nwc\":3805094.5407123296,\"payables\":1590848.5610958906,\"receivables\":3009670.260164384,\"recurring_cash_flow\":-168696.73249315098,\"year\":\"Y3\"},{\"inventory\":2486474.714260603,\"normalization_cash_flow\":0.0,\"nwc\":3981800.589710992,\"payables\":1657649.8095070685,\"receivables\":3152975.6849574572,\"recurring_cash_flow\":-176706.04899866227,\"year\":\"Y4\"},{\"inventory\":2591197.0890262695,\"normalization_cash_flow\":0.0,\"nwc\":4166901.7780828187,\"payables\":1727464.726017513,\"receivables\":3303169.415074063,\"recurring_cash_flow\":-185101.1883718269,\"year\":\"Y5\"}]},\"id\":\"financial_model\",\"label\":\"Integrated Financial Schedules\",\"type\":\"custom\"},{\"data\":{\"balance_sheet\":{\"passed\":true,\"residuals\":[0.0,0.0,-3.725290298461914e-09,-3.725290298461914e-09,0.0]},\"cash_flow\":{\"passed\":true,\"residuals\":[-4.656612873077393e-10,-9.313225746154785e-10,0.0,-4.656612873077393e-10,0.0]},\"debt_sweep\":{\"debt_nonnegative_statuses\":[true,true,true,true,true],\"draw_sweep_exclusivity_residuals\":[0.0,0.0,0.0,0.0,0.0],\"mandatory_amortization_cap_statuses\":[true,true,true,true,true],\"passed\":true,\"repayment_availability_statuses\":[true,true,true,true,true],\"revolver_first_allocation_statuses\":[true,true,true,true,true],\"revolver_rollforward_residuals\":[0.0,0.0,0.0,0.0,0.0],\"term_rollforward_residuals\":[0.0,0.0,0.0,0.0,0.0]},\"enterprise_to_equity_bridge\":{\"opening_cash\":1500000.0,\"opening_revolver\":0.0,\"opening_term_debt\":10000000.0,\"passed\":true,\"residual\":0.0},\"interest_convergence\":{\"maximum_convergence_residual\":2.2246036678552628e-05,\"passed\":true,\"residuals\":[1.5068799257278442e-05,1.612771302461624e-05,1.8941238522529602e-05,2.2246036678552628e-05,1.2284144759178162e-06],\"statuses\":[true,true,true,true,true]},\"minimum_cash\":{\"compliance_statuses\":[true,true,true,true,true],\"headroom\":[868100.2711909255,1054482.3314528987,1351834.6525705825,1720677.8271024264,3263626.954525416],\"passed\":true},\"ppe\":{\"active_basis_rollforward_residuals\":[0.0,0.0,0.0,0.0,0.0],\"passed\":true,\"residuals\":[0.0,0.0,0.0,0.0,0.0]},\"retained_earnings\":{\"passed\":true,\"residuals\":[0.0,4.656612873077393e-10,9.313225746154785e-10,-1.3969838619232178e-09,-4.656612873077393e-10]}},\"id\":\"current_case_integrity_status\",\"label\":\"Current-Case Integrity Status\",\"type\":\"custom\"},{\"data\":{\"conventional_wacc_direction_supported\":true,\"ending_cash\":4263626.954525416,\"enterprise_value\":34238656.32005686,\"equity_value\":25738656.320056863,\"equity_value_valuation_date\":\"opening_date\",\"exit_multiple\":6.0,\"opening_cash\":1500000.0,\"opening_net_debt\":8500000.0,\"opening_revolver\":0.0,\"opening_term_debt\":10000000.0,\"sensitivity\":[{\"exit_multiple\":5.0,\"values\":[24319223.85642261,23025414.961022463,21797963.474538106,20632834.95845531,19526275.745048855]},{\"exit_multiple\":5.5,\"values\":[26480728.5903664,25088686.093846366,23768309.897297487,22515233.829315536,21325395.96908005]},{\"exit_multiple\":6.0,\"values\":[28642233.32431019,27151957.226670265,25738656.32005687,24397632.700175762,23124516.193111245]},{\"exit_multiple\":6.5,\"values\":[30803738.05825398,29215228.359494165,27709002.74281624,26280031.57103599,24923636.417142436]},{\"exit_multiple\":7.0,\"values\":[32965242.792197764,31278499.49231807,29679349.165575624,28162430.441896215,26722756.64117363]}],\"sensitivity_value_type\":\"equity_value\",\"sensitivity_wacc_adjacent_changes\":[[-1293808.895400148,-1227451.4864843562,-1165128.5160827972,-1106559.2134064548],[-1392042.496520035,-1320376.1965488791,-1253076.067981951,-1189837.8602354862],[-1490276.0976399258,-1413300.9066133946,-1341023.6198811084,-1273116.5070645176],[-1588509.6987598166,-1506225.616677925,-1428971.171780251,-1356395.1538935527],[-1686743.2998796925,-1599150.326742448,-1516918.7236794084,-1439673.8007225841]],\"signed_fcff_profile\":[2438407.5342465756,2359654.657534246,2674207.0995068476,3004413.130442937,3351082.119891829],\"terminal_cash_reference_metric\":4263626.954525416,\"terminal_debt_reference_metric\":0.0,\"terminal_discount_factor\":0.6499313862983452,\"terminal_ebitda\":6063244.411018208,\"terminal_net_debt_reference_metric\":-4263626.954525416,\"terminal_present_value\":23644157.073112544,\"terminal_value\":36379466.466109246,\"wacc_direction_rounding_tolerance_eur\":1e-06,\"wacc_direction_status\":\"conventional_non_increasing_verified\",\"wacc_direction_warning\":null,\"year_5_ebitda\":6063244.411018208,\"year_5_revenue\":21921033.390946053},\"id\":\"valuation\",\"label\":\"Exit Multiple DCF and Enterprise-to-Equity Bridge\",\"type\":\"custom\"}],\"output_version\":\"2026-05-25\"}",
+              "expected_behavior": "not_null",
+              "expected_behavior_met": true,
+              "expected_behavior_evaluable": true,
+              "observed_behavior": "not_null",
+              "confirmed_issue": false
+            },
+            {
+              "issue_id": "interest_convergence_boundary_execution",
+              "severity": "medium",
+              "category": "test_coverage",
+              "artifacts": [
+                "model_package/model/checks.py",
+                "model_package/spec/model_tests.json",
+                "model_package/reports/model_tests_report.json"
+              ],
+              "human_decision_required": false,
+              "observed": "Below/at/above convergence tolerance evidence is generated from literal boolean comparisons rather than executed convergence mechanics.",
+              "required_change": "Execute the convergence status logic for residuals immediately below, at, and above the configured tolerance and report the actual resulting statuses.",
+              "acceptance_criteria": [
+                "Below-tolerance fixture returns pass/converged.",
+                "At-tolerance fixture returns pass/converged.",
+                "Above-tolerance fixture returns fail/not-converged.",
+                "Evidence includes the configured tolerance, fixture input or residual, implemented status result, and pass/fail result.",
+                "The existing interest_circularity_convergence test ID is retained."
+              ],
+              "executed": false
+            }
+          ]
+        }
+      }
+    },
+    {
+      "approved": false,
+      "repair_required": true,
+      "summary": "The repaired package now supports the raw-input/output scenario-pair contract and executes disposal-invariance comparisons. Core Base, Downside, and Upside outputs are coherent, the minimum-cash headroom semantics are correct, and an independent DCF recalculation matches the finalized Base output. Approval is withheld for two unresolved repairable medium issues: convergence-boundary coverage remains a duplicated local boolean helper rather than an executed production convergence mechanic, and the PP&E disposal test labels closing net PP&E as active depreciable basis without proving the gross active-basis invariant. The approved specification also contains a misleading cash-interest input description that should be corrected before release.",
+      "findings": [
+        {
+          "severity": "medium",
+          "area": "test_coverage",
+          "claim_tested": "The interest_circularity_convergence test executes below-, at-, and above-tolerance boundary behavior through the implemented convergence mechanics.",
+          "symptom": "The repaired check constructs residuals and evaluates them through a locally duplicated convergence_status function: residual <= tolerance. This confirms comparison semantics only; it does not execute the financing iteration, alter a convergence result, or invoke a production convergence-status implementation.",
+          "root_cause": "model_package/model/checks.py defines convergence_status inside run_checks and feeds it synthetic residual literals. The evidence therefore repeats the threshold equation rather than exercising the actual model branch.",
+          "message": "The earlier amendment is only partially satisfied. The evidence is no longer a bare literal boolean, but it remains tautological relative to the claimed production-boundary coverage. The declared test promises an executed boundary probe and the review contract rejects coverage that merely repeats the production expression.",
+          "repair_instruction": "Retain the existing interest_circularity_convergence test ID, but route the boundary fixtures through a production-owned convergence/status function or execute a financing fixture whose actual residual is below, equal to, and above tolerance. Evidence must demonstrate that the production implementation\u2014not a duplicated comparison\u2014produces the three statuses.",
+          "evidence": {
+            "artifact": "model_package/model/checks.py",
+            "observed_behavior": "convergence_boundary_fixtures are generated from production_tolerance +/- 1e-9 and passed to a local function whose implementation is {'converged': residual <= tolerance_value, 'status': 'converged' if residual <= tolerance_value else 'not_converged'}. No run_all result or altered financing iteration is involved.",
+            "report_artifact": "model_package/reports/model_tests_report.json",
+            "observed_result": "The boundary evidence reports below/at/above statuses, but those statuses arise solely from the duplicated local comparison.",
+            "declared_artifact": "model_package/spec/model_tests.json",
+            "declared_behavior": "Execute convergence-status fixtures immediately below, at, and above the reported tolerance and record implemented status and result.",
+            "artifacts": [
+              "model_package/model/checks.py"
+            ]
+          },
+          "requires_human_decision": false
+        },
+        {
+          "severity": "medium",
+          "area": "test_coverage",
+          "claim_tested": "The PP&E disposal test proves that positive disposal does not reduce active depreciable basis.",
+          "symptom": "The economic invariance comparison uses ppe.closing_net_ppe as the field named active_depreciable_basis. Closing net PP&E is not the same as active gross depreciable basis; the schedule separately exposes closing_gross, closing_accumulated_depreciation, and closing_net for each pool.",
+          "root_cause": "model_package/model/checks.py maps 'active_depreciable_basis' to ('ppe', 'closing_net_ppe'), so the test can pass while failing to compare the gross active basis that the specification says disposal must leave unchanged.",
+          "message": "The production disposal fixture currently shows the intended zero-net-book-value behavior, and the test now compares several economic outputs. However, the specific active-basis claim remains unsupported because the tested proxy is closing net PP&E rather than pool-level active gross depreciable basis or an equivalent explicit active-basis measure.",
+          "repair_instruction": "Within the existing ppe_pool_roll_forward_and_disposal_behavior test, compare zero- and positive-disposal fixtures at pool level for active gross depreciable basis, accumulated depreciation, closing net basis, and depreciation. Name the evidence according to the actual field being tested and retain the existing declared test ID.",
+          "evidence": {
+            "artifact": "model_package/model/checks.py",
+            "observed_behavior": "economic_fields defines 'active_depreciable_basis': ('ppe', 'closing_net_ppe'). The disposal fixture evidence therefore compares aggregate closing net PP&E values, not gross active basis by pool.",
+            "output_artifact": "model_package/outputs/output.json",
+            "observed_behavior_detail": "Each PP&E pool exposes closing_gross, closing_accumulated_depreciation, and closing_net; the finalized Base output has no disposal activation, so the production case itself does not establish the positive-disposal branch.",
+            "declared_artifact": "model_package/spec/model_spec.json",
+            "declared_behavior": "Disposal reduces gross PP&E and accumulated depreciation equally at zero net book value and does not reduce active depreciable basis.",
+            "artifacts": [
+              "model_package/model/checks.py"
+            ]
+          },
+          "requires_human_decision": false
+        },
+        {
+          "severity": "medium",
+          "area": "label_or_explanation",
+          "claim_tested": "The approved model specification accurately describes the cash-interest input and its economic basis.",
+          "symptom": "The editable-input description says 'Cash interest rate on average total debt, default 6%' while the assumptions and implementation use a 2% interest-income rate on average cash above minimum cash.",
+          "root_cause": "model_package/spec/model_spec.json contains an internally inconsistent input description. The schedule implementation applies cash_interest_rate to qualifying average cash, not total debt.",
+          "message": "This is a specification-label defect rather than a production-equation defect. The detailed assumption is economically consistent with the code, but the editable-input description is misleading and could cause users to set or interpret the input incorrectly.",
+          "repair_instruction": "Correct the editable-input description to state that cash interest income is calculated at the cash-interest rate on average cash above minimum cash, with the approved 2% default. Keep the implemented economics unchanged.",
+          "evidence": {
+            "artifact": "model_package/spec/model_spec.json",
+            "observed_behavior": "Under editable_inputs, the financing category describes 'Cash interest rate on average total debt, default 6%'. Under assumptions, the same input is described as interest income on average cash above minimum cash with a 2% default.",
+            "implementation_artifact": "model_package/model/schedules/core.py",
+            "observed_behavior_detail": "Base Y5 reports interest_income=49843.0478 with qualifying_average_cash=2492152.3908, consistent with approximately 2%, not a debt-based 6% calculation.",
+            "output_artifact": "model_package/outputs/output.json",
+            "artifacts": [
+              "model_package/spec/model_spec.json"
+            ]
+          },
+          "requires_human_decision": false
+        },
+        {
+          "severity": "advisory",
+          "area": "model_logic",
+          "claim_tested": "The finalized Base DCF independently reconciles under the accepted opening-date convention.",
+          "symptom": "No defect found. Independent calculation gives PV of FCFF EUR 10,594,499.25, terminal PV EUR 23,644,157.07, enterprise value EUR 34,238,656.32, and opening-date equity value EUR 25,738,656.32.",
+          "root_cause": "None identified.",
+          "message": "The independent calculation matches the finalized output within floating-point rounding. Terminal present value is approximately 69.06% of enterprise value, which is a material business-review dependency but not a package defect under the accepted exit-multiple specification.",
+          "repair_instruction": "No automatic repair required. Business users should understand the high terminal-value dependence when interpreting the DCF.",
+          "evidence": {
+            "artifact": "model_package/outputs/output.json",
+            "observed_behavior": "enterprise_value=34238656.32005686, terminal_present_value=23644157.073112544, opening_date_equity_value=25738656.320056863.",
+            "independent_calculation": "PV(FCFF)=10594499.24694432; PV(terminal)=23644157.073112547; EV=34238656.32005687; equity=25738656.32005687; terminal-PV share=0.6905690705876765.",
+            "artifacts": [
+              "model_package/outputs/output.json"
+            ]
+          },
+          "requires_human_decision": false
+        },
+        {
+          "severity": "advisory",
+          "area": "scenario_behavior",
+          "claim_tested": "Base, Downside, and Upside aggregate directionality and liquidity branches are supported by actual backend executions.",
+          "symptom": "No defect found in the repaired suite contract.",
+          "root_cause": "None identified.",
+          "message": "The suite now re-executes each supplied raw input, matches the finalized financial-model schedule fingerprints, verifies aggregate revenue/EBITDA/equity ordering, and observes a Downside revolver-draw branch.",
+          "repair_instruction": "No automatic repair required for this finding.",
+          "evidence": {
+            "artifact": "model_package/reports/model_tests_report.json",
+            "observed_behavior": "Exact case IDs are base, downside, and upside; raw-input/output pair matches are true for all three; Year 5 revenue, EBITDA, and equity value order Downside <= Base <= Upside; Downside activates revolver draw while Base and Upside do not.",
+            "artifacts": [
+              "model_package/reports/model_tests_report.json"
+            ]
+          },
+          "requires_human_decision": false
+        }
+      ],
+      "required_amendments": [
+        {
+          "issue_id": "interest_convergence_boundary_execution",
+          "severity": "medium",
+          "category": "test_coverage",
+          "observed": "Boundary evidence is produced by a local duplicated comparison function over synthetic residual literals, not by executed production convergence mechanics.",
+          "required_change": "Use a production-owned convergence/status implementation or execute financing fixtures that actually produce below-, at-, and above-tolerance outcomes. Preserve the existing declared test ID.",
+          "artifacts": [
+            "model_package/model/checks.py",
+            "model_package/spec/model_tests.json",
+            "model_package/reports/model_tests_report.json"
+          ],
+          "acceptance_criteria": [
+            "Below-tolerance fixture returns pass/converged from the production implementation.",
+            "At-tolerance fixture returns pass/converged from the production implementation.",
+            "Above-tolerance fixture returns fail/not-converged from the production implementation.",
+            "Evidence identifies the executed fixture, configured tolerance, actual resulting status, and pass/fail result.",
+            "No evidence relies only on a duplicated residual <= tolerance expression."
+          ],
+          "human_decision_required": false
+        },
+        {
+          "issue_id": "ppe_disposal_active_basis_test_precision",
+          "severity": "medium",
+          "category": "test_coverage",
+          "observed": "The disposal test labels aggregate closing net PP&E as active depreciable basis, although the schedule exposes separate gross and accumulated-depreciation fields.",
+          "required_change": "Compare pool-level active gross depreciable basis and accumulated depreciation between identical zero- and positive-disposal fixtures, alongside closing net basis, depreciation, EBIT, taxes, cash flow, and FCFF.",
+          "artifacts": [
+            "model_package/model/checks.py",
+            "model_package/spec/model_spec.json",
+            "model_package/outputs/output.json",
+            "model_package/reports/model_tests_report.json"
+          ],
+          "acceptance_criteria": [
+            "Positive disposal produces retirement gross cost equal to retirement accumulated depreciation.",
+            "Pool-level active gross basis is unchanged between zero and positive disposal within tolerance.",
+            "Pool-level accumulated depreciation changes only by the matching retirement amount and closing net basis remains unchanged within tolerance.",
+            "Depreciation, EBIT, taxes, cash flow, and FCFF remain unchanged within tolerance.",
+            "The existing ppe_pool_roll_forward_and_disposal_behavior test ID is retained."
+          ],
+          "human_decision_required": false
+        },
+        {
+          "issue_id": "cash_interest_input_description_mismatch",
+          "severity": "medium",
+          "category": "label_or_explanation",
+          "observed": "The editable-input description states cash interest is on average total debt at a 6% default, while the implemented and detailed stated method is 2% interest income on average cash above minimum cash.",
+          "required_change": "Correct the specification/input description to match the accepted implementation: cash-interest income rate applied to average qualifying cash above minimum cash, default 2%. Do not change the equation.",
+          "artifacts": [
+            "model_package/spec/model_spec.json",
+            "model_package/model/schedules/core.py",
+            "model_package/outputs/output.json"
+          ],
+          "acceptance_criteria": [
+            "No specification or input-contract description says cash interest is applied to average total debt.",
+            "The default is consistently documented as 2%.",
+            "The implementation continues to calculate interest income from qualifying average cash above minimum cash.",
+            "The Base output remains numerically unchanged apart from metadata or documentation."
+          ],
+          "human_decision_required": false
+        }
+      ],
+      "repair_instructions": [
+        "Repair the convergence-boundary test so it executes production-owned convergence mechanics rather than duplicating the threshold comparison.",
+        "Refine the PP&E disposal test to compare gross active basis at pool level, not only aggregate closing net PP&E.",
+        "Correct the misleading cash-interest input description while preserving the accepted financing equations and outputs.",
+        "Rerun the authoritative Base, Downside, Upside, model-local, deterministic, output, and scenario-suite gates after repair. Dashboard aesthetics and presentation-agent WIP items remain out of scope."
+      ],
+      "human_questions": [],
+      "failure_reasons": [
+        "Approval is withheld because two repairable medium test-coverage defects remain and one medium specification-label inconsistency could mislead users about a material financing input.",
+        "The repaired scenario-suite contract, disposal economic comparisons, minimum-cash headroom semantics, executive summary, and core valuation outputs were independently reviewed and are otherwise supported."
+      ],
+      "attempt": "after_repair_1",
+      "execution_evidence": {
+        "path": "model_package/reports/review_execution_evidence.json",
+        "code_interpreter_required": true,
+        "code_interpreter_call_count": 1
+      },
+      "function_tool_evidence": {
+        "path": "model_package/reports/agent_tool_calls_report.json",
+        "function_tool_call_count": 12,
+        "tools_used": [
+          "execute_input_probe",
+          "execute_model_test",
+          "list_package_artifacts",
+          "read_package_artifact"
+        ]
+      },
+      "usage_report": {
+        "stage": "review_agent_audit",
+        "model": "gpt-5.6-luna",
+        "usage_summary": {
+          "input_tokens": 1226200,
+          "cached_input_tokens": 947957,
+          "output_tokens": 4906,
+          "reasoning_tokens": 1879,
+          "total_tokens": 1231106,
+          "api_call_count": 1
+        },
+        "cost_summary": {
+          "estimated_cost_usd": 0.402475,
+          "pricing_note": "Estimate based on local standard-processing price table; billing dashboard is authoritative.",
+          "pricing_source": "https://developers.openai.com/api/docs/pricing",
+          "rates_usd_per_1m_tokens": {
+            "input": 1.0,
+            "cached_input": 0.1,
+            "output": 6.0
+          },
+          "billable_input_tokens": 278243
+        },
+        "openai_called": true
+      },
+      "required_amendments_report": {
+        "path": "model_package/reports/required_amendments_report.json",
+        "round_path": "model_package/reports/required_amendments_report_round_1.json",
+        "amendment_count": 3,
+        "executable_probe_count": 0,
+        "passed": true,
+        "report": {
+          "created_utc": "2026-07-21T01:02:10Z",
+          "passed": true,
+          "amendment_count": 3,
+          "executable_probe_count": 0,
+          "amendments": [
+            {
+              "issue_id": "interest_convergence_boundary_execution",
+              "severity": "medium",
+              "category": "test_coverage",
+              "artifacts": [
+                "model_package/model/checks.py",
+                "model_package/spec/model_tests.json",
+                "model_package/reports/model_tests_report.json"
+              ],
+              "human_decision_required": false,
+              "observed": "Boundary evidence is produced by a local duplicated comparison function over synthetic residual literals, not by executed production convergence mechanics.",
+              "required_change": "Use a production-owned convergence/status implementation or execute financing fixtures that actually produce below-, at-, and above-tolerance outcomes. Preserve the existing declared test ID.",
+              "acceptance_criteria": [
+                "Below-tolerance fixture returns pass/converged from the production implementation.",
+                "At-tolerance fixture returns pass/converged from the production implementation.",
+                "Above-tolerance fixture returns fail/not-converged from the production implementation.",
+                "Evidence identifies the executed fixture, configured tolerance, actual resulting status, and pass/fail result.",
+                "No evidence relies only on a duplicated residual <= tolerance expression."
+              ],
+              "executed": false
+            },
+            {
+              "issue_id": "ppe_disposal_active_basis_test_precision",
+              "severity": "medium",
+              "category": "test_coverage",
+              "artifacts": [
+                "model_package/model/checks.py",
+                "model_package/spec/model_spec.json",
+                "model_package/outputs/output.json",
+                "model_package/reports/model_tests_report.json"
+              ],
+              "human_decision_required": false,
+              "observed": "The disposal test labels aggregate closing net PP&E as active depreciable basis, although the schedule exposes separate gross and accumulated-depreciation fields.",
+              "required_change": "Compare pool-level active gross depreciable basis and accumulated depreciation between identical zero- and positive-disposal fixtures, alongside closing net basis, depreciation, EBIT, taxes, cash flow, and FCFF.",
+              "acceptance_criteria": [
+                "Positive disposal produces retirement gross cost equal to retirement accumulated depreciation.",
+                "Pool-level active gross basis is unchanged between zero and positive disposal within tolerance.",
+                "Pool-level accumulated depreciation changes only by the matching retirement amount and closing net basis remains unchanged within tolerance.",
+                "Depreciation, EBIT, taxes, cash flow, and FCFF remain unchanged within tolerance.",
+                "The existing ppe_pool_roll_forward_and_disposal_behavior test ID is retained."
+              ],
+              "executed": false
+            },
+            {
+              "issue_id": "cash_interest_input_description_mismatch",
+              "severity": "medium",
+              "category": "label_or_explanation",
+              "artifacts": [
+                "model_package/spec/model_spec.json",
+                "model_package/model/schedules/core.py",
+                "model_package/outputs/output.json"
+              ],
+              "human_decision_required": false,
+              "observed": "The editable-input description states cash interest is on average total debt at a 6% default, while the implemented and detailed stated method is 2% interest income on average cash above minimum cash.",
+              "required_change": "Correct the specification/input description to match the accepted implementation: cash-interest income rate applied to average qualifying cash above minimum cash, default 2%. Do not change the equation.",
+              "acceptance_criteria": [
+                "No specification or input-contract description says cash interest is applied to average total debt.",
+                "The default is consistently documented as 2%.",
+                "The implementation continues to calculate interest income from qualifying average cash above minimum cash.",
+                "The Base output remains numerically unchanged apart from metadata or documentation."
+              ],
+              "executed": false
+            }
+          ]
+        }
+      }
+    },
+    {
+      "approved": true,
+      "repair_required": false,
+      "summary": "Approved. The finalized package is fit for the stated five-year integrated forecast, financing, liquidity, and opening-date exit-multiple DCF purpose. Canonical validation, output-contract, model-local, scenario-suite, and targeted probe evidence support the implemented mechanics. The repaired scenario raw-input/output pairing, minimum-cash headroom semantics, executive summary, cash-interest description, convergence boundary evidence, and PP&E disposal-invariance coverage are supported by the submitted package evidence.",
+      "findings": [
+        {
+          "severity": "advisory",
+          "area": "model_logic",
+          "claim_tested": "The opening-date exit-multiple DCF provides a sufficiently diversified valuation basis for business interpretation.",
+          "symptom": "The Base enterprise value is materially dependent on terminal value: terminal present value is EUR 23.644m of EUR 34.239m enterprise value, approximately 69.06%.",
+          "root_cause": "The approved specification intentionally uses an exit-multiple terminal value and excludes perpetuity-growth valuation.",
+          "message": "This is a disclosed methodological limitation and business-review consideration, not a package defect. Users should treat the DCF as highly sensitive to Year 5 EBITDA and the selected exit multiple.",
+          "repair_instruction": "No automatic repair required. Business users should review terminal-value concentration and exit-multiple sensitivity before relying on the valuation.",
+          "evidence": {
+            "artifact": "model_package/outputs/output.json",
+            "observed_behavior": {
+              "enterprise_value": 34238656.32005686,
+              "terminal_present_value": 23644157.073112544,
+              "terminal_present_value_share": 0.6905690705876765,
+              "opening_date_equity_value": 25738656.320056863
+            },
+            "independent_calculation": "PV of forecast FCFF plus terminal present value reproduces enterprise value EUR 34.239m and opening-date equity value EUR 25.739m.",
+            "artifacts": [
+              "model_package/outputs/output.json"
+            ]
+          },
+          "requires_human_decision": false
+        },
+        {
+          "severity": "advisory",
+          "area": "scenario_behavior",
+          "claim_tested": "The three composite scenario cases provide useful aggregate operating and valuation directionality.",
+          "symptom": "The Downside case reaches binding minimum-cash headroom of zero in Years 3-5 and uses revolver draws, while Base and Upside do not activate revolver draws.",
+          "root_cause": "The composite scenario design intentionally combines operating, working-capital, financing, and valuation overrides under platform-owned scenario execution.",
+          "message": "No defect was identified. The scenario-suite evidence supports Downside <= Base <= Upside for Year 5 revenue, EBITDA, and opening-date equity value, and confirms observed liquidity-branch activation.",
+          "repair_instruction": "No automatic repair required. Business users should distinguish zero minimum-cash headroom, which is a binding limit, from a reconciliation failure.",
+          "evidence": {
+            "artifact": "model_package/reports/model_tests_report.json",
+            "observed_behavior": {
+              "case_ids": [
+                "base",
+                "downside",
+                "upside"
+              ],
+              "pair_matches": {
+                "base": true,
+                "downside": true,
+                "upside": true
+              },
+              "year_5_revenue_order": "Downside <= Base <= Upside",
+              "year_5_ebitda_order": "Downside <= Base <= Upside",
+              "equity_value_order": "Downside <= Base <= Upside",
+              "downside_revolver_draw_activated": true,
+              "downside_minimum_cash_headroom": [
+                156533.62074945588,
+                79447.3252741883,
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "artifacts": [
+              "model_package/reports/model_tests_report.json"
+            ]
+          },
+          "requires_human_decision": false
+        }
+      ],
+      "required_amendments": [],
+      "repair_instructions": [],
+      "human_questions": [],
+      "failure_reasons": [],
+      "attempt": "after_repair_2",
+      "execution_evidence": {
+        "path": "model_package/reports/review_execution_evidence.json",
+        "code_interpreter_required": true,
+        "code_interpreter_call_count": 1
+      },
+      "function_tool_evidence": {
+        "path": "model_package/reports/agent_tool_calls_report.json",
+        "function_tool_call_count": 8,
+        "tools_used": [
+          "execute_input_probe",
+          "execute_model_test",
+          "list_package_artifacts",
+          "read_package_artifact"
+        ]
+      },
+      "usage_report": {
+        "stage": "review_agent_audit",
+        "model": "gpt-5.6-luna",
+        "usage_summary": {
+          "input_tokens": 864512,
+          "cached_input_tokens": 625368,
+          "output_tokens": 2036,
+          "reasoning_tokens": 1055,
+          "total_tokens": 866548,
+          "api_call_count": 1
+        },
+        "cost_summary": {
+          "estimated_cost_usd": 0.313897,
+          "pricing_note": "Estimate based on local standard-processing price table; billing dashboard is authoritative.",
+          "pricing_source": "https://developers.openai.com/api/docs/pricing",
+          "rates_usd_per_1m_tokens": {
+            "input": 1.0,
+            "cached_input": 0.1,
+            "output": 6.0
+          },
+          "billable_input_tokens": 239144
+        },
+        "openai_called": true
+      }
+    }
+  ]
+}

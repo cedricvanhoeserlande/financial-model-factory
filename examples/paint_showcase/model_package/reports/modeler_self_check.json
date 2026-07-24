@@ -1,0 +1,64 @@
+{
+  "passed": true,
+  "summary": "Submitted repaired package. amendment_interest_convergence_boundary_execution is evidenced by production-owned convergence status fixtures below, at, and above tolerance; amendment_ppe_disposal_active_basis_test_precision is evidenced by pool-level active gross basis, accumulated depreciation, net basis, depreciation, and economic invariance comparisons; amendment_cash_interest_input_description_mismatch is corrected to qualifying average cash at a 2% default. Full production gate passed across Base, Downside, Upside, model-local checks, output contract, and scenario suite.",
+  "checks": [
+    {
+      "id": "authoritative_workspace_submitted",
+      "passed": true
+    },
+    {
+      "id": "production_full_gate_passed",
+      "passed": true
+    },
+    {
+      "id": "workspace_fingerprint_matched",
+      "passed": true
+    }
+  ],
+  "issues": [],
+  "transport": "workspace_tool_loop",
+  "gate_receipt": "35fd6268dd40d103c818b4b72d66f4fe0507e16abfc25f8be28046177ddf4e04",
+  "workspace_fingerprint": "06eb9e90949e481137fd4d2cc1ad813d10ddd4af37a53dd40e1d43d7e883a854",
+  "changed_paths": [
+    "model/checks.py",
+    "model/schedules/core.py",
+    "spec/model_spec.json",
+    "spec/model_tests.json"
+  ],
+  "promoted_spec_paths": [
+    "spec/model_spec.json",
+    "spec/model_tests.json"
+  ],
+  "resolved_issue_ids": [
+    "interest_convergence_boundary_execution",
+    "ppe_disposal_active_basis_test_precision",
+    "cash_interest_input_description_mismatch"
+  ],
+  "api_turn_count": 12,
+  "tool_call_count": 21,
+  "code_interpreter_required": false,
+  "code_interpreter_call_count": 0,
+  "repair_scope_report": {
+    "repair_round": 2,
+    "categories": [
+      "label_or_explanation",
+      "test_coverage"
+    ],
+    "allowed_all_package_files": true,
+    "admitted_file_changes": [
+      "model/checks.py",
+      "model/schedules/core.py"
+    ],
+    "rejected_unowned_file_changes": [],
+    "base_inputs_admitted": false,
+    "input_schema_admitted": false,
+    "scenario_cases_admitted": false
+  },
+  "presentation_agent_report": {
+    "passed": false,
+    "blocking": false,
+    "status": "wip_disabled",
+    "summary": "Presentation Agent is disabled while underlying model correctness is validated.",
+    "review_scope": "out_of_scope"
+  }
+}

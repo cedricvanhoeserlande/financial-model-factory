@@ -1,0 +1,7 @@
+{
+  "passed": false,
+  "blocking": false,
+  "status": "wip_disabled",
+  "summary": "Presentation Agent is disabled while underlying model correctness is validated.",
+  "review_scope": "out_of_scope"
+}

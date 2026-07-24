@@ -1,0 +1,345 @@
+{
+  "spec_version": "1.0",
+  "title": "Atelier Coatings & Tools S.A. \u2014 Five-Year Integrated Three-Statement Model and Exit-Multiple DCF",
+  "purpose": "Evaluate the five-year operating outlook, cash generation, financing needs, deleveraging capacity, and exit-multiple enterprise and equity value of the fictional EUR-based Atelier Coatings & Tools S.A. The model will support Base, Downside, and Upside backend runs through platform-applied numeric input overrides.",
+  "scope_summary": "Annual five-year integrated forecast for two operating lines: manufactured colored paint and purchased/resold painting tools. The model will include segment operating schedules, linked income statement, balance sheet, cash-flow statement, working-capital normalization, PP&E and depreciation, debt and cash management, interest circularity resolution, FCFF, an exit-multiple DCF, sensitivity analysis, valuation bridge, and reusable integrity checks. The supplied opening balance sheet and operating metrics are the default calibration point.",
+  "modeled_objects": [
+    {
+      "name": "Opening financial position",
+      "description": "Opening historical balance sheet with default cash of EUR 1.5m, receivables of EUR 2.2m, inventory of EUR 3.5m, net PP&E of EUR 12.8m, accounts payable of EUR 2.0m, other current liabilities of EUR 0.5m, term debt of EUR 10.0m, revolver of EUR 0.0m, and equity of EUR 7.5m. The opening balance sheet must balance to EUR 20.0m of total assets under the supplied defaults."
+    },
+    {
+      "name": "Paint segment",
+      "description": "Manufactured colored paint business, beginning with 400,000 units, EUR 32.00 revenue per unit, EUR 14.00 variable production cost per unit, and EUR 1.5m annual manufacturing overhead. The schedule will calculate units, realized price, revenue, variable cost, manufacturing overhead, gross profit, gross margin, and contribution information for each forecast year."
+    },
+    {
+      "name": "Tools segment",
+      "description": "Purchased and resold painting-tools business, beginning with 300,000 units, EUR 18.00 revenue per unit, EUR 10.00 purchase cost per unit, and EUR 0.6m annual storage and logistics expense. The schedule will calculate units, realized price, revenue, purchase cost, storage/logistics expense, gross profit, gross margin, and contribution information for each forecast year."
+    },
+    {
+      "name": "Consolidated operations",
+      "description": "Consolidates both segments and deducts consolidated operating expenses, defaulting to EUR 3.0m in the first forecast year, to derive EBITDA, depreciation, EBIT, net interest, taxes, and net income."
+    },
+    {
+      "name": "Working capital and normalization",
+      "description": "Receivables, inventory, and accounts payable will be forecast from editable day assumptions. Receivables will use revenue as the activity base; inventory and payables will use consistent cost-of-sales bases. The model will retain the reported opening balances while calculating a separate normalized opening working-capital reference from the days assumptions and opening operating activity. The difference between reported and normalized opening working capital will be recognized as a distinct, one-time Year 1 cash-flow normalization item, not as recurring operating improvement."
+    },
+    {
+      "name": "PP&E and depreciation",
+      "description": "Opening net PP&E will be tracked as a separate active asset pool with a 10-year remaining life. New capex will be tracked by annual vintage and depreciated straight-line over 10 years using a half-year convention in its first year. A 1% annual disposal rate, editable within stated bounds, represents retirement of fully depreciated gross asset cost with exactly matching accumulated depreciation. It reduces gross PP&E and accumulated depreciation equally at zero net book value, has no proceeds or gain/loss, and does not affect active depreciable basis, depreciation, EBIT, tax, cash flow, or FCFF. Retirement gross cost and matching accumulated depreciation are reported separately."
+    },
+    {
+      "name": "Debt, cash, and interest",
+      "description": "Term debt, revolver, mandatory amortization, optional excess-cash sweep, revolver draws, cash interest expense, and interest income will be fully linked. Mandatory term-debt amortization will be capped at outstanding term debt. Excess-cash sweep capacity will repay revolver before term debt. Revolver draws will fund any cash shortfall below minimum cash. The schedule will prohibit simultaneous gross draw and sweep in the same forecast period."
+    },
+    {
+      "name": "Three-statement financials",
+      "description": "Income statement, balance sheet, and cash-flow statement linked through net income, non-cash depreciation, working-capital movement, one-time working-capital normalization, capex, debt movements, and retained earnings. Other current liabilities will be held at their opening balance unless an explicit editable driver is added in a later revision."
+    },
+    {
+      "name": "FCFF and exit-multiple DCF",
+      "description": "Annual FCFF will be derived from operating profit after tax, non-cash depreciation, capex, working-capital cash flows, and the separately identified Year 1 normalization item. Terminal value will use Year 5 EBITDA and an exit EBITDA multiple only; no perpetuity-growth terminal value will be modeled. FCFF and terminal value are discounted to the opening valuation date, so enterprise value is an opening-date value. Equity value is bridged using opening cash less opening term debt and opening revolver; terminal cash, term debt, revolver, and net debt are forecast liquidity/reference metrics only."
+    }
+  ],
+  "editable_inputs": [
+    {
+      "category": "Opening balance sheet",
+      "inputs": [
+        "Opening cash balance, default EUR 1.5m",
+        "Opening accounts receivable, default EUR 2.2m",
+        "Opening inventory, default EUR 3.5m",
+        "Opening net PP&E, default EUR 12.8m",
+        "Opening accounts payable, default EUR 2.0m",
+        "Opening other current liabilities, default EUR 0.5m",
+        "Opening term debt, default EUR 10.0m",
+        "Opening revolver balance, default EUR 0.0m",
+        "Opening equity, default EUR 7.5m"
+      ],
+      "validation": "All opening balances must be finite and non-negative. The opening balance sheet must balance; any debt-to-assets relationship is a disclosed default calibration characteristic, not a hardcoded forecast or validation assumption."
+    },
+    {
+      "category": "Paint segment operating drivers",
+      "inputs": [
+        "Starting paint units, default 400,000",
+        "Starting paint price per unit, default EUR 32.00",
+        "Starting paint variable production cost per unit, default EUR 14.00",
+        "Starting annual manufacturing overhead, default EUR 1.5m",
+        "Annual paint unit growth",
+        "Annual paint price inflation",
+        "Annual paint unit-cost inflation",
+        "Annual manufacturing-overhead inflation, default 0%"
+      ],
+      "validation": "Quantities, prices, costs, and expenses must be finite and non-negative. Unit growth and price or cost inflation must be between -50% and +100%."
+    },
+    {
+      "category": "Tools segment operating drivers",
+      "inputs": [
+        "Starting tools units, default 300,000",
+        "Starting tools price per unit, default EUR 18.00",
+        "Starting tools purchase cost per unit, default EUR 10.00",
+        "Starting annual storage and logistics expense, default EUR 0.6m",
+        "Annual tools unit growth",
+        "Annual tools price inflation",
+        "Annual tools unit-cost inflation",
+        "Annual storage and logistics expense inflation, default 0%"
+      ],
+      "validation": "Quantities, prices, costs, and expenses must be finite and non-negative. Unit growth and price or cost inflation must be between -50% and +100%."
+    },
+    {
+      "category": "Corporate operating expenses",
+      "inputs": [
+        "Starting consolidated operating expenses, default EUR 3.0m",
+        "Annual consolidated operating-expense inflation, default 0%"
+      ],
+      "validation": "Operating expenses must be finite and non-negative; inflation must be between -50% and +100%."
+    },
+    {
+      "category": "Working capital",
+      "inputs": [
+        "Receivable days",
+        "Inventory days",
+        "Payable days"
+      ],
+      "validation": "Each days assumption must be finite and between 0 and 365 days."
+    },
+    {
+      "category": "Capital expenditure and fixed assets",
+      "inputs": [
+        "Annual capex by forecast year",
+        "Opening PP&E remaining useful life, default 10 years",
+        "New-capex useful life, default 10 years",
+        "Annual disposal rate, default 1%"
+      ],
+      "validation": "Capex must be finite and non-negative. Useful lives must be whole-number values from 1 to 40 years. Disposal rate must be between 0% and 25%."
+    },
+    {
+      "category": "Financing, tax, and cash management",
+      "inputs": [
+        "Minimum cash balance, default EUR 1.0m",
+        "Annual mandatory term-debt amortization",
+        "Debt interest expense rate on average total debt, default 6%",
+        "Cash interest income rate on average qualifying cash above minimum cash, default 2%",
+        "Optional excess-cash sweep percentage, default 50%",
+        "Tax rate, default 25%"
+      ],
+      "validation": "Minimum cash, mandatory amortization, and all balances must be finite and non-negative. Interest rates must be between 0% and 30%. Tax rate must be between 0% and 50%. Sweep percentage must be between 0% and 100%."
+    },
+    {
+      "category": "Valuation",
+      "inputs": [
+        "WACC, default 9%",
+        "Exit EBITDA multiple, default 6.0x"
+      ],
+      "validation": "WACC must be finite and between 0% and 30%. Exit multiple must be finite and between 0.0x and 15.0x."
+    }
+  ],
+  "assumptions": [
+    {
+      "name": "Forecast timing",
+      "description": "The model forecasts FY1 through FY5. Submitted starting operating units, prices, unit costs, paint overhead, tools storage expense, and corporate operating expense directly apply in FY1. Operating growth and inflation inputs are exactly four FY1-to-FY5 transitions labeled FY2, FY3, FY4, and FY5: a scalar repeats across those transitions and a four-value schedule applies one rate to each transition. No operating growth or inflation is applied before FY1 or inside FY5."
+    },
+    {
+      "name": "Segment cost classification",
+      "description": "Paint variable production costs and manufacturing overhead are treated as paint cost of sales. Tools purchase costs and storage/logistics expense are treated as tools cost of sales. Consolidated operating expenses are below gross profit."
+    },
+    {
+      "name": "Working-capital activity bases",
+      "description": "Receivables equal revenue multiplied by receivable days divided by 365. Inventory equals consolidated cost of sales multiplied by inventory days divided by 365. Accounts payable equal the same consolidated cost-of-sales basis multiplied by payable days divided by 365, ensuring a consistent inventory and payables convention."
+    },
+    {
+      "name": "Opening working-capital normalization",
+      "description": "Normalized opening receivables, inventory, and payables will be calculated using the editable day assumptions and opening operating revenue/cost-of-sales reference. The reported opening balances remain on the opening balance sheet. The cash-flow effect of moving from reported opening net working capital to the normalized reference will be separately disclosed in Year 1 and excluded from subsequent recurring working-capital changes."
+    },
+    {
+      "name": "Depreciation and disposals",
+      "description": "Opening PP&E is depreciated over its remaining life. Each capex vintage receives half a year of straight-line depreciation in its first year and full-year straight-line depreciation thereafter until its active depreciable basis is exhausted. The disposal percentage represents retirement of fully depreciated gross asset cost with exactly matching accumulated depreciation: it reduces reported gross PP&E and accumulated depreciation equally, has zero net book value, and does not reduce active depreciable basis or affect depreciation, EBIT, tax, cash flow, or FCFF. Retirement gross cost and matching accumulated depreciation are separately reported. No disposal cash proceeds, gains, losses, impairments, or salvage values are modeled."
+    },
+    {
+      "name": "Tax treatment",
+      "description": "Cash taxes are calculated at the tax rate on positive pre-tax income only. The model will not create deferred taxes, tax-loss carryforwards, or tax refunds unless added in a future scope revision."
+    },
+    {
+      "name": "Debt service and cash sweep",
+      "description": "Mandatory term-debt amortization is applied before optional debt repayment and is limited to debt outstanding. After operations, investment, tax, mandatory amortization, and interest effects, available cash above the minimum cash balance is multiplied by the sweep percentage. This optional sweep repays revolver first and then term debt. If pre-financing cash is below the minimum cash balance, the revolver is drawn only for the required shortfall. The model will use mutually exclusive draw and sweep logic."
+    },
+    {
+      "name": "Interest circularity resolution",
+      "description": "Interest expense equals the debt interest rate multiplied by average opening and closing total debt. Interest income equals the interest-income rate multiplied by average opening and closing cash balances in excess of minimum cash, with each qualifying balance floored at zero. Because closing cash and debt depend on interest, the model will solve the period deterministically through bounded fixed-point iteration with a defined tolerance and iteration limit. The final cash/debt/interest convergence residual will be reported."
+    },
+    {
+      "name": "Retained earnings",
+      "description": "Ending equity equals opening equity plus net income. No dividends, share issuance, share repurchases, or other equity transactions are modeled."
+    },
+    {
+      "name": "DCF convention",
+      "description": "FCFF is based on EBIT after tax plus depreciation less capex and working-capital cash requirements, including the separately shown one-time normalization cash-flow effect. Terminal value equals Year 5 EBITDA multiplied by the selected exit multiple. FCFF and terminal value are discounted at WACC to the valuation date. Because enterprise value is discounted to the opening valuation date, the enterprise-to-equity bridge adds opening cash and deducts opening term debt and opening revolver. Terminal financing balances remain forecast liquidity/reference metrics only."
+    },
+    {
+      "name": "Zero-safe presentation",
+      "description": "Zero is a valid input where permitted. Calculations will avoid division by zero, and undefined margins, ratios, or per-unit metrics will be displayed as null or clearly marked not applicable rather than as NaN or infinity."
+    }
+  ],
+  "scenario_design": [
+    {
+      "name": "Platform-managed Base, Downside, and Upside runs",
+      "description": "The saved Base, Downside, and Upside cases will consist solely of platform-applied numeric overrides to the editable inputs. Each run produces one internally consistent current-case model output. The model will not calculate or display manufactured cross-scenario values inside a single-case financial statement or valuation output."
+    },
+    {
+      "name": "Scenario stability and direction testing",
+      "description": "The three backend-executed composite scenario runs will be used only for aggregate case ordering, numerical stability, economically supported overall operating and valuation direction, and observed material liquidity-branch activation. Suite checks will not attribute a total KPI movement to any individual driver, recreate overrides, assume a zero revolver draw, or assume particular saved override values."
+    },
+    {
+      "name": "Valuation sensitivity",
+      "description": "Within each selected platform scenario, the DCF sensitivity table will independently vary WACC from 7% to 11% and exit EBITDA multiple from 5.0x to 7.0x. This is a valuation parameter sensitivity, not a separate operating-case selector."
+    }
+  ],
+  "outputs": [
+    {
+      "name": "Executive summary",
+      "contents": [
+        "Current-case-only machine-readable headline block with period and opening-date valuation metadata; scenario identity remains platform-owned and is not fabricated by the model",
+        "Year 5 revenue, EBITDA, EBITDA margin, EBIT, net income, ending cash, ending term debt, ending revolver, ending total debt, net debt, enterprise value, opening-date equity value, and terminal present value contribution sourced from finalized schedules",
+        "All material integrity pass statuses and maximum interest convergence residual sourced from finalized integrity schedules"
+      ]
+    },
+    {
+      "name": "Segment operating schedule",
+      "contents": [
+        "Paint and tools units, unit growth, price, price inflation, revenue, variable/purchase cost, unit-cost inflation, segment fixed direct expenses, gross profit, gross margin, and relevant per-unit metrics",
+        "Consolidated segment revenue, cost of sales, gross profit, gross margin, corporate operating expenses, EBITDA, and EBITDA margin"
+      ]
+    },
+    {
+      "name": "Income statement",
+      "contents": [
+        "Revenue",
+        "Cost of sales by principal component",
+        "Gross profit",
+        "Operating expenses",
+        "EBITDA",
+        "Depreciation",
+        "EBIT",
+        "Interest expense",
+        "Interest income",
+        "Pre-tax income",
+        "Taxes",
+        "Net income"
+      ]
+    },
+    {
+      "name": "Balance sheet",
+      "contents": [
+        "Cash",
+        "Accounts receivable",
+        "Inventory",
+        "Net PP&E",
+        "Total assets",
+        "Accounts payable",
+        "Other current liabilities",
+        "Term debt",
+        "Revolver",
+        "Total equity",
+        "Total liabilities and equity",
+        "Balance-sheet check"
+      ]
+    },
+    {
+      "name": "Cash-flow statement",
+      "contents": [
+        "Net income",
+        "Depreciation",
+        "Recurring working-capital movement",
+        "Separate Year 1 working-capital normalization cash-flow component",
+        "Operating cash flow",
+        "Capex",
+        "Investing cash flow",
+        "Mandatory debt amortization",
+        "Revolver draws or repayments",
+        "Optional cash sweep by debt instrument",
+        "Net financing cash flow",
+        "Net change in cash",
+        "Beginning and ending cash",
+        "Cash-flow reconciliation check"
+      ]
+    },
+    {
+      "name": "Supporting schedules",
+      "contents": [
+        "Reported versus normalized opening working-capital bridge and annual receivable, inventory, and payable schedules",
+        "PP&E pool and capex-vintage schedule showing opening basis, capex, disposals, depreciation, and closing net PP&E",
+        "Term-debt and revolver roll-forwards showing mandatory amortization, draw, sweep repayment, and closing balances",
+        "Interest schedule showing opening and closing debt, average debt, qualifying average cash, interest expense, interest income, iteration count, and convergence residual",
+        "Retained-earnings roll-forward"
+      ]
+    },
+    {
+      "name": "DCF and valuation",
+      "contents": [
+        "FCFF by year",
+        "Discount factors and present value of FCFF",
+        "Year 5 EBITDA, exit multiple, terminal value, and present value of terminal value",
+        "Enterprise value",
+        "Opening cash, opening term debt, opening revolver, opening net debt, and implied opening-date equity value; terminal debt, terminal cash, and terminal net debt as forecast liquidity/reference metrics only",
+        "Two-way opening-date equity-value WACC and exit-multiple sensitivity matrix using 7%-11% WACC and 5.0x-7.0x multiples, explicitly labeled sensitivity_value_type: equity_value, with machine-readable signed-FCFF WACC-direction status and warning when conventional monotonicity is unsupported; a documented EUR 0.000001 rounding tolerance applies to adjacent conventional-direction comparisons"
+      ]
+    },
+    {
+      "name": "Reusable model checks",
+      "contents": [
+        "Opening and forecast balance-sheet balance",
+        "Cash-flow reconciliation",
+        "Cash minimum compliance after financing, with per-period headroom and separate compliance statuses (zero headroom is a binding limit)",
+        "No simultaneous revolver draw and optional sweep",
+        "Debt balances remain non-negative",
+        "Mandatory amortization and sweep do not exceed debt availability",
+        "Interest circularity convergence residual and convergence status",
+        "Working-capital schedule and one-time normalization tie-out",
+        "PP&E roll-forward tie-out",
+        "FCFF and enterprise-to-equity bridge tie-outs",
+        "Finite-value and input-bound validation"
+      ]
+    }
+  ],
+  "dashboard_intent": [
+    {
+      "section": "Performance overview",
+      "display": "Annual revenue, gross profit, EBITDA, EBITDA margin, EBIT, net income, and the respective paint and tools revenue contributions. Use a revenue and EBITDA trend chart plus a segment revenue mix display."
+    },
+    {
+      "section": "Cash generation and leverage",
+      "display": "Operating cash flow, capex, FCFF, ending cash, term debt, revolver, net debt, mandatory amortization, and optional sweep. Highlight any revolver draw and show the interest convergence residual and relevant check status."
+    },
+    {
+      "section": "Working capital and investment",
+      "display": "Receivable, inventory, and payable balances and days; recurring working-capital cash movement; separately highlighted Year 1 normalization cash-flow component; capex, depreciation, disposals, and closing net PP&E."
+    },
+    {
+      "section": "Valuation",
+      "display": "Enterprise value, equity value, terminal value share of enterprise value, opening-date net-debt bridge, and a WACC/exit-multiple sensitivity heatmap. The dashboard may show the platform-selected scenario label but will not include a model-local scenario selector."
+    }
+  ],
+  "known_limitations": [
+    "The company is fictional and the model uses synthetic operating and balance-sheet data.",
+    "Forecasts are annual and do not model intra-year seasonality, monthly liquidity timing, or covenant testing.",
+    "Other current liabilities are held flat because no forecast driver was requested.",
+    "No dividends, equity financing, acquisitions, leases, pension obligations, deferred taxes, tax-loss carryforwards, or minority interests are modeled.",
+    "Disposals have no proceeds, gains, or losses, and impairment is excluded.",
+    "Interest is solved deterministically from annual average opening and closing balances; it is not a daily cash or debt interest calculation.",
+    "The DCF uses an exit multiple only and intentionally excludes a perpetuity-growth terminal-value method.",
+    "The enterprise-to-equity bridge uses only submitted opening cash, opening term debt, and opening revolver because enterprise value is discounted to the opening valuation date; it does not include other potential valuation adjustments such as leases or non-operating assets. Terminal financing is shown only as forecast liquidity/reference information."
+  ],
+  "unresolved_questions": [],
+  "build_readiness": {
+    "ready_to_build": true,
+    "blockers": []
+  },
+  "modeler_self_check": {
+    "checks": [
+      "output_data_contract_valid",
+      "model_spec_output_alignment",
+      "dashboard_spec_present",
+      "json_shapes_strict",
+      "amendment_request_implemented"
+    ]
+  }
+}

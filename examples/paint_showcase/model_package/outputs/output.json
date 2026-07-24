@@ -1,0 +1,1854 @@
+{
+  "output_version": "2026-05-25",
+  "output_blocks": [
+    {
+      "id": "executive_summary",
+      "type": "custom",
+      "label": "Current-Case Executive Summary",
+      "data": {
+        "current_case_only": true,
+        "period": "Y5",
+        "valuation_date": "opening_date",
+        "year_5_revenue": 21921033.390946053,
+        "year_5_ebitda": 6063244.411018208,
+        "year_5_ebitda_margin": 0.2765948257495234,
+        "year_5_ebit": 4108244.4110182077,
+        "year_5_net_income": 3077955.233477984,
+        "ending_cash": 4263626.954525416,
+        "ending_term_debt": 0.0,
+        "ending_revolver": 0.0,
+        "ending_total_debt": 0.0,
+        "net_debt": -4263626.954525416,
+        "enterprise_value": 34238656.32005686,
+        "opening_date_equity_value": 25738656.320056863,
+        "terminal_present_value_contribution": 23644157.073112544,
+        "integrity_pass_statuses": {
+          "balance_sheet": true,
+          "cash_flow": true,
+          "debt_sweep": true,
+          "ppe": true,
+          "retained_earnings": true,
+          "minimum_cash": true,
+          "interest_convergence": true,
+          "enterprise_to_equity_bridge": true
+        },
+        "maximum_interest_convergence_residual": 2.2246036678552628e-05
+      }
+    },
+    {
+      "id": "performance_trend",
+      "type": "time_series",
+      "label": "Revenue and EBITDA",
+      "data": {
+        "x": [
+          "Y1",
+          "Y2",
+          "Y3",
+          "Y4",
+          "Y5"
+        ],
+        "series": [
+          {
+            "id": "revenue",
+            "label": "Revenue",
+            "values": [
+              18200000.0,
+              19065840.0,
+              19973266.272,
+              20924293.1819904,
+              21921033.390946053
+            ]
+          },
+          {
+            "id": "ebitda",
+            "label": "EBITDA",
+            "values": [
+              4500000.0,
+              4859280.0,
+              5238871.775999999,
+              5639825.5725887995,
+              6063244.411018208
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "income_statement",
+      "type": "table",
+      "label": "Income Statement",
+      "data": {
+        "columns": [
+          {
+            "id": "year",
+            "label": "Year"
+          },
+          {
+            "id": "revenue",
+            "label": "Revenue"
+          },
+          {
+            "id": "ebitda",
+            "label": "EBITDA"
+          },
+          {
+            "id": "ebit",
+            "label": "EBIT"
+          },
+          {
+            "id": "net_income",
+            "label": "Net Income"
+          }
+        ],
+        "rows": [
+          {
+            "year": "Y1",
+            "revenue": 18200000.0,
+            "cost_of_sales": 10700000.0,
+            "gross_profit": 7500000.0,
+            "operating_expenses": 3000000.0,
+            "ebitda": 4500000.0,
+            "depreciation": 1355000.0,
+            "ebit": 3145000.0,
+            "interest_expense": 549956.9918647242,
+            "interest_income": 13681.002711758567,
+            "pretax_income": 2608724.0108470344,
+            "taxes": 652181.0027117586,
+            "net_income": 1956543.008135276
+          },
+          {
+            "year": "Y2",
+            "revenue": 19065840.0,
+            "cost_of_sales": 11146560.0,
+            "gross_profit": 7919280.0,
+            "operating_expenses": 3060000.0,
+            "ebitda": 4859280.0,
+            "depreciation": 1505000.0,
+            "ebit": 3354280.0,
+            "interest_expense": 444279.51378544135,
+            "interest_income": 19225.826026276965,
+            "pretax_income": 2929226.3122408357,
+            "taxes": 732306.5780602089,
+            "net_income": 2196919.734180627
+          },
+          {
+            "year": "Y3",
+            "revenue": 19973266.272,
+            "cost_of_sales": 11613194.496000001,
+            "gross_profit": 8360071.775999999,
+            "operating_expenses": 3121200.0,
+            "ebitda": 5238871.775999999,
+            "depreciation": 1655000.0,
+            "ebit": 3583871.7759999987,
+            "interest_expense": 324090.0042648213,
+            "interest_income": 24063.1698400454,
+            "pretax_income": 3283844.9415752226,
+            "taxes": 820961.2353938057,
+            "net_income": 2462883.706181417
+          },
+          {
+            "year": "Y4",
+            "revenue": 20924293.1819904,
+            "cost_of_sales": 12100843.6094016,
+            "gross_profit": 8823449.5725888,
+            "operating_expenses": 3183624.0,
+            "ebitda": 5639825.5725887995,
+            "depreciation": 1805000.0,
+            "ebit": 3834825.5725887995,
+            "interest_expense": 183914.6298747302,
+            "interest_income": 30725.12479650763,
+            "pretax_income": 3681636.067510577,
+            "taxes": 920409.0168776442,
+            "net_income": 2761227.0506329327
+          },
+          {
+            "year": "Y5",
+            "revenue": 21921033.390946053,
+            "cost_of_sales": 12610492.499927845,
+            "gross_profit": 9310540.891018208,
+            "operating_expenses": 3247296.48,
+            "ebitda": 6063244.411018208,
+            "depreciation": 1955000.0,
+            "ebit": 4108244.4110182077,
+            "interest_expense": 54147.14753049502,
+            "interest_income": 49843.04781626614,
+            "pretax_income": 4103940.311303979,
+            "taxes": 1025985.0778259947,
+            "net_income": 3077955.233477984
+          }
+        ]
+      }
+    },
+    {
+      "id": "financial_model",
+      "type": "custom",
+      "label": "Integrated Financial Schedules",
+      "data": {
+        "periods": [
+          "Y1",
+          "Y2",
+          "Y3",
+          "Y4",
+          "Y5"
+        ],
+        "paint": [
+          {
+            "year": "Y1",
+            "units": 400000.0,
+            "unit_growth": null,
+            "price": 32.0,
+            "price_inflation": null,
+            "unit_cost": 14.0,
+            "unit_cost_inflation": null,
+            "overhead": 1500000.0,
+            "overhead_inflation": null,
+            "revenue": 12800000.0,
+            "revenue_per_unit": 32.0,
+            "variable_cost": 5600000.0,
+            "variable_cost_per_unit": 14.0,
+            "gross_profit": 5700000.0,
+            "gross_profit_per_unit": 14.25,
+            "gross_margin": 0.4453125
+          },
+          {
+            "year": "Y2",
+            "units": 412000.0,
+            "unit_growth": 0.03,
+            "price": 32.64,
+            "price_inflation": 0.02,
+            "unit_cost": 14.280000000000001,
+            "unit_cost_inflation": 0.02,
+            "overhead": 1530000.0,
+            "overhead_inflation": 0.02,
+            "revenue": 13447680.0,
+            "revenue_per_unit": 32.64,
+            "variable_cost": 5883360.000000001,
+            "variable_cost_per_unit": 14.280000000000003,
+            "gross_profit": 6034319.999999999,
+            "gross_profit_per_unit": 14.646407766990288,
+            "gross_margin": 0.44872572815533973
+          },
+          {
+            "year": "Y3",
+            "units": 424360.0,
+            "unit_growth": 0.03,
+            "price": 33.2928,
+            "price_inflation": 0.02,
+            "unit_cost": 14.565600000000002,
+            "unit_cost_inflation": 0.02,
+            "overhead": 1560600.0,
+            "overhead_inflation": 0.02,
+            "revenue": 14128132.608,
+            "revenue_per_unit": 33.2928,
+            "variable_cost": 6181058.016000001,
+            "variable_cost_per_unit": 14.565600000000002,
+            "gross_profit": 6386474.591999998,
+            "gross_profit_per_unit": 15.049662060514654,
+            "gross_margin": 0.4520395418983881
+          },
+          {
+            "year": "Y4",
+            "units": 437090.8,
+            "unit_growth": 0.03,
+            "price": 33.958656,
+            "price_inflation": 0.02,
+            "unit_cost": 14.856912000000001,
+            "unit_cost_inflation": 0.02,
+            "overhead": 1591812.0,
+            "overhead_inflation": 0.02,
+            "revenue": 14843016.117964799,
+            "revenue_per_unit": 33.958656,
+            "variable_cost": 6493819.5516096,
+            "variable_cost_per_unit": 14.856912,
+            "gross_profit": 6757384.566355199,
+            "gross_profit_per_unit": 15.459910312354317,
+            "gross_margin": 0.4552568367945516
+          },
+          {
+            "year": "Y5",
+            "units": 450203.524,
+            "unit_growth": 0.03,
+            "price": 34.63782912,
+            "price_inflation": 0.02,
+            "unit_cost": 15.154050240000002,
+            "unit_cost_inflation": 0.02,
+            "overhead": 1623648.24,
+            "overhead_inflation": 0.02,
+            "revenue": 15594072.733533818,
+            "revenue_per_unit": 34.63782912,
+            "variable_cost": 6822406.820921047,
+            "variable_cost_per_unit": 15.154050240000004,
+            "gross_profit": 7148017.672612771,
+            "gross_profit_per_unit": 15.877302800972236,
+            "gross_margin": 0.4583804240723801
+          }
+        ],
+        "tools": [
+          {
+            "year": "Y1",
+            "units": 300000.0,
+            "unit_growth": null,
+            "price": 18.0,
+            "price_inflation": null,
+            "unit_cost": 10.0,
+            "unit_cost_inflation": null,
+            "storage": 600000.0,
+            "storage_inflation": null,
+            "revenue": 5400000.0,
+            "revenue_per_unit": 18.0,
+            "purchase_cost": 3000000.0,
+            "purchase_cost_per_unit": 10.0,
+            "gross_profit": 1800000.0,
+            "gross_profit_per_unit": 6.0,
+            "gross_margin": 0.3333333333333333
+          },
+          {
+            "year": "Y2",
+            "units": 306000.0,
+            "unit_growth": 0.02,
+            "price": 18.36,
+            "price_inflation": 0.02,
+            "unit_cost": 10.2,
+            "unit_cost_inflation": 0.02,
+            "storage": 612000.0,
+            "storage_inflation": 0.02,
+            "revenue": 5618160.0,
+            "revenue_per_unit": 18.36,
+            "purchase_cost": 3121200.0,
+            "purchase_cost_per_unit": 10.2,
+            "gross_profit": 1884960.0,
+            "gross_profit_per_unit": 6.16,
+            "gross_margin": 0.3355119825708061
+          },
+          {
+            "year": "Y3",
+            "units": 312120.0,
+            "unit_growth": 0.02,
+            "price": 18.7272,
+            "price_inflation": 0.02,
+            "unit_cost": 10.404,
+            "unit_cost_inflation": 0.02,
+            "storage": 624240.0,
+            "storage_inflation": 0.02,
+            "revenue": 5845133.664,
+            "revenue_per_unit": 18.7272,
+            "purchase_cost": 3247296.48,
+            "purchase_cost_per_unit": 10.404,
+            "gross_profit": 1973597.184,
+            "gross_profit_per_unit": 6.3232,
+            "gross_margin": 0.3376479131957794
+          },
+          {
+            "year": "Y4",
+            "units": 318362.4,
+            "unit_growth": 0.02,
+            "price": 19.101744,
+            "price_inflation": 0.02,
+            "unit_cost": 10.61208,
+            "unit_cost_inflation": 0.02,
+            "storage": 636724.8,
+            "storage_inflation": 0.02,
+            "revenue": 6081277.0640256,
+            "revenue_per_unit": 19.101744,
+            "purchase_cost": 3378487.2577920007,
+            "purchase_cost_per_unit": 10.61208,
+            "gross_profit": 2066065.0062336,
+            "gross_profit_per_unit": 6.489663999999999,
+            "gross_margin": 0.33974196282810615
+          },
+          {
+            "year": "Y5",
+            "units": 324729.64800000004,
+            "unit_growth": 0.02,
+            "price": 19.48377888,
+            "price_inflation": 0.02,
+            "unit_cost": 10.824321600000001,
+            "unit_cost_inflation": 0.02,
+            "storage": 649459.2960000001,
+            "storage_inflation": 0.02,
+            "revenue": 6326960.657412235,
+            "revenue_per_unit": 19.48377888,
+            "purchase_cost": 3514978.1430067974,
+            "purchase_cost_per_unit": 10.824321600000001,
+            "gross_profit": 2162523.218405437,
+            "gross_profit_per_unit": 6.659457279999998,
+            "gross_margin": 0.34179495266372056
+          }
+        ],
+        "operations": [
+          {
+            "year": "Y1",
+            "revenue": 18200000.0,
+            "cost_of_sales": 10700000.0,
+            "gross_profit": 7500000.0,
+            "gross_margin": 0.41208791208791207,
+            "corporate_opex": 3000000.0,
+            "corporate_opex_inflation": null,
+            "ebitda": 4500000.0,
+            "ebitda_margin": 0.24725274725274726,
+            "ebit": 3145000.0
+          },
+          {
+            "year": "Y2",
+            "revenue": 19065840.0,
+            "cost_of_sales": 11146560.0,
+            "gross_profit": 7919280.0,
+            "gross_margin": 0.41536486197303657,
+            "corporate_opex": 3060000.0,
+            "corporate_opex_inflation": 0.02,
+            "ebitda": 4859280.0,
+            "ebitda_margin": 0.2548683928953563,
+            "ebit": 3354280.0
+          },
+          {
+            "year": "Y3",
+            "revenue": 19973266.272,
+            "cost_of_sales": 11613194.496000001,
+            "gross_profit": 8360071.775999999,
+            "gross_margin": 0.4185630763717282,
+            "corporate_opex": 3121200.0,
+            "corporate_opex_inflation": 0.02,
+            "ebitda": 5238871.775999999,
+            "ebitda_margin": 0.2622941938817607,
+            "ebit": 3583871.7759999987
+          },
+          {
+            "year": "Y4",
+            "revenue": 20924293.1819904,
+            "cost_of_sales": 12100843.6094016,
+            "gross_profit": 8823449.5725888,
+            "gross_margin": 0.4216844743975949,
+            "corporate_opex": 3183624.0,
+            "corporate_opex_inflation": 0.02,
+            "ebitda": 5639825.5725887995,
+            "ebitda_margin": 0.2695348188603577,
+            "ebit": 3834825.5725887995
+          },
+          {
+            "year": "Y5",
+            "revenue": 21921033.390946053,
+            "cost_of_sales": 12610492.499927845,
+            "gross_profit": 9310540.891018208,
+            "gross_margin": 0.4247309296496806,
+            "corporate_opex": 3247296.48,
+            "corporate_opex_inflation": 0.02,
+            "ebitda": 6063244.411018208,
+            "ebitda_margin": 0.2765948257495234,
+            "ebit": 4108244.4110182077
+          }
+        ],
+        "working_capital": [
+          {
+            "year": "Y1",
+            "receivables": 2742465.7534246575,
+            "inventory": 2198630.1369863013,
+            "payables": 1465753.4246575343,
+            "nwc": 3475342.4657534244,
+            "recurring_cash_flow": 0.0,
+            "normalization_cash_flow": 224657.53424657555
+          },
+          {
+            "year": "Y2",
+            "receivables": 2872934.794520548,
+            "inventory": 2290389.0410958906,
+            "payables": 1526926.0273972603,
+            "nwc": 3636397.8082191786,
+            "recurring_cash_flow": -161055.34246575413,
+            "normalization_cash_flow": 0.0
+          },
+          {
+            "year": "Y3",
+            "receivables": 3009670.260164384,
+            "inventory": 2386272.841643836,
+            "payables": 1590848.5610958906,
+            "nwc": 3805094.5407123296,
+            "recurring_cash_flow": -168696.73249315098,
+            "normalization_cash_flow": 0.0
+          },
+          {
+            "year": "Y4",
+            "receivables": 3152975.6849574572,
+            "inventory": 2486474.714260603,
+            "payables": 1657649.8095070685,
+            "nwc": 3981800.589710992,
+            "recurring_cash_flow": -176706.04899866227,
+            "normalization_cash_flow": 0.0
+          },
+          {
+            "year": "Y5",
+            "receivables": 3303169.415074063,
+            "inventory": 2591197.0890262695,
+            "payables": 1727464.726017513,
+            "nwc": 4166901.7780828187,
+            "recurring_cash_flow": -185101.1883718269,
+            "normalization_cash_flow": 0.0
+          }
+        ],
+        "opening_working_capital": {
+          "reported_nwc": 3700000.0,
+          "normalized_nwc": 3475342.4657534244,
+          "normalization_cash_flow": 224657.53424657555
+        },
+        "ppe": [
+          {
+            "year": "Y1",
+            "pools": [
+              {
+                "id": "opening",
+                "opening_gross": 12800000.0,
+                "opening_accumulated_depreciation": 0.0,
+                "opening_net": 12800000.0,
+                "pre_retirement_net_book_value": 12800000.0,
+                "fully_depreciated_retirement_availability": 0.0,
+                "capex": 0.0,
+                "retirement_gross_cost": 0.0,
+                "retirement_accumulated_depreciation": 0.0,
+                "disposals": 0.0,
+                "depreciation": 1280000.0,
+                "closing_gross": 12800000.0,
+                "closing_accumulated_depreciation": 1280000.0,
+                "closing_net": 11520000.0
+              },
+              {
+                "id": "capex_1",
+                "opening_gross": 1500000.0,
+                "opening_accumulated_depreciation": 0.0,
+                "opening_net": 1500000.0,
+                "pre_retirement_net_book_value": 1500000.0,
+                "fully_depreciated_retirement_availability": 0.0,
+                "capex": 1500000.0,
+                "retirement_gross_cost": 0.0,
+                "retirement_accumulated_depreciation": 0.0,
+                "disposals": 0.0,
+                "depreciation": 75000.0,
+                "closing_gross": 1500000.0,
+                "closing_accumulated_depreciation": 75000.0,
+                "closing_net": 1425000.0
+              }
+            ],
+            "capex": 1500000.0,
+            "retirement_gross_cost": 0.0,
+            "retirement_accumulated_depreciation": 0.0,
+            "disposals": 0.0,
+            "depreciation": 1355000.0,
+            "closing_net_ppe": 12945000.0
+          },
+          {
+            "year": "Y2",
+            "pools": [
+              {
+                "id": "opening",
+                "opening_gross": 12800000.0,
+                "opening_accumulated_depreciation": 1280000.0,
+                "opening_net": 11520000.0,
+                "pre_retirement_net_book_value": 11520000.0,
+                "fully_depreciated_retirement_availability": 0.0,
+                "capex": 0.0,
+                "retirement_gross_cost": 0.0,
+                "retirement_accumulated_depreciation": 0.0,
+                "disposals": 0.0,
+                "depreciation": 1280000.0,
+                "closing_gross": 12800000.0,
+                "closing_accumulated_depreciation": 2560000.0,
+                "closing_net": 10240000.0
+              },
+              {
+                "id": "capex_1",
+                "opening_gross": 1500000.0,
+                "opening_accumulated_depreciation": 75000.0,
+                "opening_net": 1425000.0,
+                "pre_retirement_net_book_value": 1425000.0,
+                "fully_depreciated_retirement_availability": 0.0,
+                "capex": 0.0,
+                "retirement_gross_cost": 0.0,
+                "retirement_accumulated_depreciation": 0.0,
+                "disposals": 0.0,
+                "depreciation": 150000.0,
+                "closing_gross": 1500000.0,
+                "closing_accumulated_depreciation": 225000.0,
+                "closing_net": 1275000.0
+              },
+              {
+                "id": "capex_2",
+                "opening_gross": 1500000.0,
+                "opening_accumulated_depreciation": 0.0,
+                "opening_net": 1500000.0,
+                "pre_retirement_net_book_value": 1500000.0,
+                "fully_depreciated_retirement_availability": 0.0,
+                "capex": 1500000.0,
+                "retirement_gross_cost": 0.0,
+                "retirement_accumulated_depreciation": 0.0,
+                "disposals": 0.0,
+                "depreciation": 75000.0,
+                "closing_gross": 1500000.0,
+                "closing_accumulated_depreciation": 75000.0,
+                "closing_net": 1425000.0
+              }
+            ],
+            "capex": 1500000.0,
+            "retirement_gross_cost": 0.0,
+            "retirement_accumulated_depreciation": 0.0,
+            "disposals": 0.0,
+            "depreciation": 1505000.0,
+            "closing_net_ppe": 12940000.0
+          },
+          {
+            "year": "Y3",
+            "pools": [
+              {
+                "id": "opening",
+                "opening_gross": 12800000.0,
+                "opening_accumulated_depreciation": 2560000.0,
+                "opening_net": 10240000.0,
+                "pre_retirement_net_book_value": 10240000.0,
+                "fully_depreciated_retirement_availability": 0.0,
+                "capex": 0.0,
+                "retirement_gross_cost": 0.0,
+                "retirement_accumulated_depreciation": 0.0,
+                "disposals": 0.0,
+                "depreciation": 1280000.0,
+                "closing_gross": 12800000.0,
+                "closing_accumulated_depreciation": 3840000.0,
+                "closing_net": 8960000.0
+              },
+              {
+                "id": "capex_1",
+                "opening_gross": 1500000.0,
+                "opening_accumulated_depreciation": 225000.0,
+                "opening_net": 1275000.0,
+                "pre_retirement_net_book_value": 1275000.0,
+                "fully_depreciated_retirement_availability": 0.0,
+                "capex": 0.0,
+                "retirement_gross_cost": 0.0,
+                "retirement_accumulated_depreciation": 0.0,
+                "disposals": 0.0,
+                "depreciation": 150000.0,
+                "closing_gross": 1500000.0,
+                "closing_accumulated_depreciation": 375000.0,
+                "closing_net": 1125000.0
+              },
+              {
+                "id": "capex_2",
+                "opening_gross": 1500000.0,
+                "opening_accumulated_depreciation": 75000.0,
+                "opening_net": 1425000.0,
+                "pre_retirement_net_book_value": 1425000.0,
+                "fully_depreciated_retirement_availability": 0.0,
+                "capex": 0.0,
+                "retirement_gross_cost": 0.0,
+                "retirement_accumulated_depreciation": 0.0,
+                "disposals": 0.0,
+                "depreciation": 150000.0,
+                "closing_gross": 1500000.0,
+                "closing_accumulated_depreciation": 225000.0,
+                "closing_net": 1275000.0
+              },
+              {
+                "id": "capex_3",
+                "opening_gross": 1500000.0,
+                "opening_accumulated_depreciation": 0.0,
+                "opening_net": 1500000.0,
+                "pre_retirement_net_book_value": 1500000.0,
+                "fully_depreciated_retirement_availability": 0.0,
+                "capex": 1500000.0,
+                "retirement_gross_cost": 0.0,
+                "retirement_accumulated_depreciation": 0.0,
+                "disposals": 0.0,
+                "depreciation": 75000.0,
+                "closing_gross": 1500000.0,
+                "closing_accumulated_depreciation": 75000.0,
+                "closing_net": 1425000.0
+              }
+            ],
+            "capex": 1500000.0,
+            "retirement_gross_cost": 0.0,
+            "retirement_accumulated_depreciation": 0.0,
+            "disposals": 0.0,
+            "depreciation": 1655000.0,
+            "closing_net_ppe": 12785000.0
+          },
+          {
+            "year": "Y4",
+            "pools": [
+              {
+                "id": "opening",
+                "opening_gross": 12800000.0,
+                "opening_accumulated_depreciation": 3840000.0,
+                "opening_net": 8960000.0,
+                "pre_retirement_net_book_value": 8960000.0,
+                "fully_depreciated_retirement_availability": 0.0,
+                "capex": 0.0,
+                "retirement_gross_cost": 0.0,
+                "retirement_accumulated_depreciation": 0.0,
+                "disposals": 0.0,
+                "depreciation": 1280000.0,
+                "closing_gross": 12800000.0,
+                "closing_accumulated_depreciation": 5120000.0,
+                "closing_net": 7680000.0
+              },
+              {
+                "id": "capex_1",
+                "opening_gross": 1500000.0,
+                "opening_accumulated_depreciation": 375000.0,
+                "opening_net": 1125000.0,
+                "pre_retirement_net_book_value": 1125000.0,
+                "fully_depreciated_retirement_availability": 0.0,
+                "capex": 0.0,
+                "retirement_gross_cost": 0.0,
+                "retirement_accumulated_depreciation": 0.0,
+                "disposals": 0.0,
+                "depreciation": 150000.0,
+                "closing_gross": 1500000.0,
+                "closing_accumulated_depreciation": 525000.0,
+                "closing_net": 975000.0
+              },
+              {
+                "id": "capex_2",
+                "opening_gross": 1500000.0,
+                "opening_accumulated_depreciation": 225000.0,
+                "opening_net": 1275000.0,
+                "pre_retirement_net_book_value": 1275000.0,
+                "fully_depreciated_retirement_availability": 0.0,
+                "capex": 0.0,
+                "retirement_gross_cost": 0.0,
+                "retirement_accumulated_depreciation": 0.0,
+                "disposals": 0.0,
+                "depreciation": 150000.0,
+                "closing_gross": 1500000.0,
+                "closing_accumulated_depreciation": 375000.0,
+                "closing_net": 1125000.0
+              },
+              {
+                "id": "capex_3",
+                "opening_gross": 1500000.0,
+                "opening_accumulated_depreciation": 75000.0,
+                "opening_net": 1425000.0,
+                "pre_retirement_net_book_value": 1425000.0,
+                "fully_depreciated_retirement_availability": 0.0,
+                "capex": 0.0,
+                "retirement_gross_cost": 0.0,
+                "retirement_accumulated_depreciation": 0.0,
+                "disposals": 0.0,
+                "depreciation": 150000.0,
+                "closing_gross": 1500000.0,
+                "closing_accumulated_depreciation": 225000.0,
+                "closing_net": 1275000.0
+              },
+              {
+                "id": "capex_4",
+                "opening_gross": 1500000.0,
+                "opening_accumulated_depreciation": 0.0,
+                "opening_net": 1500000.0,
+                "pre_retirement_net_book_value": 1500000.0,
+                "fully_depreciated_retirement_availability": 0.0,
+                "capex": 1500000.0,
+                "retirement_gross_cost": 0.0,
+                "retirement_accumulated_depreciation": 0.0,
+                "disposals": 0.0,
+                "depreciation": 75000.0,
+                "closing_gross": 1500000.0,
+                "closing_accumulated_depreciation": 75000.0,
+                "closing_net": 1425000.0
+              }
+            ],
+            "capex": 1500000.0,
+            "retirement_gross_cost": 0.0,
+            "retirement_accumulated_depreciation": 0.0,
+            "disposals": 0.0,
+            "depreciation": 1805000.0,
+            "closing_net_ppe": 12480000.0
+          },
+          {
+            "year": "Y5",
+            "pools": [
+              {
+                "id": "opening",
+                "opening_gross": 12800000.0,
+                "opening_accumulated_depreciation": 5120000.0,
+                "opening_net": 7680000.0,
+                "pre_retirement_net_book_value": 7680000.0,
+                "fully_depreciated_retirement_availability": 0.0,
+                "capex": 0.0,
+                "retirement_gross_cost": 0.0,
+                "retirement_accumulated_depreciation": 0.0,
+                "disposals": 0.0,
+                "depreciation": 1280000.0,
+                "closing_gross": 12800000.0,
+                "closing_accumulated_depreciation": 6400000.0,
+                "closing_net": 6400000.0
+              },
+              {
+                "id": "capex_1",
+                "opening_gross": 1500000.0,
+                "opening_accumulated_depreciation": 525000.0,
+                "opening_net": 975000.0,
+                "pre_retirement_net_book_value": 975000.0,
+                "fully_depreciated_retirement_availability": 0.0,
+                "capex": 0.0,
+                "retirement_gross_cost": 0.0,
+                "retirement_accumulated_depreciation": 0.0,
+                "disposals": 0.0,
+                "depreciation": 150000.0,
+                "closing_gross": 1500000.0,
+                "closing_accumulated_depreciation": 675000.0,
+                "closing_net": 825000.0
+              },
+              {
+                "id": "capex_2",
+                "opening_gross": 1500000.0,
+                "opening_accumulated_depreciation": 375000.0,
+                "opening_net": 1125000.0,
+                "pre_retirement_net_book_value": 1125000.0,
+                "fully_depreciated_retirement_availability": 0.0,
+                "capex": 0.0,
+                "retirement_gross_cost": 0.0,
+                "retirement_accumulated_depreciation": 0.0,
+                "disposals": 0.0,
+                "depreciation": 150000.0,
+                "closing_gross": 1500000.0,
+                "closing_accumulated_depreciation": 525000.0,
+                "closing_net": 975000.0
+              },
+              {
+                "id": "capex_3",
+                "opening_gross": 1500000.0,
+                "opening_accumulated_depreciation": 225000.0,
+                "opening_net": 1275000.0,
+                "pre_retirement_net_book_value": 1275000.0,
+                "fully_depreciated_retirement_availability": 0.0,
+                "capex": 0.0,
+                "retirement_gross_cost": 0.0,
+                "retirement_accumulated_depreciation": 0.0,
+                "disposals": 0.0,
+                "depreciation": 150000.0,
+                "closing_gross": 1500000.0,
+                "closing_accumulated_depreciation": 375000.0,
+                "closing_net": 1125000.0
+              },
+              {
+                "id": "capex_4",
+                "opening_gross": 1500000.0,
+                "opening_accumulated_depreciation": 75000.0,
+                "opening_net": 1425000.0,
+                "pre_retirement_net_book_value": 1425000.0,
+                "fully_depreciated_retirement_availability": 0.0,
+                "capex": 0.0,
+                "retirement_gross_cost": 0.0,
+                "retirement_accumulated_depreciation": 0.0,
+                "disposals": 0.0,
+                "depreciation": 150000.0,
+                "closing_gross": 1500000.0,
+                "closing_accumulated_depreciation": 225000.0,
+                "closing_net": 1275000.0
+              },
+              {
+                "id": "capex_5",
+                "opening_gross": 1500000.0,
+                "opening_accumulated_depreciation": 0.0,
+                "opening_net": 1500000.0,
+                "pre_retirement_net_book_value": 1500000.0,
+                "fully_depreciated_retirement_availability": 0.0,
+                "capex": 1500000.0,
+                "retirement_gross_cost": 0.0,
+                "retirement_accumulated_depreciation": 0.0,
+                "disposals": 0.0,
+                "depreciation": 75000.0,
+                "closing_gross": 1500000.0,
+                "closing_accumulated_depreciation": 75000.0,
+                "closing_net": 1425000.0
+              }
+            ],
+            "capex": 1500000.0,
+            "retirement_gross_cost": 0.0,
+            "retirement_accumulated_depreciation": 0.0,
+            "disposals": 0.0,
+            "depreciation": 1955000.0,
+            "closing_net_ppe": 12025000.0
+          }
+        ],
+        "financing": [
+          {
+            "year": "Y1",
+            "opening_cash": 1500000.0,
+            "closing_cash": 1868100.2711909255,
+            "opening_term_debt": 10000000.0,
+            "closing_term_debt": 8331899.7288090745,
+            "opening_revolver": 0.0,
+            "closing_revolver": 0.0,
+            "mandatory_amortization": 800000.0,
+            "revolver_draw": 0.0,
+            "revolver_sweep": 0.0,
+            "term_sweep": 868100.2711909255,
+            "sweep_capacity": 868100.2711909255,
+            "pre_financing_cash": 2736200.542381851,
+            "interest_expense": 549956.9918647242,
+            "interest_income": 13681.002711758567,
+            "qualifying_average_cash": 684050.1355879284,
+            "iterations": 7,
+            "convergence_residual": 1.5068799257278442e-05,
+            "convergence_tolerance": 0.0001,
+            "converged": true,
+            "convergence_status": "converged"
+          },
+          {
+            "year": "Y2",
+            "opening_cash": 1868100.2711909255,
+            "closing_cash": 2054482.3314528987,
+            "opening_term_debt": 8331899.7288090745,
+            "closing_term_debt": 6477417.397356176,
+            "opening_revolver": 0.0,
+            "closing_revolver": 0.0,
+            "mandatory_amortization": 800000.0,
+            "revolver_draw": 0.0,
+            "revolver_sweep": 0.0,
+            "term_sweep": 1054482.3314528987,
+            "sweep_capacity": 1054482.3314528987,
+            "pre_financing_cash": 3108964.6629057974,
+            "interest_expense": 444279.51378544135,
+            "interest_income": 19225.826026276965,
+            "qualifying_average_cash": 961291.3013138482,
+            "iterations": 7,
+            "convergence_residual": 1.612771302461624e-05,
+            "convergence_tolerance": 0.0001,
+            "converged": true,
+            "convergence_status": "converged"
+          },
+          {
+            "year": "Y3",
+            "opening_cash": 2054482.3314528987,
+            "closing_cash": 2351834.6525705825,
+            "opening_term_debt": 6477417.397356176,
+            "closing_term_debt": 4325582.744785594,
+            "opening_revolver": 0.0,
+            "closing_revolver": 0.0,
+            "mandatory_amortization": 800000.0,
+            "revolver_draw": 0.0,
+            "revolver_sweep": 0.0,
+            "term_sweep": 1351834.6525705825,
+            "sweep_capacity": 1351834.6525705825,
+            "pre_financing_cash": 3703669.305141165,
+            "interest_expense": 324090.0042648213,
+            "interest_income": 24063.1698400454,
+            "qualifying_average_cash": 1203158.49200227,
+            "iterations": 7,
+            "convergence_residual": 1.8941238522529602e-05,
+            "convergence_tolerance": 0.0001,
+            "converged": true,
+            "convergence_status": "converged"
+          },
+          {
+            "year": "Y4",
+            "opening_cash": 2351834.6525705825,
+            "closing_cash": 2720677.8271024264,
+            "opening_term_debt": 4325582.744785594,
+            "closing_term_debt": 1804904.9176831674,
+            "opening_revolver": 0.0,
+            "closing_revolver": 0.0,
+            "mandatory_amortization": 800000.0,
+            "revolver_draw": 0.0,
+            "revolver_sweep": 0.0,
+            "term_sweep": 1720677.8271024264,
+            "sweep_capacity": 1720677.8271024264,
+            "pre_financing_cash": 4441355.654204853,
+            "interest_expense": 183914.6298747302,
+            "interest_income": 30725.12479650763,
+            "qualifying_average_cash": 1536256.2398253814,
+            "iterations": 7,
+            "convergence_residual": 2.2246036678552628e-05,
+            "convergence_tolerance": 0.0001,
+            "converged": true,
+            "convergence_status": "converged"
+          },
+          {
+            "year": "Y5",
+            "opening_cash": 2720677.8271024264,
+            "closing_cash": 4263626.954525416,
+            "opening_term_debt": 1804904.9176831674,
+            "closing_term_debt": 0.0,
+            "opening_revolver": 0.0,
+            "closing_revolver": 0.0,
+            "mandatory_amortization": 800000.0,
+            "revolver_draw": 0.0,
+            "revolver_sweep": 0.0,
+            "term_sweep": 1004904.9176831674,
+            "sweep_capacity": 2134265.9361042916,
+            "pre_financing_cash": 5268531.872208583,
+            "interest_expense": 54147.14753049502,
+            "interest_income": 49843.04781626614,
+            "qualifying_average_cash": 2492152.390813307,
+            "iterations": 7,
+            "convergence_residual": 1.2284144759178162e-06,
+            "convergence_tolerance": 0.0001,
+            "converged": true,
+            "convergence_status": "converged"
+          }
+        ],
+        "income_statement": [
+          {
+            "year": "Y1",
+            "revenue": 18200000.0,
+            "cost_of_sales": 10700000.0,
+            "gross_profit": 7500000.0,
+            "operating_expenses": 3000000.0,
+            "ebitda": 4500000.0,
+            "depreciation": 1355000.0,
+            "ebit": 3145000.0,
+            "interest_expense": 549956.9918647242,
+            "interest_income": 13681.002711758567,
+            "pretax_income": 2608724.0108470344,
+            "taxes": 652181.0027117586,
+            "net_income": 1956543.008135276
+          },
+          {
+            "year": "Y2",
+            "revenue": 19065840.0,
+            "cost_of_sales": 11146560.0,
+            "gross_profit": 7919280.0,
+            "operating_expenses": 3060000.0,
+            "ebitda": 4859280.0,
+            "depreciation": 1505000.0,
+            "ebit": 3354280.0,
+            "interest_expense": 444279.51378544135,
+            "interest_income": 19225.826026276965,
+            "pretax_income": 2929226.3122408357,
+            "taxes": 732306.5780602089,
+            "net_income": 2196919.734180627
+          },
+          {
+            "year": "Y3",
+            "revenue": 19973266.272,
+            "cost_of_sales": 11613194.496000001,
+            "gross_profit": 8360071.775999999,
+            "operating_expenses": 3121200.0,
+            "ebitda": 5238871.775999999,
+            "depreciation": 1655000.0,
+            "ebit": 3583871.7759999987,
+            "interest_expense": 324090.0042648213,
+            "interest_income": 24063.1698400454,
+            "pretax_income": 3283844.9415752226,
+            "taxes": 820961.2353938057,
+            "net_income": 2462883.706181417
+          },
+          {
+            "year": "Y4",
+            "revenue": 20924293.1819904,
+            "cost_of_sales": 12100843.6094016,
+            "gross_profit": 8823449.5725888,
+            "operating_expenses": 3183624.0,
+            "ebitda": 5639825.5725887995,
+            "depreciation": 1805000.0,
+            "ebit": 3834825.5725887995,
+            "interest_expense": 183914.6298747302,
+            "interest_income": 30725.12479650763,
+            "pretax_income": 3681636.067510577,
+            "taxes": 920409.0168776442,
+            "net_income": 2761227.0506329327
+          },
+          {
+            "year": "Y5",
+            "revenue": 21921033.390946053,
+            "cost_of_sales": 12610492.499927845,
+            "gross_profit": 9310540.891018208,
+            "operating_expenses": 3247296.48,
+            "ebitda": 6063244.411018208,
+            "depreciation": 1955000.0,
+            "ebit": 4108244.4110182077,
+            "interest_expense": 54147.14753049502,
+            "interest_income": 49843.04781626614,
+            "pretax_income": 4103940.311303979,
+            "taxes": 1025985.0778259947,
+            "net_income": 3077955.233477984
+          }
+        ],
+        "cash_flow": [
+          {
+            "year": "Y1",
+            "net_income": 1956543.008135276,
+            "depreciation": 1355000.0,
+            "recurring_working_capital": 0.0,
+            "normalization_working_capital": 224657.53424657555,
+            "operating_cash_flow": 3536200.5423818515,
+            "capex": 1500000.0,
+            "investing_cash_flow": -1500000.0,
+            "mandatory_amortization": -800000.0,
+            "revolver_draw": 0.0,
+            "revolver_sweep": -0.0,
+            "term_sweep": -868100.2711909255,
+            "financing_cash_flow": -1668100.2711909255,
+            "net_change_cash": 368100.27119092597,
+            "beginning_cash": 1500000.0,
+            "ending_cash": 1868100.2711909255,
+            "cash_reconciliation_residual": -4.656612873077393e-10
+          },
+          {
+            "year": "Y2",
+            "net_income": 2196919.734180627,
+            "depreciation": 1505000.0,
+            "recurring_working_capital": -161055.34246575413,
+            "normalization_working_capital": 0.0,
+            "operating_cash_flow": 3540864.391714873,
+            "capex": 1500000.0,
+            "investing_cash_flow": -1500000.0,
+            "mandatory_amortization": -800000.0,
+            "revolver_draw": 0.0,
+            "revolver_sweep": -0.0,
+            "term_sweep": -1054482.3314528987,
+            "financing_cash_flow": -1854482.3314528987,
+            "net_change_cash": 186382.0602619741,
+            "beginning_cash": 1868100.2711909255,
+            "ending_cash": 2054482.3314528987,
+            "cash_reconciliation_residual": -9.313225746154785e-10
+          },
+          {
+            "year": "Y3",
+            "net_income": 2462883.706181417,
+            "depreciation": 1655000.0,
+            "recurring_working_capital": -168696.73249315098,
+            "normalization_working_capital": 0.0,
+            "operating_cash_flow": 3949186.9736882662,
+            "capex": 1500000.0,
+            "investing_cash_flow": -1500000.0,
+            "mandatory_amortization": -800000.0,
+            "revolver_draw": 0.0,
+            "revolver_sweep": -0.0,
+            "term_sweep": -1351834.6525705825,
+            "financing_cash_flow": -2151834.6525705825,
+            "net_change_cash": 297352.3211176838,
+            "beginning_cash": 2054482.3314528987,
+            "ending_cash": 2351834.6525705825,
+            "cash_reconciliation_residual": 0.0
+          },
+          {
+            "year": "Y4",
+            "net_income": 2761227.0506329327,
+            "depreciation": 1805000.0,
+            "recurring_working_capital": -176706.04899866227,
+            "normalization_working_capital": 0.0,
+            "operating_cash_flow": 4389521.001634271,
+            "capex": 1500000.0,
+            "investing_cash_flow": -1500000.0,
+            "mandatory_amortization": -800000.0,
+            "revolver_draw": 0.0,
+            "revolver_sweep": -0.0,
+            "term_sweep": -1720677.8271024264,
+            "financing_cash_flow": -2520677.8271024264,
+            "net_change_cash": 368843.17453184444,
+            "beginning_cash": 2351834.6525705825,
+            "ending_cash": 2720677.8271024264,
+            "cash_reconciliation_residual": -4.656612873077393e-10
+          },
+          {
+            "year": "Y5",
+            "net_income": 3077955.233477984,
+            "depreciation": 1955000.0,
+            "recurring_working_capital": -185101.1883718269,
+            "normalization_working_capital": 0.0,
+            "operating_cash_flow": 4847854.045106157,
+            "capex": 1500000.0,
+            "investing_cash_flow": -1500000.0,
+            "mandatory_amortization": -800000.0,
+            "revolver_draw": 0.0,
+            "revolver_sweep": -0.0,
+            "term_sweep": -1004904.9176831674,
+            "financing_cash_flow": -1804904.9176831674,
+            "net_change_cash": 1542949.1274229893,
+            "beginning_cash": 2720677.8271024264,
+            "ending_cash": 4263626.954525416,
+            "cash_reconciliation_residual": 0.0
+          }
+        ],
+        "balance_sheet": [
+          {
+            "year": "Y1",
+            "cash": 1868100.2711909255,
+            "receivables": 2742465.7534246575,
+            "inventory": 2198630.1369863013,
+            "net_ppe": 12945000.0,
+            "total_assets": 19754196.161601886,
+            "payables": 1465753.4246575343,
+            "other_current_liabilities": 500000.0,
+            "term_debt": 8331899.7288090745,
+            "revolver": 0.0,
+            "equity": 9456543.008135276,
+            "total_liabilities_equity": 19754196.161601886,
+            "balance_sheet_check": 0.0
+          },
+          {
+            "year": "Y2",
+            "cash": 2054482.3314528987,
+            "receivables": 2872934.794520548,
+            "inventory": 2290389.0410958906,
+            "net_ppe": 12940000.0,
+            "total_assets": 20157806.16706934,
+            "payables": 1526926.0273972603,
+            "other_current_liabilities": 500000.0,
+            "term_debt": 6477417.397356176,
+            "revolver": 0.0,
+            "equity": 11653462.742315903,
+            "total_liabilities_equity": 20157806.16706934,
+            "balance_sheet_check": 0.0
+          },
+          {
+            "year": "Y3",
+            "cash": 2351834.6525705825,
+            "receivables": 3009670.260164384,
+            "inventory": 2386272.841643836,
+            "net_ppe": 12785000.0,
+            "total_assets": 20532777.754378803,
+            "payables": 1590848.5610958906,
+            "other_current_liabilities": 500000.0,
+            "term_debt": 4325582.744785594,
+            "revolver": 0.0,
+            "equity": 14116346.448497321,
+            "total_liabilities_equity": 20532777.754378807,
+            "balance_sheet_check": -3.725290298461914e-09
+          },
+          {
+            "year": "Y4",
+            "cash": 2720677.8271024264,
+            "receivables": 3152975.6849574572,
+            "inventory": 2486474.714260603,
+            "net_ppe": 12480000.0,
+            "total_assets": 20840128.226320487,
+            "payables": 1657649.8095070685,
+            "other_current_liabilities": 500000.0,
+            "term_debt": 1804904.9176831674,
+            "revolver": 0.0,
+            "equity": 16877573.499130253,
+            "total_liabilities_equity": 20840128.22632049,
+            "balance_sheet_check": -3.725290298461914e-09
+          },
+          {
+            "year": "Y5",
+            "cash": 4263626.954525416,
+            "receivables": 3303169.415074063,
+            "inventory": 2591197.0890262695,
+            "net_ppe": 12025000.0,
+            "total_assets": 22182993.45862575,
+            "payables": 1727464.726017513,
+            "other_current_liabilities": 500000.0,
+            "term_debt": 0.0,
+            "revolver": 0.0,
+            "equity": 19955528.732608236,
+            "total_liabilities_equity": 22182993.45862575,
+            "balance_sheet_check": 0.0
+          }
+        ],
+        "retained_earnings": [
+          {
+            "year": "Y1",
+            "opening_equity": 7500000.0,
+            "net_income": 1956543.008135276,
+            "closing_equity": 9456543.008135276
+          },
+          {
+            "year": "Y2",
+            "opening_equity": 9456543.008135276,
+            "net_income": 2196919.734180627,
+            "closing_equity": 11653462.742315903
+          },
+          {
+            "year": "Y3",
+            "opening_equity": 11653462.742315903,
+            "net_income": 2462883.706181417,
+            "closing_equity": 14116346.448497321
+          },
+          {
+            "year": "Y4",
+            "opening_equity": 14116346.448497321,
+            "net_income": 2761227.0506329327,
+            "closing_equity": 16877573.499130253
+          },
+          {
+            "year": "Y5",
+            "opening_equity": 16877573.499130253,
+            "net_income": 3077955.233477984,
+            "closing_equity": 19955528.732608236
+          }
+        ],
+        "fcff": [
+          {
+            "year": "Y1",
+            "operating_tax": 786250.0,
+            "fcff": 2438407.5342465756,
+            "discount_factor": 0.9174311926605504,
+            "present_value": 2237071.132336308
+          },
+          {
+            "year": "Y2",
+            "operating_tax": 838570.0,
+            "fcff": 2359654.657534246,
+            "discount_factor": 0.84167999326656,
+            "present_value": 1986074.1162648308
+          },
+          {
+            "year": "Y3",
+            "operating_tax": 895967.9439999997,
+            "fcff": 2674207.0995068476,
+            "discount_factor": 0.7721834800610642,
+            "present_value": 2064978.5445012022
+          },
+          {
+            "year": "Y4",
+            "operating_tax": 958706.3931471999,
+            "fcff": 3004413.130442937,
+            "discount_factor": 0.7084252110651963,
+            "present_value": 2128402.0060610846
+          },
+          {
+            "year": "Y5",
+            "operating_tax": 1027061.1027545519,
+            "fcff": 3351082.119891829,
+            "discount_factor": 0.6499313862983452,
+            "present_value": 2177973.447780894
+          }
+        ],
+        "valuation": {
+          "terminal_ebitda": 6063244.411018208,
+          "exit_multiple": 6.0,
+          "terminal_value": 36379466.466109246,
+          "terminal_discount_factor": 0.6499313862983452,
+          "terminal_present_value": 23644157.073112544,
+          "enterprise_value": 34238656.32005686,
+          "opening_cash": 1500000.0,
+          "opening_term_debt": 10000000.0,
+          "opening_revolver": 0.0,
+          "opening_net_debt": 8500000.0,
+          "terminal_cash": 4263626.954525416,
+          "terminal_term_debt": 0.0,
+          "terminal_revolver": 0.0,
+          "terminal_total_debt": 0.0,
+          "net_debt": -4263626.954525416,
+          "equity_value": 25738656.320056863,
+          "sensitivity_value_type": "equity_value",
+          "sensitivity": [
+            {
+              "exit_multiple": 5.0,
+              "values": [
+                24319223.85642261,
+                23025414.961022463,
+                21797963.474538106,
+                20632834.95845531,
+                19526275.745048855
+              ]
+            },
+            {
+              "exit_multiple": 5.5,
+              "values": [
+                26480728.5903664,
+                25088686.093846366,
+                23768309.897297487,
+                22515233.829315536,
+                21325395.96908005
+              ]
+            },
+            {
+              "exit_multiple": 6.0,
+              "values": [
+                28642233.32431019,
+                27151957.226670265,
+                25738656.32005687,
+                24397632.700175762,
+                23124516.193111245
+              ]
+            },
+            {
+              "exit_multiple": 6.5,
+              "values": [
+                30803738.05825398,
+                29215228.359494165,
+                27709002.74281624,
+                26280031.57103599,
+                24923636.417142436
+              ]
+            },
+            {
+              "exit_multiple": 7.0,
+              "values": [
+                32965242.792197764,
+                31278499.49231807,
+                29679349.165575624,
+                28162430.441896215,
+                26722756.64117363
+              ]
+            }
+          ],
+          "sensitivity_wacc_rates": [
+            0.07,
+            0.08,
+            0.09,
+            0.1,
+            0.11
+          ],
+          "sensitivity_wacc_adjacent_changes": [
+            [
+              -1293808.895400148,
+              -1227451.4864843562,
+              -1165128.5160827972,
+              -1106559.2134064548
+            ],
+            [
+              -1392042.496520035,
+              -1320376.1965488791,
+              -1253076.067981951,
+              -1189837.8602354862
+            ],
+            [
+              -1490276.0976399258,
+              -1413300.9066133946,
+              -1341023.6198811084,
+              -1273116.5070645176
+            ],
+            [
+              -1588509.6987598166,
+              -1506225.616677925,
+              -1428971.171780251,
+              -1356395.1538935527
+            ],
+            [
+              -1686743.2998796925,
+              -1599150.326742448,
+              -1516918.7236794084,
+              -1439673.8007225841
+            ]
+          ],
+          "wacc_direction_rounding_tolerance": 1e-06,
+          "signed_fcff_profile": [
+            2438407.5342465756,
+            2359654.657534246,
+            2674207.0995068476,
+            3004413.130442937,
+            3351082.119891829
+          ],
+          "conventional_wacc_direction_supported": true,
+          "wacc_direction_status": "conventional_non_increasing_verified",
+          "wacc_direction_warning": null
+        },
+        "integrity_status": {
+          "balance_sheet": {
+            "residuals": [
+              0.0,
+              0.0,
+              -3.725290298461914e-09,
+              -3.725290298461914e-09,
+              0.0
+            ],
+            "passed": true
+          },
+          "cash_flow": {
+            "residuals": [
+              -4.656612873077393e-10,
+              -9.313225746154785e-10,
+              0.0,
+              -4.656612873077393e-10,
+              0.0
+            ],
+            "passed": true
+          },
+          "debt_sweep": {
+            "term_rollforward_residuals": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "revolver_rollforward_residuals": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "mandatory_amortization_cap_statuses": [
+              true,
+              true,
+              true,
+              true,
+              true
+            ],
+            "repayment_availability_statuses": [
+              true,
+              true,
+              true,
+              true,
+              true
+            ],
+            "revolver_first_allocation_statuses": [
+              true,
+              true,
+              true,
+              true,
+              true
+            ],
+            "draw_sweep_exclusivity_residuals": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "debt_nonnegative_statuses": [
+              true,
+              true,
+              true,
+              true,
+              true
+            ],
+            "passed": true
+          },
+          "ppe": {
+            "residuals": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "active_basis_rollforward_residuals": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "passed": true
+          },
+          "retained_earnings": {
+            "residuals": [
+              0.0,
+              4.656612873077393e-10,
+              9.313225746154785e-10,
+              -1.3969838619232178e-09,
+              -4.656612873077393e-10
+            ],
+            "passed": true
+          },
+          "minimum_cash": {
+            "headroom": [
+              868100.2711909255,
+              1054482.3314528987,
+              1351834.6525705825,
+              1720677.8271024264,
+              3263626.954525416
+            ],
+            "compliance_statuses": [
+              true,
+              true,
+              true,
+              true,
+              true
+            ],
+            "passed": true
+          },
+          "interest_convergence": {
+            "residuals": [
+              1.5068799257278442e-05,
+              1.612771302461624e-05,
+              1.8941238522529602e-05,
+              2.2246036678552628e-05,
+              1.2284144759178162e-06
+            ],
+            "statuses": [
+              true,
+              true,
+              true,
+              true,
+              true
+            ],
+            "maximum_convergence_residual": 2.2246036678552628e-05,
+            "passed": true
+          },
+          "enterprise_to_equity_bridge": {
+            "residual": 0.0,
+            "opening_cash": 1500000.0,
+            "opening_term_debt": 10000000.0,
+            "opening_revolver": 0.0,
+            "passed": true
+          }
+        }
+      }
+    },
+    {
+      "id": "current_case_integrity_status",
+      "type": "custom",
+      "label": "Current-Case Integrity Status",
+      "data": {
+        "balance_sheet": {
+          "residuals": [
+            0.0,
+            0.0,
+            -3.725290298461914e-09,
+            -3.725290298461914e-09,
+            0.0
+          ],
+          "passed": true
+        },
+        "cash_flow": {
+          "residuals": [
+            -4.656612873077393e-10,
+            -9.313225746154785e-10,
+            0.0,
+            -4.656612873077393e-10,
+            0.0
+          ],
+          "passed": true
+        },
+        "debt_sweep": {
+          "term_rollforward_residuals": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "revolver_rollforward_residuals": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "mandatory_amortization_cap_statuses": [
+            true,
+            true,
+            true,
+            true,
+            true
+          ],
+          "repayment_availability_statuses": [
+            true,
+            true,
+            true,
+            true,
+            true
+          ],
+          "revolver_first_allocation_statuses": [
+            true,
+            true,
+            true,
+            true,
+            true
+          ],
+          "draw_sweep_exclusivity_residuals": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "debt_nonnegative_statuses": [
+            true,
+            true,
+            true,
+            true,
+            true
+          ],
+          "passed": true
+        },
+        "ppe": {
+          "residuals": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "active_basis_rollforward_residuals": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "passed": true
+        },
+        "retained_earnings": {
+          "residuals": [
+            0.0,
+            4.656612873077393e-10,
+            9.313225746154785e-10,
+            -1.3969838619232178e-09,
+            -4.656612873077393e-10
+          ],
+          "passed": true
+        },
+        "minimum_cash": {
+          "headroom": [
+            868100.2711909255,
+            1054482.3314528987,
+            1351834.6525705825,
+            1720677.8271024264,
+            3263626.954525416
+          ],
+          "compliance_statuses": [
+            true,
+            true,
+            true,
+            true,
+            true
+          ],
+          "passed": true
+        },
+        "interest_convergence": {
+          "residuals": [
+            1.5068799257278442e-05,
+            1.612771302461624e-05,
+            1.8941238522529602e-05,
+            2.2246036678552628e-05,
+            1.2284144759178162e-06
+          ],
+          "statuses": [
+            true,
+            true,
+            true,
+            true,
+            true
+          ],
+          "maximum_convergence_residual": 2.2246036678552628e-05,
+          "passed": true
+        },
+        "enterprise_to_equity_bridge": {
+          "residual": 0.0,
+          "opening_cash": 1500000.0,
+          "opening_term_debt": 10000000.0,
+          "opening_revolver": 0.0,
+          "passed": true
+        }
+      }
+    },
+    {
+      "id": "valuation",
+      "type": "custom",
+      "label": "Exit Multiple DCF and Enterprise-to-Equity Bridge",
+      "data": {
+        "enterprise_value": 34238656.32005686,
+        "terminal_ebitda": 6063244.411018208,
+        "exit_multiple": 6.0,
+        "terminal_value": 36379466.466109246,
+        "terminal_discount_factor": 0.6499313862983452,
+        "terminal_present_value": 23644157.073112544,
+        "opening_cash": 1500000.0,
+        "opening_term_debt": 10000000.0,
+        "opening_revolver": 0.0,
+        "opening_net_debt": 8500000.0,
+        "equity_value": 25738656.320056863,
+        "equity_value_valuation_date": "opening_date",
+        "terminal_cash_reference_metric": 4263626.954525416,
+        "terminal_debt_reference_metric": 0.0,
+        "terminal_net_debt_reference_metric": -4263626.954525416,
+        "sensitivity_value_type": "equity_value",
+        "sensitivity": [
+          {
+            "exit_multiple": 5.0,
+            "values": [
+              24319223.85642261,
+              23025414.961022463,
+              21797963.474538106,
+              20632834.95845531,
+              19526275.745048855
+            ]
+          },
+          {
+            "exit_multiple": 5.5,
+            "values": [
+              26480728.5903664,
+              25088686.093846366,
+              23768309.897297487,
+              22515233.829315536,
+              21325395.96908005
+            ]
+          },
+          {
+            "exit_multiple": 6.0,
+            "values": [
+              28642233.32431019,
+              27151957.226670265,
+              25738656.32005687,
+              24397632.700175762,
+              23124516.193111245
+            ]
+          },
+          {
+            "exit_multiple": 6.5,
+            "values": [
+              30803738.05825398,
+              29215228.359494165,
+              27709002.74281624,
+              26280031.57103599,
+              24923636.417142436
+            ]
+          },
+          {
+            "exit_multiple": 7.0,
+            "values": [
+              32965242.792197764,
+              31278499.49231807,
+              29679349.165575624,
+              28162430.441896215,
+              26722756.64117363
+            ]
+          }
+        ],
+        "signed_fcff_profile": [
+          2438407.5342465756,
+          2359654.657534246,
+          2674207.0995068476,
+          3004413.130442937,
+          3351082.119891829
+        ],
+        "conventional_wacc_direction_supported": true,
+        "wacc_direction_status": "conventional_non_increasing_verified",
+        "wacc_direction_warning": null,
+        "sensitivity_wacc_adjacent_changes": [
+          [
+            -1293808.895400148,
+            -1227451.4864843562,
+            -1165128.5160827972,
+            -1106559.2134064548
+          ],
+          [
+            -1392042.496520035,
+            -1320376.1965488791,
+            -1253076.067981951,
+            -1189837.8602354862
+          ],
+          [
+            -1490276.0976399258,
+            -1413300.9066133946,
+            -1341023.6198811084,
+            -1273116.5070645176
+          ],
+          [
+            -1588509.6987598166,
+            -1506225.616677925,
+            -1428971.171780251,
+            -1356395.1538935527
+          ],
+          [
+            -1686743.2998796925,
+            -1599150.326742448,
+            -1516918.7236794084,
+            -1439673.8007225841
+          ]
+        ],
+        "wacc_direction_rounding_tolerance_eur": 1e-06,
+        "year_5_revenue": 21921033.390946053,
+        "year_5_ebitda": 6063244.411018208,
+        "ending_cash": 4263626.954525416
+      }
+    }
+  ],
+  "dashboard_spec": {
+    "title": "Atelier Coatings & Tools S.A.",
+    "sections": [
+      "Performance overview",
+      "Cash generation and leverage",
+      "Working capital and investment",
+      "Valuation"
+    ]
+  },
+  "metadata": {
+    "openai_called": false
+  }
+}

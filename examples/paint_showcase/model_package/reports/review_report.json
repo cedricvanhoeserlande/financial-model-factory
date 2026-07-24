@@ -1,0 +1,113 @@
+{
+  "approved": true,
+  "repair_required": false,
+  "summary": "Approved. The finalized package is fit for the stated five-year integrated forecast, financing, liquidity, and opening-date exit-multiple DCF purpose. Canonical validation, output-contract, model-local, scenario-suite, and targeted probe evidence support the implemented mechanics. The repaired scenario raw-input/output pairing, minimum-cash headroom semantics, executive summary, cash-interest description, convergence boundary evidence, and PP&E disposal-invariance coverage are supported by the submitted package evidence.",
+  "findings": [
+    {
+      "severity": "advisory",
+      "area": "model_logic",
+      "claim_tested": "The opening-date exit-multiple DCF provides a sufficiently diversified valuation basis for business interpretation.",
+      "symptom": "The Base enterprise value is materially dependent on terminal value: terminal present value is EUR 23.644m of EUR 34.239m enterprise value, approximately 69.06%.",
+      "root_cause": "The approved specification intentionally uses an exit-multiple terminal value and excludes perpetuity-growth valuation.",
+      "message": "This is a disclosed methodological limitation and business-review consideration, not a package defect. Users should treat the DCF as highly sensitive to Year 5 EBITDA and the selected exit multiple.",
+      "repair_instruction": "No automatic repair required. Business users should review terminal-value concentration and exit-multiple sensitivity before relying on the valuation.",
+      "evidence": {
+        "artifact": "model_package/outputs/output.json",
+        "observed_behavior": {
+          "enterprise_value": 34238656.32005686,
+          "terminal_present_value": 23644157.073112544,
+          "terminal_present_value_share": 0.6905690705876765,
+          "opening_date_equity_value": 25738656.320056863
+        },
+        "independent_calculation": "PV of forecast FCFF plus terminal present value reproduces enterprise value EUR 34.239m and opening-date equity value EUR 25.739m.",
+        "artifacts": [
+          "model_package/outputs/output.json"
+        ]
+      },
+      "requires_human_decision": false
+    },
+    {
+      "severity": "advisory",
+      "area": "scenario_behavior",
+      "claim_tested": "The three composite scenario cases provide useful aggregate operating and valuation directionality.",
+      "symptom": "The Downside case reaches binding minimum-cash headroom of zero in Years 3-5 and uses revolver draws, while Base and Upside do not activate revolver draws.",
+      "root_cause": "The composite scenario design intentionally combines operating, working-capital, financing, and valuation overrides under platform-owned scenario execution.",
+      "message": "No defect was identified. The scenario-suite evidence supports Downside <= Base <= Upside for Year 5 revenue, EBITDA, and opening-date equity value, and confirms observed liquidity-branch activation.",
+      "repair_instruction": "No automatic repair required. Business users should distinguish zero minimum-cash headroom, which is a binding limit, from a reconciliation failure.",
+      "evidence": {
+        "artifact": "model_package/reports/model_tests_report.json",
+        "observed_behavior": {
+          "case_ids": [
+            "base",
+            "downside",
+            "upside"
+          ],
+          "pair_matches": {
+            "base": true,
+            "downside": true,
+            "upside": true
+          },
+          "year_5_revenue_order": "Downside <= Base <= Upside",
+          "year_5_ebitda_order": "Downside <= Base <= Upside",
+          "equity_value_order": "Downside <= Base <= Upside",
+          "downside_revolver_draw_activated": true,
+          "downside_minimum_cash_headroom": [
+            156533.62074945588,
+            79447.3252741883,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "artifacts": [
+          "model_package/reports/model_tests_report.json"
+        ]
+      },
+      "requires_human_decision": false
+    }
+  ],
+  "required_amendments": [],
+  "repair_instructions": [],
+  "human_questions": [],
+  "failure_reasons": [],
+  "attempt": "after_repair_2",
+  "execution_evidence": {
+    "path": "model_package/reports/review_execution_evidence.json",
+    "code_interpreter_required": true,
+    "code_interpreter_call_count": 1
+  },
+  "function_tool_evidence": {
+    "path": "model_package/reports/agent_tool_calls_report.json",
+    "function_tool_call_count": 8,
+    "tools_used": [
+      "execute_input_probe",
+      "execute_model_test",
+      "list_package_artifacts",
+      "read_package_artifact"
+    ]
+  },
+  "usage_report": {
+    "stage": "review_agent_audit",
+    "model": "gpt-5.6-luna",
+    "usage_summary": {
+      "input_tokens": 864512,
+      "cached_input_tokens": 625368,
+      "output_tokens": 2036,
+      "reasoning_tokens": 1055,
+      "total_tokens": 866548,
+      "api_call_count": 1
+    },
+    "cost_summary": {
+      "estimated_cost_usd": 0.313897,
+      "pricing_note": "Estimate based on local standard-processing price table; billing dashboard is authoritative.",
+      "pricing_source": "https://developers.openai.com/api/docs/pricing",
+      "rates_usd_per_1m_tokens": {
+        "input": 1.0,
+        "cached_input": 0.1,
+        "output": 6.0
+      },
+      "billable_input_tokens": 239144
+    },
+    "openai_called": true
+  }
+}
